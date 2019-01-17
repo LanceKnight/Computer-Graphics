@@ -1,2 +1,2 @@
-move 123, 43,2
+move 123, 43,2 #this is a comment
 #this is a comment
