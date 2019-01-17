@@ -364,8 +364,8 @@ read(std::vector<std::string> paramList){
 					
 					std::cout<<"executing a command from the file..."<<std::endl;
 					std::cout<<"command:"<<command<<std::endl;
-
 					strcpy(line, command.c_str());
+					strtok(line, "#");
 					#ifdef DEBUG
 						std::cout<<"=====DEBUG  INFO====="<< std::endl;
 							std::cout<<"line:"<<line<<std::endl;
@@ -383,7 +383,7 @@ read(std::vector<std::string> paramList){
 
 			#ifdef DEBUG
 				std::cout<<"=====DEBUG  INFO====="<< std::endl;
-					std::cout<<"File closed, nestRead"<<nestedRead<<std::endl;
+					std::cout<<"File closed, nestRead:"<<nestedRead<<std::endl;
 
 				std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 			#endif
@@ -469,7 +469,7 @@ main_loop(char line[])
 			strcpy(line, read(paramList).c_str());
 		}
 		else{
-			std::cout<< "maxium number of nested read reached"<<std::endl;
+			std::cout<< "WARNING:maxium number of nested read reached. Read command abandoned"<<std::endl;
 		}
 		nestedRead--;
 	}
