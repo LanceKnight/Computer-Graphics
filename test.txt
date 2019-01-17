@@ -1,0 +1,11 @@
+movE 2 3 4
+moVE 1
+
+colOr 3	4, 6, 2
+dRaw e3 45 44
+#this is a comment
+draw
+nonExistentCommand 3 d 34
+nonExistentCommand
+read test.txt
+read test2.txt
