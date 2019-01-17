@@ -359,24 +359,24 @@ read(std::vector<std::string> paramList){
 				return result;
 			}
 			while (std::getline(file, command)) {
-			
-				//std::cout<<"first:"<< command.at(0)<<std::endl;	
-				//if(command.at(0)!='#'){
-				
-				std::cout<<"executing a command from the file..."<<std::endl;
-				std::cout<<"command:"<<command<<std::endl;
+				if(command.empty()!= true){
+					if(command.at(0)!='#'){
+					
+					std::cout<<"executing a command from the file..."<<std::endl;
+					std::cout<<"command:"<<command<<std::endl;
 
-				strcpy(line, command.c_str());
-				#ifdef DEBUG
-					std::cout<<"=====DEBUG  INFO====="<< std::endl;
-						std::cout<<"line:"<<line<<std::endl;
+					strcpy(line, command.c_str());
+					#ifdef DEBUG
+						std::cout<<"=====DEBUG  INFO====="<< std::endl;
+							std::cout<<"line:"<<line<<std::endl;
 
-					std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-				#endif
-				main_loop(line);
+						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+					#endif
+					main_loop(line);
 
-			result = "File was processed succefully";
-				//}	
+					result = "File was processed succefully";
+					}	
+				}
 			}
 
 			file.close();
