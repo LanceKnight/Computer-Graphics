@@ -3,6 +3,8 @@
 movE 2 3 4 # test of case-insensitivity of command
 moVE 1 # test of less params than required
 colOr 3	4, 6, 2 # test of more params than required
+color 3.1  4f, 2 # test of floating numbers
+color 3.1	es, 2 # test of floating numbers mixed with illegal param
 dRaw e3 45 44 # test of illegal char(first param)
 draw # test of no params
 nonExistentCommand 3 d 34 # non-exist command with params
