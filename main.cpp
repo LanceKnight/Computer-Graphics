@@ -240,10 +240,18 @@ move(std::vector<std::string> paramList){
 		#endif
 		std::string result = "";	
 		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			if(!is_number(*it)){
+			try{
+				std::stod(*it);
+			}
+			catch(...)
+			{
+				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
+				*it = "0"; 
+			}
+	/*		if(!is_number(*it)){
 				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
 				*it = "0";
-			}
+			}*/
 			result += *it + " ";
 		}
 		return result;
@@ -280,9 +288,14 @@ draw(std::vector<std::string> paramList){
 		#endif
 		std::string result = "";	
 		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			if(!is_number(*it)){
+
+			try{
+				std::stod(*it);
+			}
+			catch(...)
+			{
 				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0";
+				*it = "0"; 
 			}
 			result += *it + " ";
 		}
@@ -320,9 +333,14 @@ color(std::vector<std::string> paramList){
 		#endif
 		std::string result = "";	
 		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			if(!is_number(*it)){
+		
+			try{
+				std::stod(*it);
+			}
+			catch(...)
+			{
 				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0";
+				*it = "0"; 
 			}
 			result += *it + " ";
 		}
