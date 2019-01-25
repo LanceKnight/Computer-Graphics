@@ -54,7 +54,7 @@ Reader::read(std::vector<std::string> paramList){
 
 			#ifdef DEBUG
 				std::cout<<"=====DEBUG  INFO====="<< std::endl;
-					std::cout<<"File closed, nestRead:"<<Dispatcher::nested_read<<std::endl;
+					std::cout<<"File closed, nestRead:"<<Dispatcher::nested_read_<<std::endl;
 
 				std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 			#endif

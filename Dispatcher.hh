@@ -18,7 +18,7 @@ public:
      static int s_max( 5);
      return s_max;
    }
-private:
+
 	static int nested_read_;
 };
 
