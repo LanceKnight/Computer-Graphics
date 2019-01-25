@@ -26,38 +26,40 @@ Reader::read(std::vector<std::string> paramList){
 			file.open(filename);
 		  	if (!file) {
 				result = "Unable to open "+ filename;
-				return result;
+				
 			}
-			while (std::getline(file, command)) {
-				if(command.empty()!= true){
-					if(command.at(0)!='#'){
-					
-					std::cout<<"executing a command from the file..."<<std::endl;
-					std::cout<<"command:"<<command<<std::endl;
-					strcpy(line, command.c_str());
-					strtok(line, "#");
-					#ifdef DEBUG
-						std::cout<<"=====DEBUG  INFO====="<< std::endl;
-							std::cout<<"line:"<<line<<std::endl;
+			else{
+				while (std::getline(file, command)) {
+					if(command.empty()!= true){
+						if(command.at(0)!='#'){
+						
+						std::cout<<"executing a command from the file..."<<std::endl;
+						std::cout<<"command:"<<command<<std::endl;
+						strcpy(line, command.c_str());
+						strtok(line, "#");
+						#ifdef DEBUG
+							std::cout<<"=====DEBUG  INFO====="<< std::endl;
+								std::cout<<"line:"<<line<<std::endl;
 
-						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-					#endif
-					
-					Dispatcher::dispatch(line);
+							std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+						#endif
+						
+						Dispatcher::dispatch(line);
 
-					result = "File was processed succefully";
-					}	
+						result = "File <"+ filename+"> was processed succefully";
+						}	
+					}
 				}
+
+				file.close();
+
+				#ifdef DEBUG
+					std::cout<<"=====DEBUG  INFO====="<< std::endl;
+						std::cout<<"File closed, nestRead:"<<Dispatcher::nested_read_<<std::endl;
+
+					std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+				#endif
 			}
-
-			file.close();
-
-			#ifdef DEBUG
-				std::cout<<"=====DEBUG  INFO====="<< std::endl;
-					std::cout<<"File closed, nestRead:"<<Dispatcher::nested_read_<<std::endl;
-
-				std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-			#endif
 		}
 		else{
 			result = "No file specified!";
