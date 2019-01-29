@@ -14,6 +14,10 @@ public:
 	~Util();
 
 	static bool isLittleEndian();
+	
+
+
+	static void reverse(unsigned char * bytes, int n);
 
 };
 
