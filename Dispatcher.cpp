@@ -102,7 +102,7 @@ Dispatcher::dispatch(char line[]){
 			std::cout<<"dispatching to TiffRead branch"<<std::endl;
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		#endif
-		TiffStat::tiff_stat(paramList);
+		strcpy(line, TiffStat::tiff_stat(paramList).c_str());
 
 
 	}
