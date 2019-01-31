@@ -163,11 +163,16 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	memcpy((void*)ifd_value_offset, (void *)(IFD+8), 5);
 	ifd_value_offset[4] = '\0';
 	
+	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
 	if(should_reverse){
 		Util::reverse(ifd_tag, 2); 
 		Util::reverse(ifd_type,2);	
 		Util::reverse(ifd_count,4);
-		Util::reverse(ifd_value_offset,4);
+		if(type_length_multip_count<=4){
+		}
+		else{	
+			Util::reverse(ifd_value_offset,4);
+		}
 	}
 
 
@@ -201,7 +206,6 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	std::cout<<type_intepret(*((short*)ifd_type))<<"("<<std::dec<<* ((short*)ifd_type)<<")"<<" ";
 	std::cout<<std::dec<<*((short*)ifd_count)<<"<";
 
-	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
 	if(type_length_multip_count>4){
 		int ifd_position;
 		ifd_position = file.tellg();
@@ -219,8 +223,22 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		#endif
 	}
 	else{
-				
-		std::cout<<std::dec<<*((int*)ifd_value_offset)<<">"<<std::endl;
+		if(*((short*)ifd_type) == 3){
+			
+			if(Util::isLittleEndian()){
+				unsigned char value[2] ={ifd_value_offset[1], ifd_value_offset[0]};
+
+				std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+			}
+			else{
+				unsigned char value[2] ={ifd_value_offset[0], ifd_value_offset[1]};
+				std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+			}
+		}
+		else if((*((short*)ifd_type) == 2)||(*((short*)ifd_type) == 1)){
+			
+
+		}
 		#ifdef DEBUG
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"#: "<<type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count))<<std::endl;
@@ -458,7 +476,7 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			unsigned char * data;
 				
 			for(int i = 0;i<2;i++){
-			//	data[i] = data_array[i];
+				//data[i] = data_array[i];
 			}
 			
 			std::cout<<">"<<std::endl;
