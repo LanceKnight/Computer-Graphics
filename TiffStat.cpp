@@ -35,7 +35,7 @@ TiffStat::tiff_stat(std::vector<std::string> paramList){
 				
 			}
 			else{
-			
+				std::cout<<filename<<std::endl;			
 				file.seekg(0,std::ios::beg);
 				
 				file.read(buffer,2);
@@ -81,7 +81,7 @@ TiffStat::tiff_stat(std::vector<std::string> paramList){
 					const unsigned char TIFF_FORMAT[3] = {0x2a, 0x00, 0x00};
 					if(memcmp((void*)&magicno,(void*)TIFF_FORMAT,2)){//if magic number is not 42
 						std::cout<< "magicno: 0x"<<magicno <<std::endl;
-						return "This is not a TIFF file according to magic number.";
+						return "This is not a TIFF file";
 					}
 					else{//if magic number is 42
 		
@@ -112,7 +112,7 @@ TiffStat::tiff_stat(std::vector<std::string> paramList){
 					}
 				}
 				else{//if buffer value is either little nor big Endian
-					result = "This is not a valid TIFF file according to buffer value.";
+					result = "This is not a valid TIFF file";
 				}
 			}
 		}
@@ -133,7 +133,7 @@ void
 TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream & file){
 
 	#ifdef DEBUG
-
+/*
 		std::cout<<"=====DEBUG  INFO====="<<std::endl;
 		std::cout <<"raw IDF: 0x ";
 		for(int j = 0; j < 12; j++){			
@@ -142,6 +142,7 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		std::cout<<std::endl;
 
 		std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 	#endif
 
 	unsigned char ifd_tag[3];
@@ -163,37 +164,25 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	memcpy((void*)ifd_value_offset, (void *)(IFD+8), 5);
 	ifd_value_offset[4] = '\0';
 	
-	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
 	if(should_reverse){
 		Util::reverse(ifd_tag, 2); 
 		Util::reverse(ifd_type,2);	
 		Util::reverse(ifd_count,4);
-		if(type_length_multip_count<=4){
-		}
-		else{	
-			Util::reverse(ifd_value_offset,4);
-		}
 	}
 
 
 	#ifdef DEBUG
 		std::cout<<"=====DEBUG  INFO====="<<std::endl;
 		std::cout<<"Endian-ness adjusted IFD 0x ";
-		
 		for (int i = 0; i< 2;i++){
 			std::cout<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) ifd_tag[i] <<" ";
 		}
-
 		for (int i = 0; i< 2;i++){
 			std::cout<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) ifd_type[i] <<" ";
 		}
-
-
 		for (int i = 0; i< 4;i++){
 			std::cout<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) ifd_count[i] <<" ";
 		}
-
-
 		for (int i = 0; i< 4;i++){
 			std::cout<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) ifd_value_offset[i] <<" ";
 		}
@@ -206,6 +195,24 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	std::cout<<type_intepret(*((short*)ifd_type))<<"("<<std::dec<<* ((short*)ifd_type)<<")"<<" ";
 	std::cout<<std::dec<<*((short*)ifd_count)<<"<";
 
+	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
+
+	if(should_reverse){//if format is Big-Endness
+		if(type_length_multip_count<=4){
+		}
+		else{	
+			Util::reverse(ifd_value_offset,4);
+		}
+	}
+
+/*	else{//if format is Small-Endian
+		if(type_length_multip_count<=4){
+			Util::reverse(ifd_value_offset,4);
+		}
+		else{
+		}
+	}*/
+
 	if(type_length_multip_count>4){
 		int ifd_position;
 		ifd_position = file.tellg();
@@ -216,30 +223,75 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		type_output_intepret(*((short*)ifd_type), data_array, type_length_multip_count);
 		file.seekg(ifd_position, std::ios::beg);
 		#ifdef DEBUG
+/*
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"#: "<<type_length_multip_count<<std::endl;	
 			std::cout<<"length > 4"<<std::endl;
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 		#endif
+
 	}
 	else{
-		if(*((short*)ifd_type) == 3){
+		if(*((short*)ifd_type) == 3){//type short
 			
-			if(Util::isLittleEndian()){
-				unsigned char value[2] ={ifd_value_offset[1], ifd_value_offset[0]};
+			if(*((short *)ifd_count)==1){//if count ==1
+				if(should_reverse){
+					unsigned char value[2] ={ifd_value_offset[1], ifd_value_offset[0]};
 
-				std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+				}
+				else{
+					unsigned char value[2] ={ifd_value_offset[0], ifd_value_offset[1]};
+					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+				}
+			}
+			else{//count ==2
+				unsigned char value1[2]={ifd_value_offset[1], ifd_value_offset[0]};
+				unsigned char value2[2]={ifd_value_offset[3], ifd_value_offset[2]};
+				std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
+			}
+		}
+		else if((*((short*)ifd_type) == 2)||(*((short*)ifd_type) == 1)){//type byte or char
+		
+			if(*((short*)ifd_count) ==1){
+				unsigned char value1=ifd_value_offset[0];
+				std::cout<<std::hex<<value1<<">"<<std::endl;
+			}
+			else if((*((short*)ifd_count) ==2)){
+
+				unsigned char value1=ifd_value_offset[0];
+				unsigned char value2=ifd_value_offset[1];
+				std::cout<<std::hex<<value1<<" "<<value2<<">"<<std::endl;
+			}
+			else if((*((short*)ifd_count) ==3)){
+				unsigned char value1=ifd_value_offset[0];
+				unsigned char value2=ifd_value_offset[1];
+				unsigned char value3=ifd_value_offset[2];
+				std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<">"<<std::endl;
 			}
 			else{
-				unsigned char value[2] ={ifd_value_offset[0], ifd_value_offset[1]};
-				std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+				unsigned char value1=ifd_value_offset[0];
+				unsigned char value2=ifd_value_offset[1];
+				unsigned char value3=ifd_value_offset[2];
+				unsigned char value4=ifd_value_offset[3];
+
+				std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<" "<<value4 <<">"<<std::endl;
 			}
-		}
-		else if((*((short*)ifd_type) == 2)||(*((short*)ifd_type) == 1)){
-			
 
 		}
+		else if((*((short*)ifd_type) == 4)){//type long
+
+			unsigned char value[4] ={ifd_value_offset[3], ifd_value_offset[2], ifd_value_offset[1], ifd_value_offset[0]};
+		/*	
+			std::cout<<std::hex<<"test:"<<(int) value[0] <<">"<<std::endl;
+			std::cout<<std::hex<<"test:"<<(int) value[1] <<">"<<std::endl;
+			std::cout<<std::hex<<"test:"<<(int) value[2] <<">"<<std::endl;
+			std::cout<<std::hex<<"test:"<<(int) value[3] <<">"<<std::endl;*/
+			std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+		}
 		#ifdef DEBUG
+/*
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"#: "<<type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count))<<std::endl;
 
@@ -249,6 +301,7 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 			std::cout<<std::endl;
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 		#endif
 	
 	}
@@ -462,7 +515,7 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 	switch(code){
 		case 1:
 			for (int i = 0;  i < n; i++){
-				std::cout<<std::hex<<(int)data_array[i]<<" ";
+				std::cout<<"0x"<<std::hex<<(int)data_array[i]<<" ";
 			}
 			std::cout<<">"<<std::endl;
 			return;
@@ -474,7 +527,7 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			return;
 		case 3:
 			unsigned char * data;
-				
+		//TODO		
 			for(int i = 0;i<2;i++){
 				//data[i] = data_array[i];
 			}
@@ -482,10 +535,13 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			std::cout<<">"<<std::endl;
 			return;
 		case 4:
-
+//TODO
 			std::cout<<">"<<std::endl;
 			return;
-		case 5:/*
+		case 5://TODO
+
+
+/*
 			int one;
 			unsigned char * one_bytes;
 			int fraction;
