@@ -6,6 +6,7 @@
 #include "Drawer.hh"
 #include "Colorer.hh"
 #include "Reader.hh"
+#include "TiffRead.hh"
 #include "TiffStat.hh"
 
 //static int nested_read_ = 0;//current nested read
@@ -99,7 +100,7 @@ Dispatcher::dispatch(char line[]){
 
 		#ifdef DEBUG
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
-			std::cout<<"dispatching to TiffRead branch"<<std::endl;
+			std::cout<<"dispatching to TiffStat branch"<<std::endl;
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		#endif
 		strcpy(line, TiffStat::tiff_stat(paramList).c_str());
@@ -107,6 +108,20 @@ Dispatcher::dispatch(char line[]){
 
 	}
 
+
+//tiffread branch
+	if(!strcmp(line, "tiffread"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to TiffRead branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, TiffRead::tiff_read(paramList).c_str());
+
+
+	}
 
 //other processing
    if (line == NULL)
