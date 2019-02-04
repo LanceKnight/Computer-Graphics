@@ -197,23 +197,14 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
 
-	if(should_reverse){//if format is Big-Endness
-		if(type_length_multip_count<=4){
-		}
-		else{	
-			Util::reverse(ifd_value_offset,4);
-		}
-	}
-
-/*	else{//if format is Small-Endian
-		if(type_length_multip_count<=4){
-			Util::reverse(ifd_value_offset,4);
-		}
-		else{
-		}
-	}*/
 
 	if(type_length_multip_count>4){
+
+		if(should_reverse){//if format is Big-Endness
+			Util::reverse(ifd_value_offset,4);
+		}
+	
+
 		int ifd_position;
 		ifd_position = file.tellg();
 		file.seekg(*((int *)ifd_value_offset),std::ios::beg);
@@ -238,7 +229,6 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 			if(*((short *)ifd_count)==1){//if count ==1
 				if(should_reverse){
 					unsigned char value[2] ={ifd_value_offset[1], ifd_value_offset[0]};
-
 					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
 				}
 				else{
@@ -247,9 +237,17 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 				}
 			}
 			else{//count ==2
-				unsigned char value1[2]={ifd_value_offset[1], ifd_value_offset[0]};
-				unsigned char value2[2]={ifd_value_offset[3], ifd_value_offset[2]};
-				std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
+				if(should_reverse){
+					unsigned char value1[2]={ifd_value_offset[1], ifd_value_offset[0]};
+					unsigned char value2[2]={ifd_value_offset[3], ifd_value_offset[2]};
+					std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
+				}
+				else{
+
+					unsigned char value1[2]={ifd_value_offset[0], ifd_value_offset[1]};
+					unsigned char value2[2]={ifd_value_offset[2], ifd_value_offset[3]};
+					std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
+				}
 			}
 		}
 		else if((*((short*)ifd_type) == 2)||(*((short*)ifd_type) == 1)){//type byte or char
@@ -281,14 +279,15 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 		}
 		else if((*((short*)ifd_type) == 4)){//type long
-
-			unsigned char value[4] ={ifd_value_offset[3], ifd_value_offset[2], ifd_value_offset[1], ifd_value_offset[0]};
-		/*	
-			std::cout<<std::hex<<"test:"<<(int) value[0] <<">"<<std::endl;
-			std::cout<<std::hex<<"test:"<<(int) value[1] <<">"<<std::endl;
-			std::cout<<std::hex<<"test:"<<(int) value[2] <<">"<<std::endl;
-			std::cout<<std::hex<<"test:"<<(int) value[3] <<">"<<std::endl;*/
-			std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+			if(should_reverse){
+				unsigned char value[4] ={ifd_value_offset[3], ifd_value_offset[2], ifd_value_offset[1], ifd_value_offset[0]};
+				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+			}
+			else{
+				unsigned char value[4] ={ifd_value_offset[0], ifd_value_offset[1], ifd_value_offset[2], ifd_value_offset[3]};
+				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+			
+			}
 		}
 		#ifdef DEBUG
 /*
