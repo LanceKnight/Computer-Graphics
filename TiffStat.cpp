@@ -526,7 +526,7 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			std::cout<<">"<<std::endl;
 			return;
 		case 3:
-			unsigned char * data;
+		//	unsigned char * data;
 		//TODO		
 			for(int i = 0;i<2;i++){
 				//data[i] = data_array[i];
@@ -539,20 +539,36 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			std::cout<<">"<<std::endl;
 			return;
 		case 5://TODO
+			
 
-
+		#ifdef DEBUG
 /*
-			int one;
-			unsigned char * one_bytes;
-			int fraction;
-			unsigned char * fraction_bytes;
-			for(int i = 0;i<4;i++){
-				one_bytes[i] = data_array[i];
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
+			std::cout<<"content in remote address: 0x";
+
+			for (int i = 0; i< 8;i++){
+				std::cout<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) data_array[i] <<" ";
 			}
+
+			std::cout<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
+		#endif
+			int numerator;
+			unsigned char numerator_bytes[4];
+			int denominator;
+			unsigned char  denominator_bytes[4];
+			for(int i = 0;i<4;i++){
+				numerator_bytes[i] = data_array[i];
+			}
+
+			numerator =*((long*)numerator_bytes);
 			for(int j =0; j<4;j++){
-				fraction_bytes[j] = data_array[j+4];
-			}*/
-			std::cout<<">"<<std::endl;
+				denominator_bytes[j] = data_array[j+4];
+			}
+			denominator = *((long*)denominator_bytes);
+			std::cout<<std::dec<< numerator/denominator<<">"<<std::endl;
 			return;		
 			
 		default:
