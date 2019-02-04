@@ -526,27 +526,48 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 			std::cout<<">"<<std::endl;
 			return;
 		case 3:
-		//	unsigned char * data;
-		//TODO		
-			for(int i = 0;i<2;i++){
-				//data[i] = data_array[i];
+			int short_num;
+			unsigned char short_bytes[4];
+			for(int k =0; k<n; k++){
+				if(should_reverse){
+					for(int i = 0;i<2;i++){
+						short_bytes[i] = data_array[2*k+1-i];
+					}
+				}
+				else{			
+					for(int i = 0;i<2;i++){
+						short_bytes[i] = data_array[2*k+i];
+					}
+				}
+				short_num =*((short*)short_bytes);
+				
+				std::cout<<std::dec<< short_num<<" ";
 			}
-			
+
 			std::cout<<">"<<std::endl;
 			return;
+
+
 		case 4:
 
 			int long_num;
 			unsigned char long_bytes[4];
-			for(int k =0; k<n; k++){			
-				for(int i = 0;i<4;i++){
-					long_bytes[i] = data_array[i];
+			for(int k =0; k<n; k++){
+				if(should_reverse){
+					for(int i = 0;i<4;i++){
+						long_bytes[i] = data_array[4*k+1-i];
+					}
+				}
+				else{			
+					for(int i = 0;i<4;i++){
+						long_bytes[i] = data_array[4*k+i];
+					}
 				}
 				long_num =*((long*)long_bytes);
+				
 				std::cout<<std::dec<< long_num<<" ";
 			}
 
-			std::cout<<std::dec<<">"<<std::endl;
 			std::cout<<">"<<std::endl;
 			return;
 		case 5://TODO
@@ -574,12 +595,12 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 				if(should_reverse){
 
 					for(int i = 0;i<4;i++){
-						numerator_bytes[i] = data_array[3-i];
+						numerator_bytes[i] = data_array[8*k+3-i];
 					}
 				}
 				else{
 					for(int i = 0;i<4;i++){
-						numerator_bytes[i] = data_array[i];
+						numerator_bytes[i] = data_array[8*k+i];
 					}
 				}
 
@@ -587,12 +608,12 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 				if(should_reverse){
 
 					for(int j =0; j<4;j++){
-						denominator_bytes[j] = data_array[(3-j)+4];
+						denominator_bytes[j] = data_array[8*k+(3-j)+4];
 					}
 				}
 				else{
 					for(int j =0; j<4;j++){
-						denominator_bytes[j] = data_array[j+4];
+						denominator_bytes[j] = data_array[8*k+j+4];
 					}
 				}
 				denominator = *((long*)denominator_bytes);
