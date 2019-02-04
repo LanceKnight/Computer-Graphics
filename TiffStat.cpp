@@ -525,8 +525,8 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 			std::cout<<">"<<std::endl;
 			return;
 		case 3:
-			int short_num;
-			unsigned char short_bytes[4];
+			unsigned short short_num;
+			unsigned char short_bytes[2];
 			for(int k =0; k<n; k++){
 				if(should_reverse){
 					for(int i = 0;i<2;i++){
@@ -549,12 +549,12 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 
 		case 4:
 
-			int long_num;
+			unsigned int long_num;
 			unsigned char long_bytes[4];
 			for(int k =0; k<n; k++){
 				if(should_reverse){
 					for(int i = 0;i<4;i++){
-						long_bytes[i] = data_array[4*k+1-i];
+						long_bytes[i] = data_array[4*k+3-i];
 					}
 				}
 				else{			
