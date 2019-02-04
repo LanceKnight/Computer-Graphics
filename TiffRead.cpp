@@ -9,6 +9,14 @@
 #include "Util.hh"
 
 
+int TiffRead::image_length_=0;
+int TiffRead::image_width_=0;
+int TiffRead::rows_per_strip_=0;
+std::vector<int> TiffRead::strip_offsets_(1,0);
+std::vector<int> TiffRead::strip_byte_counts_(1,0);
+int TiffRead::strips_per_image_ = 0;
+
+
 TiffRead::TiffRead(){}
 
 TiffRead::~TiffRead(){}
@@ -50,9 +58,11 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 
 
 				#ifdef DEBUG
+/*
 					std::cout<<"=====DEBUG  INFO====="<<std::endl;
 					std::cout<<"Is machine little-endian? " <<std::boolalpha<< Util::isLittleEndian() <<std::endl;
 					std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 				#endif
 
 				std::cout<< "buffer: 0x"<<std::hex<<(int)buffer[0] <<(int)buffer[1];
@@ -71,9 +81,11 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 					bool should_reverse = (Util::isLittleEndian()) != (!memcmp((void*)buffer, (void*)LITTLE, 2));
 					if(should_reverse){	
 						#ifdef DEBUG
+/*
 							std::cout<<"=====DEBUG  INFO====="<<std::endl;
 							std::cout<<"reversing"<<std::endl;
 							std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 						#endif
 						Util::reverse((unsigned char*)&magicno,2);	
 						Util::reverse((unsigned char*)&ifdaddress,4);
@@ -106,8 +118,34 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 							file.seekg(file_position);
 						}
 
+//==========================================
+
+					#ifdef DEBUG
+						std::cout<<"=====DEBUG  INFO====="<<std::endl;
+						std::cout<<"ImageLength:"<<image_length_<<std::endl;
+						std::cout<<"ImageWidth:"<<image_width_<<std::endl;
+						std::cout<<"RowsPerStrip:"<<rows_per_strip_<<std::endl;
+						std::cout<<"StripsPerImage:"<<strips_per_image_<<std::endl;
+						std::cout<<"StripOffsets:";
+						for(int i=0; i<strips_per_image_;i++){
+							std::cout<<strip_offsets_[i]<<" ";
+
+						}
+						std::cout<<std::endl;
+
+						std::cout<<"StripByteCounts:";
+						for(int i=0; i<strips_per_image_;i++){
+							std::cout<<strip_byte_counts_[i]<<" ";
+
+						}
+						std::cout<<std::endl;
+						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+					#endif
+						//display_image();
+
 						file.close();
 						result = "Read stat of file <"+filename+"> successfully";
+
 
 					}
 				}
@@ -172,6 +210,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 
 	#ifdef DEBUG
+/*
 		std::cout<<"=====DEBUG  INFO====="<<std::endl;
 		std::cout<<"Endian-ness adjusted IFD 0x ";
 		for (int i = 0; i< 2;i++){
@@ -188,6 +227,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		}
 		std::cout<<std::endl;
 		std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 	#endif
 		
 
@@ -196,7 +236,6 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	std::cout<<std::dec<<*((short*)ifd_count)<<"<";
 
 	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
-
 
 	if(type_length_multip_count>4){
 
@@ -211,7 +250,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		unsigned char data_array[type_length_multip_count+1]; 
 		file.read((char*)data_array,type_length_multip_count);
 		data_array[type_length_multip_count]='\0';
-		type_output_intepret(*((short*)ifd_type), data_array, (*(short*)ifd_count), should_reverse);
+		type_output_intepret(*((short*)ifd_tag), *((short*)ifd_type), data_array, (*(short*)ifd_count), should_reverse);
 		file.seekg(ifd_position, std::ios::beg);
 		#ifdef DEBUG
 /*
@@ -222,19 +261,61 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 */
 		#endif
 
+		if(*((short*)ifd_tag)==257){// if tag is ImageLength
+			std::cout<<"sorry, the program only supports image smaller than size of 1024*1024."<<std::endl;
+		}
+
+		if(*((short*)ifd_tag)==256){// if tag is ImageWidth
+			std::cout<<"sorry, the program only supports image smaller than size of 1024*1024."<<std::endl;
+		}
+		//TODO if tag is 278 RowsPerStrip
 	}
 	else{
 		if(*((short*)ifd_type) == 3){//type short
 			
 			if(*((short *)ifd_count)==1){//if count ==1
+				unsigned char value[2];
+
 				if(should_reverse){
-					unsigned char value[2] ={ifd_value_offset[1], ifd_value_offset[0]};
+					for(int i =0; i<2; i++){
+						value[i] = ifd_value_offset[1-i];
+					}
 					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
 				}
 				else{
-					unsigned char value[2] ={ifd_value_offset[0], ifd_value_offset[1]};
+					for(int i =0; i<2; i++){
+						value[i] = ifd_value_offset[i];
+					}
 					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
 				}
+		
+				if(*((short*)ifd_tag)==257){// if tag is ImageLength
+					image_length_=*((short*)value);
+					if(rows_per_strip_!=0){
+						strips_per_image_ = (image_length_+rows_per_strip_-1)/rows_per_strip_;
+					}
+				}
+				
+				if(*((short*)ifd_tag)==256){// if tag is ImageWidth
+					image_width_=*((short*)value);
+				}
+				
+				if(*((short*)ifd_tag)==278){// if tag is RowsPerStrip
+					rows_per_strip_=*((short*)value);
+
+					if(image_length_!=0){
+						strips_per_image_ = (image_length_+rows_per_strip_-1)/rows_per_strip_;
+					}
+				}
+/*
+				if(*((short*)ifd_tag)==273){// if tag is StripOffsets
+					strip_offsets_[0]=*((short*)value);
+				}
+
+				if(*((short*)ifd_tag)==279){// if tag is ImageWidth
+					strip_byte_counts_=*((short*)value);
+				}
+*/				
 			}
 			else{//count ==2
 				if(should_reverse){
@@ -249,6 +330,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 					std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
 				}
 			}
+			
 		}
 		else if((*((short*)ifd_type) == 2)||(*((short*)ifd_type) == 1)){//type byte or char
 		
@@ -286,8 +368,9 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 			else{
 				unsigned char value[4] ={ifd_value_offset[0], ifd_value_offset[1], ifd_value_offset[2], ifd_value_offset[3]};
 				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
-			
+							
 			}
+			//TODO: for tag image_length, image_width, rows_per_strip, strip_offsets, stripbytecouts,
 		}
 		#ifdef DEBUG
 /*
@@ -509,7 +592,14 @@ TiffRead::type_length_intepret(short code){
 }
 
 void
-TiffRead::type_output_intepret(short code, unsigned char *data_array, int n, bool should_reverse){
+TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse){
+	if(tag==273){
+		std::vector<int> strip_offsets_(n,0);
+	}
+	if(tag==279){
+		std::vector<int> strip_byte_counts_(n,0);
+	}
+
 
 	switch(code){
 		case 1:
@@ -547,10 +637,12 @@ TiffRead::type_output_intepret(short code, unsigned char *data_array, int n, boo
 			return;
 
 
-		case 4:
+		case 4://long type
 
 			unsigned int long_num;
 			unsigned char long_bytes[4];
+
+
 			for(int k =0; k<n; k++){
 				if(should_reverse){
 					for(int i = 0;i<4;i++){
@@ -565,9 +657,20 @@ TiffRead::type_output_intepret(short code, unsigned char *data_array, int n, boo
 				long_num =*((long*)long_bytes);
 				
 				std::cout<<std::dec<< long_num<<" ";
-			}
+				
+				if(tag==273){// if tag is StripOffsets
+					strip_offsets_[k] = long_num;	
+				}
+				
+				if(tag==279){// if tag is StripByteCounts
+					strip_byte_counts_[k] = long_num;		
+				}
+				
 
+
+			}
 			std::cout<<">"<<std::endl;
+
 			return;
 		case 5://TODO
 			

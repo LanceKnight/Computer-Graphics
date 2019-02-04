@@ -19,12 +19,19 @@ public:
 
 private:
 
-	void static IFD_intepret(unsigned char* IFD, bool should_reverse, std::ifstream& file);
-	std::string static tag_intepret(short code);
-	std::string static type_intepret(short code);
-	int static type_length_intepret(short code);
-	void static type_output_intepret(short code, unsigned char *data_array, int n, bool should_reverse);
+	static void IFD_intepret(unsigned char* IFD, bool should_reverse, std::ifstream& file);
+	static std::string tag_intepret(short code);
+	static std::string type_intepret(short code);
+	static int type_length_intepret(short code);
+	static void type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse);
 
+
+	static int image_length_;
+	static int image_width_;
+	static int rows_per_strip_;
+	static std::vector<int> strip_offsets_;
+	static std::vector<int> strip_byte_counts_;
+	static int strips_per_image_;
 };
 
 
