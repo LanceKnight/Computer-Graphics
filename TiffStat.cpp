@@ -220,7 +220,7 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		unsigned char data_array[type_length_multip_count+1]; 
 		file.read((char*)data_array,type_length_multip_count);
 		data_array[type_length_multip_count]='\0';
-		type_output_intepret(*((short*)ifd_type), data_array, type_length_multip_count);
+		type_output_intepret(*((short*)ifd_type), data_array, (*(short*)ifd_count), should_reverse);
 		file.seekg(ifd_position, std::ios::beg);
 		#ifdef DEBUG
 /*
@@ -510,7 +510,7 @@ TiffStat::type_length_intepret(short code){
 }
 
 void
-TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
+TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, bool should_reverse){
 
 	switch(code){
 		case 1:
@@ -535,7 +535,18 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			std::cout<<">"<<std::endl;
 			return;
 		case 4:
-//TODO
+
+			int long_num;
+			unsigned char long_bytes[4];
+			for(int k =0; k<n; k++){			
+				for(int i = 0;i<4;i++){
+					long_bytes[i] = data_array[i];
+				}
+				long_num =*((long*)long_bytes);
+				std::cout<<std::dec<< long_num<<" ";
+			}
+
+			std::cout<<std::dec<<">"<<std::endl;
 			std::cout<<">"<<std::endl;
 			return;
 		case 5://TODO
@@ -555,20 +566,42 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n){
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 */
 		#endif
-			int numerator;
+			unsigned int numerator;
 			unsigned char numerator_bytes[4];
-			int denominator;
+			unsigned int denominator;
 			unsigned char  denominator_bytes[4];
-			for(int i = 0;i<4;i++){
-				numerator_bytes[i] = data_array[i];
+			for(int k=0; k<n; k++){
+				if(should_reverse){
+
+					for(int i = 0;i<4;i++){
+						numerator_bytes[i] = data_array[3-i];
+					}
+				}
+				else{
+					for(int i = 0;i<4;i++){
+						numerator_bytes[i] = data_array[i];
+					}
+				}
+
+				numerator =*((long*)numerator_bytes);
+				if(should_reverse){
+
+					for(int j =0; j<4;j++){
+						denominator_bytes[j] = data_array[(3-j)+4];
+					}
+				}
+				else{
+					for(int j =0; j<4;j++){
+						denominator_bytes[j] = data_array[j+4];
+					}
+				}
+				denominator = *((long*)denominator_bytes);
+
+
+				std::cout<<std::dec<< numerator/denominator<<" ";
 			}
 
-			numerator =*((long*)numerator_bytes);
-			for(int j =0; j<4;j++){
-				denominator_bytes[j] = data_array[j+4];
-			}
-			denominator = *((long*)denominator_bytes);
-			std::cout<<std::dec<< numerator/denominator<<">"<<std::endl;
+			std::cout<<">"<<std::endl;
 			return;		
 			
 		default:
