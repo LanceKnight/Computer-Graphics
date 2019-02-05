@@ -17,6 +17,7 @@ std::vector<int> TiffRead::strip_offsets_(1,0);
 std::vector<int> TiffRead::strip_byte_counts_(1,0);
 int TiffRead::strips_per_image_ = 0;
 std::vector<int> TiffRead::bits_per_sample_(1,0);
+int TiffRead::photo_metric_ =0;
 
 TiffRead::TiffRead(){}
 
@@ -123,7 +124,7 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 
 					#ifdef DEBUG
 						std::cout<<"=====DEBUG  INFO====="<<std::endl;
-						std::cout<<"ImageLength:"<<image_length_<<std::endl;
+						std::cout<<"ImageLength:"<<std::dec<<image_length_<<std::endl;
 						std::cout<<"ImageWidth:"<<image_width_<<std::endl;
 						std::cout<<"RowsPerStrip:"<<rows_per_strip_<<std::endl;
 						std::cout<<"StripsPerImage:"<<strips_per_image_<<std::endl;
@@ -142,12 +143,13 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 						std::cout<<std::endl;
 
 						std::cout<<"BitsPerSample:";
-						for(int i=0; i<bits_per_sample_.size();i++){
+						for(unsigned int i=0; i<bits_per_sample_.size();i++){
 							std::cout<<bits_per_sample_[i]<<" ";
 
 						}
 						std::cout<<std::endl;
-
+					
+						std::cout<<"PhotometriIntepretation:"<<photo_metric_<<std::endl;
 						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 					#endif
 						display_image(file, should_reverse);
@@ -281,7 +283,6 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	}
 	else{//if type_length_multip_count <=4
 		if(*((short*)ifd_type) == 3){//type short
-			
 			if(*((short *)ifd_count)==1){//if count ==1
 				unsigned char value[2];
 
@@ -299,10 +300,13 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 				}
 		
 				if(*((short*)ifd_tag)==257){// if tag is ImageLength
+
 					image_length_=*((short*)value);
 					if(rows_per_strip_!=0){
 						strips_per_image_ = (image_length_+rows_per_strip_-1)/rows_per_strip_;
 					}
+
+					//std::cout<<"debug:"<<image_length_<<std::endl;	
 				}
 				
 				if(*((short*)ifd_tag)==256){// if tag is ImageWidth
@@ -314,6 +318,9 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 					bits_per_sample_[0]=*((short*)value);
 				}
 				
+				if(*((short*)ifd_tag)==262){// if tag is PhotometricIntepretation
+					photo_metric_=*((short*)value);
+				}
 				if(*((short*)ifd_tag)==278){// if tag is RowsPerStrip
 					rows_per_strip_=*((short*)value);
 
@@ -783,7 +790,33 @@ TiffRead::display_image(std::ifstream& file, bool should_reverse){
 	//GLubyte checkImage[1024][1024][3];
    std::cout<<"displaying image..."<<std::endl;
 	
-	if(bits_per_sample_.size() ==3){
+	if(bits_per_sample_.size() ==1){//gray image
+		int image_address = strip_offsets_[0];
+		char gray[1];
+		file.seekg(image_address,std::ios::beg);
+		glutReshapeWindow(image_length_, image_width_);
+		for (i = 0; i < image_length_; i++) {
+			for (j = 0; j < image_width_; j++) {
+				if(should_reverse){
+					file.read(gray,1);
+				}
+				else{
+					file.read(gray,1);
+				}
+				if(photo_metric_==1){
+					checkImage[image_length_-i][j][0] = (GLubyte) gray[0];
+					checkImage[image_length_-i][j][1] = (GLubyte) gray[0];
+					checkImage[image_length_-i][j][2] = (GLubyte) gray[0];
+				}
+				else{
+					checkImage[image_length_-i][j][0] = (GLubyte) 255-gray[0];
+					checkImage[image_length_-i][j][1] = (GLubyte) 255-gray[0];
+					checkImage[image_length_-i][j][2] = (GLubyte) 255-gray[0];
+				}
+			}
+		}
+	}
+	else if(bits_per_sample_.size()==3){//rgb image	
 		int image_address = strip_offsets_[0];
 		char r[1];
 		char g[1];
@@ -809,6 +842,37 @@ TiffRead::display_image(std::ifstream& file, bool should_reverse){
 		}
 
 	}
+	else if(bits_per_sample_.size()==4){
+		int image_address = strip_offsets_[0];
+		char r[1];
+		char g[1];
+		char b[1];
+		char skippable[1];
+		file.seekg(image_address,std::ios::beg);
+		glutReshapeWindow(image_length_, image_width_);
+		for (i = 0; i < image_length_; i++) {
+			for (j = 0; j < image_width_; j++) {
+				if(should_reverse){
+					file.read(r,1);
+					file.read(g,1);
+					file.read(b,1);
+					file.read(skippable,1);
+				}
+				else{
+					file.read(r,1);
+					file.read(g,1);
+					file.read(b,1);
+					file.read(skippable,1);
+				}
+				checkImage[image_length_-i][j][0] = (GLubyte) r[0];
+				checkImage[image_length_-i][j][1] = (GLubyte) g[0];
+				checkImage[image_length_-i][j][2] = (GLubyte) b[0];
+			}
+		}
+
+
+	}
+	
 	 
 	display();
 
