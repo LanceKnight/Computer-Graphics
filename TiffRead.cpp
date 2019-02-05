@@ -16,7 +16,8 @@ int TiffRead::rows_per_strip_=0;
 std::vector<int> TiffRead::strip_offsets_(1,0);
 std::vector<int> TiffRead::strip_byte_counts_(1,0);
 int TiffRead::strips_per_image_ = 0;
-
+std::vector<int> TiffRead::bits_per_sample_(1,0);
+int TiffRead::bits_per_sample_num_=0;
 
 TiffRead::TiffRead(){}
 
@@ -140,9 +141,17 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 
 						}
 						std::cout<<std::endl;
+
+						std::cout<<"BitsPerSample:";
+						for(int i=0; i<bits_per_sample_num_;i++){
+							std::cout<<bits_per_sample_[i]<<" ";
+
+						}
+						std::cout<<std::endl;
+
 						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 					#endif
-						display_image();
+						display_image(file, should_reverse);
 
 						file.close();
 						result = "Read stat of file <"+filename+"> successfully";
@@ -365,6 +374,12 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 			if(should_reverse){
 				unsigned char value[4] ={ifd_value_offset[3], ifd_value_offset[2], ifd_value_offset[1], ifd_value_offset[0]};
 				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+				
+				if(*((short*)ifd_tag) == 273){
+					strip_offsets_.resize(strips_per_image_);
+					strip_offsets_[0] = *((int*)value);
+				}
+
 			}
 			else{
 				unsigned char value[4] ={ifd_value_offset[0], ifd_value_offset[1], ifd_value_offset[2], ifd_value_offset[3]};
@@ -594,12 +609,17 @@ TiffRead::type_length_intepret(short code){
 
 void
 TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse){
+	if(tag==258){
+		std::vector<int> bits_per_sample_(n,0);
+		bits_per_sample_num_ = n;
+	}
 	if(tag==273){
 		std::vector<int> strip_offsets_(n,0);
 	}
 	if(tag==279){
 		std::vector<int> strip_byte_counts_(n,0);
 	}
+	
 
 
 	switch(code){
@@ -632,6 +652,11 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 				short_num =*((short*)short_bytes);
 				
 				std::cout<<std::dec<< short_num<<" ";
+				
+				if(tag==258){// if tag is StripOffsets
+					bits_per_sample_[k] = short_num;	
+				}
+
 			}
 
 			std::cout<<">"<<std::endl;
@@ -734,18 +759,39 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 }
 
 void
-TiffRead::display_image(){
-   int i, j, c;
+TiffRead::display_image(std::ifstream& file, bool should_reverse){
+   int i, j;
 	//GLubyte checkImage[1024][1024][3];
-   std::cout<<"displaying image..."<<std::endl; 
-   for (i = 0; i < 500; i++) {
-      for (j = 0; j < 70; j++) {
-         c = ((((i&0x8)==0)^((j&0x8)==0)))*30;
-         checkImage[i][j][0] = (GLubyte) 0;
-         checkImage[i][j][1] = (GLubyte) c;
-         checkImage[i][j][2] = (GLubyte) c;
-      }
-   }
+   std::cout<<"displaying image..."<<std::endl;
+	
+	if(bits_per_sample_num_ ==3){
+		int image_address = strip_offsets_[0];
+		char r[1];
+		char g[1];
+		char b[1];
+		std::cout<<"address:"<<image_address<<std::endl;
+		file.seekg(image_address,std::ios::beg);
+		glutReshapeWindow(image_length_, image_width_);
+		for (i = 0; i < image_length_; i++) {
+			for (j = 0; j < image_width_; j++) {
+				if(should_reverse){
+					file.read(r,1);
+					file.read(g,1);
+					file.read(b,1);
+				}
+				else{
+					file.read(r,1);
+					file.read(g,1);
+					file.read(b,1);
+				}
+				checkImage[image_length_-i][j][0] = (GLubyte) r[0];
+				checkImage[image_length_-i][j][1] = (GLubyte) g[0];
+				checkImage[image_length_-i][j][2] = (GLubyte) b[0];
+			}
+		}
+
+	}
+	 
 	display();
 
 }

@@ -24,7 +24,7 @@ private:
 	static std::string type_intepret(short code);
 	static int type_length_intepret(short code);
 	static void type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse);
-	static void display_image();
+	static void display_image(std::ifstream& file, bool should_reverse);
 
 	static int image_length_;
 	static int image_width_;
@@ -32,6 +32,9 @@ private:
 	static std::vector<int> strip_offsets_;
 	static std::vector<int> strip_byte_counts_;
 	static int strips_per_image_;
+	static std::vector<int> bits_per_sample_;
+	static int bits_per_sample_num_;
+
 };
 
 
