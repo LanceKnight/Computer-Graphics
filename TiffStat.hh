@@ -23,7 +23,7 @@ private:
 	std::string static tag_intepret(short code);
 	std::string static type_intepret(short code);
 	int static type_length_intepret(short code);
-	void static type_output_intepret(short code, unsigned char *data_array, int n, bool should_reverse);
+	void static type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse);
 
 };
 

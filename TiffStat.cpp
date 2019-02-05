@@ -211,7 +211,7 @@ TiffStat::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		unsigned char data_array[type_length_multip_count+1]; 
 		file.read((char*)data_array,type_length_multip_count);
 		data_array[type_length_multip_count]='\0';
-		type_output_intepret(*((short*)ifd_type), data_array, (*(short*)ifd_count), should_reverse);
+		type_output_intepret(*((short*)ifd_tag), *((short*)ifd_type), data_array, (*(short*)ifd_count), should_reverse);
 		file.seekg(ifd_position, std::ios::beg);
 		#ifdef DEBUG
 /*
@@ -509,7 +509,7 @@ TiffStat::type_length_intepret(short code){
 }
 
 void
-TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, bool should_reverse){
+TiffStat::type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse){
 
 	switch(code){
 		case 1:
@@ -527,6 +527,9 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 		case 3:
 			unsigned short short_num;
 			unsigned char short_bytes[2];
+			if(tag==320){//if tag is colormap
+				n=5;
+			}
 			for(int k =0; k<n; k++){
 				if(should_reverse){
 					for(int i = 0;i<2;i++){
@@ -542,7 +545,9 @@ TiffStat::type_output_intepret(short code, unsigned char *data_array, int n, boo
 				
 				std::cout<<std::dec<< short_num<<" ";
 			}
-
+			if(tag==320){//if tag is colormap
+				std::cout<<"...";
+			}
 			std::cout<<">"<<std::endl;
 			return;
 
