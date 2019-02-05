@@ -1,13 +1,14 @@
 #include <cstring>
-#include <string>
-#include <vector>
 #include <fstream>
+#include <GL/glut.h>
 #include <iomanip>
 #include <iostream>
+#include <string>
+#include <vector>
 #include "Dispatcher.hh"
 #include "TiffRead.hh"
 #include "Util.hh"
-
+#include "main.hh"
 
 int TiffRead::image_length_=0;
 int TiffRead::image_width_=0;
@@ -141,7 +142,7 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 						std::cout<<std::endl;
 						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 					#endif
-						//display_image();
+						display_image();
 
 						file.close();
 						result = "Read stat of file <"+filename+"> successfully";
@@ -729,10 +730,22 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 			
 		default:
 			std::cout<<"error in type"<<std::endl;
-
 	}	
+}
 
-
-
+void
+TiffRead::display_image(){
+   int i, j, c;
+	//GLubyte checkImage[1024][1024][3];
+   std::cout<<"displaying image..."<<std::endl; 
+   for (i = 0; i < 500; i++) {
+      for (j = 0; j < 70; j++) {
+         c = ((((i&0x8)==0)^((j&0x8)==0)))*30;
+         checkImage[i][j][0] = (GLubyte) 0;
+         checkImage[i][j][1] = (GLubyte) c;
+         checkImage[i][j][2] = (GLubyte) c;
+      }
+   }
+	display();
 
 }

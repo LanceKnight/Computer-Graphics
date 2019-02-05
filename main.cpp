@@ -21,13 +21,13 @@ extern "C"{
 #include <stdio.h>
 #include <string.h>
 
-void makeCheckImage(void);
-void init(void);
-void display(void);
-void reshape(int w, int h);
-void motion(int x, int y);
-void mouse(int button, int press, int x, int y);
-void read_next_command(unsigned char key, int x, int y);
+//void makeCheckImage(void);
+//void init(void);
+//void display(void);
+//void reshape(int w, int h);
+//void motion(int x, int y);
+//void mouse(int button, int press, int x, int y);
+//void read_next_command(unsigned char key, int x, int y);
 }
 #include <vector>
 #include <iostream>
@@ -38,10 +38,10 @@ void read_next_command(unsigned char key, int x, int y);
 #include "Drawer.hh"
 #include "Colorer.hh"
 #include "Reader.hh"
-
+#include "main.hh"
 const int numNested=6;
 
-void main_loop(char line[]);
+//void main_loop(char line[]);
 
 /*	Create checkerboard image	*/
 #define	checkImageWidth 1024
