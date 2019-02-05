@@ -33,7 +33,6 @@ private:
 	static std::vector<int> strip_byte_counts_;
 	static int strips_per_image_;
 	static std::vector<int> bits_per_sample_;
-	static int bits_per_sample_num_;
 
 };
 

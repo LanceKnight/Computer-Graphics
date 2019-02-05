@@ -17,7 +17,6 @@ std::vector<int> TiffRead::strip_offsets_(1,0);
 std::vector<int> TiffRead::strip_byte_counts_(1,0);
 int TiffRead::strips_per_image_ = 0;
 std::vector<int> TiffRead::bits_per_sample_(1,0);
-int TiffRead::bits_per_sample_num_=0;
 
 TiffRead::TiffRead(){}
 
@@ -143,7 +142,7 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 						std::cout<<std::endl;
 
 						std::cout<<"BitsPerSample:";
-						for(int i=0; i<bits_per_sample_num_;i++){
+						for(int i=0; i<bits_per_sample_.size();i++){
 							std::cout<<bits_per_sample_[i]<<" ";
 
 						}
@@ -308,6 +307,11 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 				
 				if(*((short*)ifd_tag)==256){// if tag is ImageWidth
 					image_width_=*((short*)value);
+				}
+				
+				if(*((short*)ifd_tag)==258){// if tag is BitsPerSample
+					bits_per_sample_.resize(1);
+					bits_per_sample_[0]=*((short*)value);
 				}
 				
 				if(*((short*)ifd_tag)==278){// if tag is RowsPerStrip
@@ -627,7 +631,6 @@ void
 TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse){
 	if(tag==258){
 		bits_per_sample_.resize(n,0);
-		bits_per_sample_num_ = n;
 	}
 	if(tag==273){
 		strip_offsets_.resize(n,0);
@@ -780,7 +783,7 @@ TiffRead::display_image(std::ifstream& file, bool should_reverse){
 	//GLubyte checkImage[1024][1024][3];
    std::cout<<"displaying image..."<<std::endl;
 	
-	if(bits_per_sample_num_ ==3){
+	if(bits_per_sample_.size() ==3){
 		int image_address = strip_offsets_[0];
 		char r[1];
 		char g[1];
