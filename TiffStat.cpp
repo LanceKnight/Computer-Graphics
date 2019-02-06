@@ -510,11 +510,22 @@ TiffStat::type_length_intepret(short code){
 
 void
 TiffStat::type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse){
+	bool too_much = false;
+
 
 	switch(code){
 		case 1:
 			for (int i = 0;  i < n; i++){
-				std::cout<<"0x"<<std::hex<<(int)data_array[i]<<" ";
+				if(i>5){
+					too_much = true;
+				}
+				else{
+					std::cout<<"0x"<<std::hex<<(int)data_array[i]<<" ";
+				}
+			}
+
+			if(too_much){
+				std::cout<<"...";
 			}
 			std::cout<<">"<<std::endl;
 			return;
@@ -527,9 +538,6 @@ TiffStat::type_output_intepret(short tag, short code, unsigned char *data_array,
 		case 3:
 			unsigned short short_num;
 			unsigned char short_bytes[2];
-			if(tag==320){//if tag is colormap
-				n=5;
-			}
 			for(int k =0; k<n; k++){
 				if(should_reverse){
 					for(int i = 0;i<2;i++){
@@ -543,9 +551,14 @@ TiffStat::type_output_intepret(short tag, short code, unsigned char *data_array,
 				}
 				short_num =*((short*)short_bytes);
 				
-				std::cout<<std::dec<< short_num<<" ";
+				if(k>5){
+					too_much = true;
+				}	
+				else{
+					std::cout<<std::dec<< short_num<<" ";
+				}
 			}
-			if(tag==320){//if tag is colormap
+			if(too_much){
 				std::cout<<"...";
 			}
 			std::cout<<">"<<std::endl;
@@ -569,9 +582,17 @@ TiffStat::type_output_intepret(short tag, short code, unsigned char *data_array,
 				}
 				long_num =*((long*)long_bytes);
 				
-				std::cout<<std::dec<< long_num<<" ";
+				if(k>5){
+					too_much = true;
+				}	
+				else{
+					std::cout<<std::dec<< long_num<<" ";
+				}
 			}
 
+			if(too_much){//if tag is colormap
+				std::cout<<"...";
+			}
 			std::cout<<">"<<std::endl;
 			return;
 		case 5://TODO
