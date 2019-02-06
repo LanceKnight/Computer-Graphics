@@ -34,6 +34,9 @@ private:
 	static int strips_per_image_;
 	static std::vector<int> bits_per_sample_;
 	static int photo_metric_;
+	static std::vector<int>r_color_map_;
+	static std::vector<int>g_color_map_;
+	static std::vector<int>b_color_map_;
 };
 
 

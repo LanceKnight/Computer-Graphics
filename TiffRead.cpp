@@ -18,6 +18,9 @@ std::vector<int> TiffRead::strip_byte_counts_(1,0);
 int TiffRead::strips_per_image_ = 0;
 std::vector<int> TiffRead::bits_per_sample_(1,0);
 int TiffRead::photo_metric_ =0;
+std::vector<int> TiffRead::r_color_map_(256,0);
+std::vector<int> TiffRead::g_color_map_(256,0);
+std::vector<int> TiffRead::b_color_map_(256,0);
 
 TiffRead::TiffRead(){}
 
@@ -150,6 +153,14 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 						std::cout<<std::endl;
 					
 						std::cout<<"PhotometriIntepretation:"<<photo_metric_<<std::endl;
+
+						std::cout<<"ColorMap:";
+						for(unsigned int i=0; i<r_color_map_.size();i++){
+							std::cout<<std::dec<<((double)r_color_map_[i]/65535)*255<<" ";
+
+						}
+						std::cout<<std::endl;
+
 						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 					#endif
 						display_image(file, should_reverse);
@@ -370,9 +381,10 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 				std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<" "<<value4 <<">"<<std::endl;
 			}
-
+		
 		}
 		else if((*((short*)ifd_type) == 4)){//type long
+		
 			unsigned char value[4];
 			if(should_reverse){
 				for(int i =0; i<4; i++){
@@ -414,6 +426,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 					strips_per_image_ = (image_length_+rows_per_strip_-1)/rows_per_strip_;
 				}
 			}
+		
 		}
 		#ifdef DEBUG
 /*
@@ -646,6 +659,7 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 		strip_byte_counts_.resize(n,0);
 	}
 	
+	bool too_much= false;
 
 
 	switch(code){
@@ -677,14 +691,31 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 				}
 				short_num =*((short*)short_bytes);
 				
-				std::cout<<std::dec<< short_num<<" ";
-				
+				if(k>5){//if tag == colorMap
+					too_much = true;
+				}
+				else{
+					std::cout<<std::dec<< short_num<<" ";
+				}
 				if(tag==258){// if tag is StripOffsets
 					bits_per_sample_[k] = short_num;	
 				}
+				if(tag==320){//if tag is colorMap
+					if((k>=0) &&(k<=255)){
+						r_color_map_[k]= short_num;
+					}
+					else if((k>=256)&&(k<=511)){
+						g_color_map_[k-256]= short_num;
+					}
+					else if((k>=512)&&(k<=767)){
+						b_color_map_[k-512]= short_num;
+					}
+				}
 
 			}
-
+			if(too_much){//if tag == colorMap
+				std::cout<<"...";
+			}
 			std::cout<<">"<<std::endl;
 			return;
 
@@ -785,38 +816,44 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 }
 
 void
-TiffRead::display_image(std::ifstream& file, bool should_reverse){
+TiffRead::display_image(std::ifstream & file, bool should_reverse){
    int i, j;
 	//GLubyte checkImage[1024][1024][3];
    std::cout<<"displaying image..."<<std::endl;
 	
 	if(bits_per_sample_.size() ==1){//gray image
 		int image_address = strip_offsets_[0];
-		char gray[1];
+		unsigned char gray[1];
 		file.seekg(image_address,std::ios::beg);
 		glutReshapeWindow(image_length_, image_width_);
 		for (i = 0; i < image_length_; i++) {
 			for (j = 0; j < image_width_; j++) {
 				if(should_reverse){
-					file.read(gray,1);
+					file.read((char*)gray,1);
 				}
 				else{
-					file.read(gray,1);
+					file.read((char*)gray,1);
 				}
 				if(photo_metric_==1){
 					checkImage[image_length_-i][j][0] = (GLubyte) gray[0];
 					checkImage[image_length_-i][j][1] = (GLubyte) gray[0];
 					checkImage[image_length_-i][j][2] = (GLubyte) gray[0];
 				}
-				else{
+				else if(photo_metric_==0){//Whie is Zero
 					checkImage[image_length_-i][j][0] = (GLubyte) 255-gray[0];
 					checkImage[image_length_-i][j][1] = (GLubyte) 255-gray[0];
 					checkImage[image_length_-i][j][2] = (GLubyte) 255-gray[0];
 				}
+				else if(photo_metric_==3){//Color Map
+					checkImage[image_length_-i][j][0] = (GLubyte) r_color_map_[gray[0]];
+					checkImage[image_length_-i][j][1] = (GLubyte) g_color_map_[gray[0]];
+					checkImage[image_length_-i][j][2] = (GLubyte) b_color_map_[gray[0]];
+				}
+
 			}
 		}
 	}
-	else if(bits_per_sample_.size()==3){//rgb image	
+	else if(bits_per_sample_.size()==3){//rgb image
 		int image_address = strip_offsets_[0];
 		char r[1];
 		char g[1];
@@ -840,7 +877,6 @@ TiffRead::display_image(std::ifstream& file, bool should_reverse){
 				checkImage[image_length_-i][j][2] = (GLubyte) b[0];
 			}
 		}
-
 	}
 	else if(bits_per_sample_.size()==4){
 		int image_address = strip_offsets_[0];
