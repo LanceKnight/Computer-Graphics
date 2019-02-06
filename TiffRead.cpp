@@ -399,7 +399,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 				for(int i =0; i<4; i++){
 					value[i] = ifd_value_offset[i];
 				}
-				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+//				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
 							
 			}
 
