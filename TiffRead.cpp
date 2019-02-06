@@ -70,7 +70,7 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 */
 				#endif
 
-				std::cout<< "buffer: 0x"<<std::hex<<(int)buffer[0] <<(int)buffer[1];
+				//std::cout<< "buffer: 0x"<<std::hex<<(int)buffer[0] <<(int)buffer[1];
 				if(!memcmp((void*)buffer,(void*)LITTLE,2)){
 					std::cout<<"<Little-Endian>"<<std::endl;
 				}
@@ -110,9 +110,9 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 							Util::reverse((unsigned char*)&ifdcount,2);
 						}
 
-						std::cout<< "magicno: 0x"<<magicno <<std::endl;
-						std::cout<< "IFD address: 0x" <<std::setfill('0')<<std::setw(8)<<ifdaddress <<std::endl;	
-						std::cout<< "IFD count: 0x" <<ifdcount <<std::endl;
+//						std::cout<< "magicno: 0x"<<magicno <<std::endl;
+//						std::cout<< "IFD address: 0x" <<std::setfill('0')<<std::setw(8)<<ifdaddress <<std::endl;	
+//						std::cout<< "IFD count: 0x" <<ifdcount <<std::endl;
 						
 						int file_position;
 						for(int i =0; i<ifdcount; i++){
@@ -126,6 +126,7 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 //==========================================
 
 					#ifdef DEBUG
+/*
 						std::cout<<"=====DEBUG  INFO====="<<std::endl;
 						std::cout<<"ImageLength:"<<std::dec<<image_length_<<std::endl;
 						std::cout<<"ImageWidth:"<<image_width_<<std::endl;
@@ -162,6 +163,7 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 						std::cout<<std::endl;
 
 						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+*/
 					#endif
 						display_image(file, should_reverse);
 
@@ -253,9 +255,9 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 	#endif
 		
 
-	std::cout<<tag_intepret(*((short*)ifd_tag))<<" ";
-	std::cout<<type_intepret(*((short*)ifd_type))<<"("<<std::dec<<* ((short*)ifd_type)<<")"<<" ";
-	std::cout<<std::dec<<*((short*)ifd_count)<<"<";
+	//std::cout<<tag_intepret(*((short*)ifd_tag))<<" ";
+	//std::cout<<type_intepret(*((short*)ifd_type))<<"("<<std::dec<<* ((short*)ifd_type)<<")"<<" ";
+	//std::cout<<std::dec<<*((short*)ifd_count)<<"<";
 
 	int type_length_multip_count = (type_length_intepret(*((short*)ifd_type))*(*((short*)ifd_count)));
 
@@ -301,13 +303,13 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 					for(int i =0; i<2; i++){
 						value[i] = ifd_value_offset[1-i];
 					}
-					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+					//std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
 				}
 				else{
 					for(int i =0; i<2; i++){
 						value[i] = ifd_value_offset[i];
 					}
-					std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
+					//std::cout<<std::dec<<*((short*)value)<<">"<<std::endl;
 				}
 		
 				if(*((short*)ifd_tag)==257){// if tag is ImageLength
@@ -342,15 +344,15 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 			}
 			else{//count ==2
 				if(should_reverse){
-					unsigned char value1[2]={ifd_value_offset[1], ifd_value_offset[0]};
-					unsigned char value2[2]={ifd_value_offset[3], ifd_value_offset[2]};
-					std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
+//					unsigned char value1[2]={ifd_value_offset[1], ifd_value_offset[0]};
+//					unsigned char value2[2]={ifd_value_offset[3], ifd_value_offset[2]};
+					//std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
 				}
 				else{
 
-					unsigned char value1[2]={ifd_value_offset[0], ifd_value_offset[1]};
-					unsigned char value2[2]={ifd_value_offset[2], ifd_value_offset[3]};
-					std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
+//					unsigned char value1[2]={ifd_value_offset[0], ifd_value_offset[1]};
+//					unsigned char value2[2]={ifd_value_offset[2], ifd_value_offset[3]};
+					//std::cout<<std::dec<<*((short*)value1)<<" "<<*((short*)value2)<<">"<<std::endl;
 				}
 			}
 			
@@ -358,28 +360,28 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 		else if((*((short*)ifd_type) == 2)||(*((short*)ifd_type) == 1)){//type byte or char
 		
 			if(*((short*)ifd_count) ==1){
-				unsigned char value1=ifd_value_offset[0];
-				std::cout<<std::hex<<value1<<">"<<std::endl;
+//				unsigned char value1=ifd_value_offset[0];
+				//std::cout<<std::hex<<value1<<">"<<std::endl;
 			}
 			else if((*((short*)ifd_count) ==2)){
 
-				unsigned char value1=ifd_value_offset[0];
-				unsigned char value2=ifd_value_offset[1];
-				std::cout<<std::hex<<value1<<" "<<value2<<">"<<std::endl;
+//				unsigned char value1=ifd_value_offset[0];
+//				unsigned char value2=ifd_value_offset[1];
+				//std::cout<<std::hex<<value1<<" "<<value2<<">"<<std::endl;
 			}
 			else if((*((short*)ifd_count) ==3)){
-				unsigned char value1=ifd_value_offset[0];
-				unsigned char value2=ifd_value_offset[1];
-				unsigned char value3=ifd_value_offset[2];
-				std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<">"<<std::endl;
+//				unsigned char value1=ifd_value_offset[0];
+//				unsigned char value2=ifd_value_offset[1];
+//				unsigned char value3=ifd_value_offset[2];
+				//std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<">"<<std::endl;
 			}
 			else{
-				unsigned char value1=ifd_value_offset[0];
-				unsigned char value2=ifd_value_offset[1];
-				unsigned char value3=ifd_value_offset[2];
-				unsigned char value4=ifd_value_offset[3];
+//				unsigned char value1=ifd_value_offset[0];
+//				unsigned char value2=ifd_value_offset[1];
+//				unsigned char value3=ifd_value_offset[2];
+//				unsigned char value4=ifd_value_offset[3];
 
-				std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<" "<<value4 <<">"<<std::endl;
+				//std::cout<<std::hex<<value1<<" "<<value2<<" "<<value3<<" "<<value4 <<">"<<std::endl;
 			}
 		
 		}
@@ -390,7 +392,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 				for(int i =0; i<4; i++){
 					value[i] = ifd_value_offset[3-i];
 				}
-				std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
+				//std::cout<<std::dec<<*((int*) value) <<">"<<std::endl;
 			}
 			else{
 
@@ -448,6 +450,7 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 std::string
 TiffRead::tag_intepret(short code){
+
 	switch(code){
 		case 254:
 			return "NewSubfileType(" + std::to_string(code) +")";
@@ -665,15 +668,15 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 	switch(code){
 		case 1:
 			for (int i = 0;  i < n; i++){
-				std::cout<<"0x"<<std::hex<<(int)data_array[i]<<" ";
+				//std::cout<<"0x"<<std::hex<<(int)data_array[i]<<" ";
 			}
-			std::cout<<">"<<std::endl;
+			//std::cout<<">"<<std::endl;
 			return;
 		case 2:
 			for (int i = 0;  i < n; i++){
-				std::cout<<data_array[i];
+				//std::cout<<data_array[i];
 			}
-			std::cout<<">"<<std::endl;
+			//std::cout<<">"<<std::endl;
 			return;
 		case 3:
 			unsigned short short_num;
@@ -695,7 +698,7 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 					too_much = true;
 				}
 				else{
-					std::cout<<std::dec<< short_num<<" ";
+					//std::cout<<std::dec<< short_num<<" ";
 				}
 				if(tag==258){// if tag is StripOffsets
 					bits_per_sample_[k] = short_num;	
@@ -714,9 +717,9 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 
 			}
 			if(too_much){//if tag == colorMap
-				std::cout<<"...";
+				//std::cout<<"...";
 			}
-			std::cout<<">"<<std::endl;
+			//std::cout<<">"<<std::endl;
 			return;
 
 
@@ -739,7 +742,7 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 				}
 				long_num =*((long*)long_bytes);
 				
-				std::cout<<std::dec<< long_num<<" ";
+				//std::cout<<std::dec<< long_num<<" ";
 				
 				if(tag==273){// if tag is StripOffsets
 					strip_offsets_[k] = long_num;	
@@ -752,7 +755,7 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 
 
 			}
-			std::cout<<">"<<std::endl;
+			//std::cout<<">"<<std::endl;
 
 			return;
 		case 5://TODO
@@ -772,7 +775,7 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 */
 		#endif
-			unsigned int numerator;
+/*			unsigned int numerator;
 			unsigned char numerator_bytes[4];
 			unsigned int denominator;
 			unsigned char  denominator_bytes[4];
@@ -804,10 +807,10 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 				denominator = *((long*)denominator_bytes);
 
 
-				std::cout<<std::dec<< numerator/denominator<<" ";
-			}
+				//std::cout<<std::dec<< numerator/denominator<<" ";
+			}*/
 
-			std::cout<<">"<<std::endl;
+			//std::cout<<">"<<std::endl;
 			return;		
 			
 		default:
