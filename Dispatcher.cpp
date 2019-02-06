@@ -8,7 +8,7 @@
 #include "Reader.hh"
 #include "TiffRead.hh"
 #include "TiffStat.hh"
-
+#include "TiffWrite.hh"
 //static int nested_read_ = 0;//current nested read
 
 
@@ -123,6 +123,19 @@ Dispatcher::dispatch(char line[]){
 
 	}
 
+//tiffwrite branch
+	if(!strcmp(line, "tiffwrite"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to TiffWrite branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, TiffWrite::tiff_write(paramList).c_str());
+
+
+	}
 //other processing
    if (line == NULL)
    {
