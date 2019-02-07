@@ -17,6 +17,24 @@ public:
 	std::string static tiff_read(std::vector<std::string> paramList);
 
 
+	static int image_length_;
+	static int image_width_;
+	static int rows_per_strip_;
+	static std::vector<int> strip_offsets_;
+	static std::vector<int> strip_byte_counts_;
+	static int strips_per_image_;
+	static std::vector<int> bits_per_sample_;
+	static int photo_metric_;
+	static double x_resolution_;
+	static double y_resolution_;
+	static short resolution_unit_;	
+
+	static std::vector<int>r_color_map_;
+	static std::vector<int>g_color_map_;
+	static std::vector<int>b_color_map_;
+
+	static bool is_gray_image_;
+	
 private:
 
 	static void IFD_intepret(unsigned char* IFD, bool should_reverse, std::ifstream& file);
@@ -26,17 +44,6 @@ private:
 	static void type_output_intepret(short tag, short code, unsigned char *data_array, int n, bool should_reverse);
 	static void display_image(std::ifstream& file, bool should_reverse);
 
-	static int image_length_;
-	static int image_width_;
-	static int rows_per_strip_;
-	static std::vector<int> strip_offsets_;
-	static std::vector<int> strip_byte_counts_;
-	static int strips_per_image_;
-	static std::vector<int> bits_per_sample_;
-	static int photo_metric_;
-	static std::vector<int>r_color_map_;
-	static std::vector<int>g_color_map_;
-	static std::vector<int>b_color_map_;
 };
 
 
