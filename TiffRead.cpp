@@ -17,9 +17,12 @@ std::vector<int> TiffRead::strip_offsets_(1,0);
 std::vector<int> TiffRead::strip_byte_counts_(1,0);
 int TiffRead::strips_per_image_ = 0;
 std::vector<int> TiffRead::bits_per_sample_(1,0);
+int TiffRead::compression_=0;
 int TiffRead::photo_metric_ =0;
-double TiffRead::x_resolution_=0;
-double TiffRead::y_resolution_=0;
+int TiffRead::x_resolution_numerator_=0;
+int TiffRead::x_resolution_denominator_=0;
+int TiffRead::y_resolution_numerator_=0;
+int TiffRead::y_resolution_denominator_=0;
 short TiffRead::resolution_unit_=0;	
 
 std::vector<int> TiffRead::r_color_map_(256,0);
@@ -157,12 +160,18 @@ TiffRead::tiff_read(std::vector<std::string> paramList){
 
 						}
 						std::cout<<std::endl;
+	
+						std::cout<<"Compression:"<<compression_<<std::endl;
 					
 						std::cout<<"PhotometriIntepretation:"<<photo_metric_<<std::endl;
 
-						std::cout<<"XResolution:"<<x_resolution_<<std::endl;
+						std::cout<<"XResolution(numerator):"<<x_resolution_numerator_<<std::endl;
 
-						std::cout<<"YResolution:"<<y_resolution_<<std::endl;
+						std::cout<<"XResolution(denominator):"<<x_resolution_denominator_<<std::endl;
+
+						std::cout<<"YResolution(numerator):"<<y_resolution_numerator_<<std::endl;
+
+						std::cout<<"YResolution(denominator):"<<y_resolution_denominator_<<std::endl;
 
 						std::cout<<"ResolutionUnit:"<<resolution_unit_<<std::endl;
 
@@ -341,6 +350,10 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 				if(*((short*)ifd_tag)==258){// if tag is BitsPerSample
 					bits_per_sample_.resize(1);
 					bits_per_sample_[0]=*((short*)value);
+				}
+				
+				if(*((short*)ifd_tag)==259){// if tag is Compression
+					compression_=*((short*)value);
 				}
 				
 				if(*((short*)ifd_tag)==262){// if tag is PhotometricIntepretation
@@ -826,11 +839,13 @@ TiffRead::type_output_intepret(short tag, short code, unsigned char *data_array,
 				denominator = *((long*)denominator_bytes);
 				
 				if(tag == 282){
-					x_resolution_ =(double)numerator/(double)denominator;
+					x_resolution_numerator_ = numerator;
+					x_resolution_denominator_ =denominator;
 				}
 
 				if(tag == 283){
-					y_resolution_ =(double)numerator/(double)denominator;
+					y_resolution_numerator_ = numerator;
+					y_resolution_denominator_ = denominator;
 				}
 				//std::cout<<std::dec<< numerator/denominator<<" ";
 			}

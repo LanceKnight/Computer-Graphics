@@ -24,9 +24,12 @@ public:
 	static std::vector<int> strip_byte_counts_;
 	static int strips_per_image_;
 	static std::vector<int> bits_per_sample_;
+	static int compression_;
 	static int photo_metric_;
-	static double x_resolution_;
-	static double y_resolution_;
+	static int x_resolution_numerator_;
+	static int x_resolution_denominator_; 
+	static int y_resolution_numerator_;
+	static int y_resolution_denominator_;
 	static short resolution_unit_;	
 
 	static std::vector<int>r_color_map_;
