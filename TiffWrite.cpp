@@ -37,10 +37,15 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 		if(paramList.size()==5){
 			
 			std::string filename = *paramList.begin();
-			std::string x0 = paramList[1];
-			std::string y0 = paramList[2];
-			std::string xc = paramList[3];
-			std::string yc = paramList[4];
+			std::string x0_str = paramList[1];
+			std::string y0_str = paramList[2];
+			std::string xc_str = paramList[3];
+			std::string yc_str = paramList[4];
+			
+			int x0 = std::stoi(x0_str);
+			int xc = std::stoi(xc_str);
+			int y0 = std::stoi(y0_str);
+			int yc = std::stoi(yc_str);
 
 			std::ofstream out_file(filename.c_str(), std::ios::binary);
 		  	if (out_file.fail()) {
@@ -62,8 +67,131 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 				out_file.write((char*)buffer,2);
 				out_file.write((char*)magicno,2);
 				out_file.write((char*)ifd_address,4);
-				if(TiffRead::is_gray_image_){
+				if(TiffRead::is_gray_image_){//gray image
+					std::cout<<"This is gray image writing route"<<std::endl;
 					unsigned char ifd_num[2] ={0x00,0xb};
+					out_file.write((char*)ifd_num, 2);
+
+					unsigned char starting_offset_value_address_bytes[4] = {0x8e,0x00,0x00,0x00};
+
+					//image width
+					int image_width = xc-x0;
+					unsigned char* ifd_image_width = IFD_encode(256, 4, 1, image_width);
+					out_file.write((char*)ifd_image_width,12);	
+
+					//image length
+					int image_length = yc-y0;
+					unsigned char* ifd_image_length = IFD_encode(257, 4, 1, image_length);	
+					out_file.write((char*)ifd_image_length,12);	
+
+					//bits per sample
+					char bits_per_sample[4] = {0x00, 0x00,0x08,0x00};	
+					unsigned char* ifd_bits_per_sample = IFD_encode(258, 3, 1, *((int*)bits_per_sample));	
+					out_file.write((char*)ifd_bits_per_sample,12);	
+
+					//compression
+					unsigned char compression_content[4] =  {0x00, 0x00, ((unsigned char*)&TiffRead::compression_)[0], 0x00};
+					unsigned char* ifd_compression = IFD_encode(259, 3, 1, *((int*)compression_content));	
+					out_file.write((char*)ifd_compression,12);
+
+					//photometric_intepretation					
+					unsigned char photo_metric_content[4] =  {0x00, 0x00, 0x01, 0x00};
+					unsigned char* ifd_photo_metric = IFD_encode(262, 3, 1, *((int*)photo_metric_content));	
+					out_file.write((char*)ifd_photo_metric,12);
+
+					//hold the space for strip_offset
+					int strip_offset_address = out_file.tellp();
+					unsigned char space_holder[4] = {0x00,0x00,0x00,0x00};						
+					unsigned char* ifd_strip_offset = IFD_encode(273, 3, 1, *((int*) space_holder) );	
+					out_file.write((char*)ifd_strip_offset,12);
+
+					//rows_per_strip 
+					unsigned char* ifd_rows_per_strip = IFD_encode(278, 4, 1, image_length);	
+					out_file.write((char*)ifd_rows_per_strip,12);
+
+					//strip_byte_counts 
+					unsigned char* ifd_strip_byte_counts = IFD_encode(279, 4, 1, image_length*image_width);	
+					out_file.write((char*)ifd_strip_byte_counts,12);
+
+					//x resolution 
+					unsigned char ifd_x_resolution_content[8] = {
+						((unsigned char*)&TiffRead::x_resolution_numerator_)[3], 
+						((unsigned char*)&TiffRead::x_resolution_numerator_)[2], 
+						((unsigned char*)&TiffRead::x_resolution_numerator_)[1],
+						((unsigned char*)&TiffRead::x_resolution_numerator_)[0],
+						
+						((unsigned char*)&TiffRead::x_resolution_denominator_)[3], 
+						((unsigned char*)&TiffRead::x_resolution_denominator_)[2], 
+						((unsigned char*)&TiffRead::x_resolution_denominator_)[1],
+						((unsigned char*)&TiffRead::x_resolution_denominator_)[0],
+					};
+					unsigned char* ifd_x_resolution_address = IFD_encode(282, 5, 1, *((int*)starting_offset_value_address_bytes));	
+					out_file.write((char*)ifd_x_resolution_address,12);
+					int next_offset_value_address = write_on_address(out_file, *((int*)starting_offset_value_address_bytes), ifd_x_resolution_content, 8);
+
+					//y resolution 
+					unsigned char ifd_y_resolution_content[8] = {
+						((unsigned char*)&TiffRead::y_resolution_numerator_)[3], 
+						((unsigned char*)&TiffRead::y_resolution_numerator_)[2], 
+						((unsigned char*)&TiffRead::y_resolution_numerator_)[1],
+						((unsigned char*)&TiffRead::y_resolution_numerator_)[0],
+						
+						((unsigned char*)&TiffRead::y_resolution_denominator_)[3], 
+						((unsigned char*)&TiffRead::y_resolution_denominator_)[2], 
+						((unsigned char*)&TiffRead::y_resolution_denominator_)[1],
+						((unsigned char*)&TiffRead::y_resolution_denominator_)[0],
+					};
+					unsigned char* ifd_y_resolution_address = IFD_encode(283, 5, 1, next_offset_value_address);	
+					out_file.write((char*)ifd_y_resolution_address,12);
+					next_offset_value_address = write_on_address(out_file, next_offset_value_address, ifd_y_resolution_content, 8);
+					int end_of_jumped_address = next_offset_value_address;
+					//resolution unit
+
+					unsigned char ifd_resolution_unit_content[4] =  {0x00, 0x00, ((unsigned char*)&TiffRead::resolution_unit_)[0], 0x00};
+					unsigned char* ifd_resolution_unit = IFD_encode(296, 3, 1, *((int*)ifd_resolution_unit_content));	
+					out_file.write((char*)ifd_resolution_unit,12);
+
+					//go back and fill strip_offset ifd
+
+					char strip_offset_content[4] = {
+						((char*)&end_of_jumped_address)[0], 
+						((char*)&end_of_jumped_address)[1],
+						((char*)&end_of_jumped_address)[2],
+						((char*)&end_of_jumped_address)[3]};	
+					ifd_strip_offset = IFD_encode(273, 4, 1, *((int*)strip_offset_content) );
+					write_on_address(out_file, strip_offset_address, ifd_strip_offset, 12);
+					#ifdef DEBUG	
+				/*	
+						std::cout<<"=====DEBUG  INFO====="<<std::endl;
+						std::cout<<"ifd:0x ";
+						for(int i =0; i< 12; i++){
+
+							std::cout<<std::hex<<std::setfill('0')<<std::setw(2)<<(int)(ifd_image_width[i])<<" ";
+
+						}
+						std::cout<<std::endl;
+						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;	
+				*/	
+					#endif
+
+					//========writing of gray image data==========
+
+					std::cout<<"end_of_jumped_address:"<<std::hex<<end_of_jumped_address<<std::endl;	
+					out_file.seekp(end_of_jumped_address);
+					int intensity;
+					for(int i = y0; i<yc; i++){
+						for(int j = x0; j<xc; j++){
+							intensity =  ((int)checkImage[TiffRead::image_length_-i][j][0] + (int)checkImage[TiffRead::image_length_-i][j][1]+ (int)checkImage[TiffRead::image_length_-i][j][2])/3;
+							
+							char intensity_byte = ((char*)&intensity)[0];
+
+							if((i==y0)&&(j==x0)){
+								std::cout<<"intensity:"<<std::hex<<(int)intensity_byte<<std::endl;
+							}
+							out_file.write(&intensity_byte,1);
+						}
+					}	
+
 
 				}
 				else{//rgb image
@@ -73,50 +201,101 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 
 					}
 					else if(TiffRead::photo_metric_==2){//full rgb imag
-						unsigned char offset_value_address_bytes[4] = {0x00,0x00,0x00,0x9a};
-						int offset_value_address =*((int*)offset_value_address_bytes);
-						std::cout<<"address::"<<offset_value_address<<std::endl;
+						unsigned char starting_offset_value_address_bytes[4] = {0x9a,0x00,0x00,0x00};
+
+						//image width
+						int image_width = xc-x0;
+						unsigned char* ifd_image_width = IFD_encode(256, 4, 1, image_width);
+						out_file.write((char*)ifd_image_width,12);	
 
 						//image length
-						unsigned char* ifd_image_width = IFD_encode(256, 3, 1, TiffRead::image_width_);
-						out_file.write((char*)ifd_image_width,12);	
-						//image width
-						unsigned char* ifd_image_length = IFD_encode(257, 3, 1, TiffRead::image_length_);	
+						int image_length = yc-y0;
+						unsigned char* ifd_image_length = IFD_encode(257, 4, 1, image_length);	
 						out_file.write((char*)ifd_image_length,12);	
+
 						//bits per sample
-						unsigned char bits_per_sample_address[4] ={0x00,0x00,0x00,0x00};
-						unsigned char* ifd_bits_per_sample = IFD_encode(258, 3, 3, *((int*)bits_per_sample_address));	
+						unsigned char* ifd_bits_per_sample = IFD_encode(258, 3, 3, *((int*)starting_offset_value_address_bytes));	
 						out_file.write((char*)ifd_bits_per_sample,12);	
-						//compression 
-						unsigned char* ifd_compression = IFD_encode(259, 3, 1, 1);	
+						unsigned char bits_per_sample_content[6] = {0x00,0x08,0x00,0x08,0x00,0x08};
+						int next_offset_value_address = write_on_address(out_file, *((int*)starting_offset_value_address_bytes), bits_per_sample_content, 6);
+						//compression
+						unsigned char compression_content[4] =  {0x00, 0x00, ((unsigned char*)&TiffRead::compression_)[0], 0x00};
+						unsigned char* ifd_compression = IFD_encode(259, 3, 1, *((int*)compression_content));	
 						out_file.write((char*)ifd_compression,12);
+
 						//photometric_intepretation					
-						unsigned char* ifd_photo_metric = IFD_encode(262, 3, 1, TiffRead::photo_metric_);	
+						unsigned char photo_metric_content[4] =  {0x00, 0x00, ((unsigned char*)&TiffRead::photo_metric_)[0], 0x00};
+						unsigned char* ifd_photo_metric = IFD_encode(262, 3, 1, *((int*)photo_metric_content));	
 						out_file.write((char*)ifd_photo_metric,12);
-						//strip_offset
-						unsigned strip_offset_address[4]={0x00,0x00,0x00,0x00};
-						unsigned char* ifd_strip_offset = IFD_encode(273, 3, 1, *((int*)strip_offset_address));	
+
+						//hold the space for strip_offset
+						int strip_offset_address = out_file.tellp();
+						unsigned char space_holder[4] = {0x00,0x00,0x00,0x00};						
+						unsigned char* ifd_strip_offset = IFD_encode(273, 3, 1, *((int*) space_holder) );	
 						out_file.write((char*)ifd_strip_offset,12);
+
 						//samples_per_pixel
-						unsigned char* ifd_samples_per_pixel = IFD_encode(277, 3, 1, 3);	
+						unsigned char samples_per_pixel_content[4] = {0x00,0x00,0x03,0x00};
+						unsigned char* ifd_samples_per_pixel = IFD_encode(277, 3, 1, *((int*)samples_per_pixel_content));	
 						out_file.write((char*)ifd_samples_per_pixel,12);
-						//rows_per_strip //needs to change
-						unsigned char* ifd_rows_per_strip = IFD_encode(278, 3, 1, 1);	
+
+						//rows_per_strip 
+						unsigned char* ifd_rows_per_strip = IFD_encode(278, 4, 1, image_length);	
 						out_file.write((char*)ifd_rows_per_strip,12);
-						//strip_byte_counts //needs to change
-						unsigned char* ifd_strip_byte_counts = IFD_encode(279, 3, 1, 1);	
+
+						//strip_byte_counts 
+						unsigned char* ifd_strip_byte_counts = IFD_encode(279, 4, 1, image_length*image_width);	
 						out_file.write((char*)ifd_strip_byte_counts,12);
+
 						//x resolution 
-						unsigned char* ifd_x_resolution = IFD_encode(282, 5, 1, TiffRead::x_resolution_);	
-						out_file.write((char*)ifd_x_resolution,12);
+						unsigned char ifd_x_resolution_content[8] = {
+							((unsigned char*)&TiffRead::x_resolution_numerator_)[3], 
+							((unsigned char*)&TiffRead::x_resolution_numerator_)[2], 
+							((unsigned char*)&TiffRead::x_resolution_numerator_)[1],
+							((unsigned char*)&TiffRead::x_resolution_numerator_)[0],
+							
+							((unsigned char*)&TiffRead::x_resolution_denominator_)[3], 
+							((unsigned char*)&TiffRead::x_resolution_denominator_)[2], 
+							((unsigned char*)&TiffRead::x_resolution_denominator_)[1],
+							((unsigned char*)&TiffRead::x_resolution_denominator_)[0],
+						};
+						unsigned char* ifd_x_resolution_address = IFD_encode(282, 5, 1, next_offset_value_address);	
+						out_file.write((char*)ifd_x_resolution_address,12);
+						next_offset_value_address = write_on_address(out_file, next_offset_value_address, ifd_x_resolution_content, 8);
+
 						//y resolution 
-						unsigned char* ifd_y_resolution = IFD_encode(283, 5, 1, TiffRead::y_resolution_);	
-						out_file.write((char*)ifd_y_resolution,12);
+						unsigned char ifd_y_resolution_content[8] = {
+							((unsigned char*)&TiffRead::y_resolution_numerator_)[3], 
+							((unsigned char*)&TiffRead::y_resolution_numerator_)[2], 
+							((unsigned char*)&TiffRead::y_resolution_numerator_)[1],
+							((unsigned char*)&TiffRead::y_resolution_numerator_)[0],
+							
+							((unsigned char*)&TiffRead::y_resolution_denominator_)[3], 
+							((unsigned char*)&TiffRead::y_resolution_denominator_)[2], 
+							((unsigned char*)&TiffRead::y_resolution_denominator_)[1],
+							((unsigned char*)&TiffRead::y_resolution_denominator_)[0],
+						};
+						unsigned char* ifd_y_resolution_address = IFD_encode(283, 5, 1, next_offset_value_address);	
+						out_file.write((char*)ifd_y_resolution_address,12);
+						next_offset_value_address = write_on_address(out_file, next_offset_value_address, ifd_y_resolution_content, 8);
+						int end_of_jumped_address = next_offset_value_address;
 						//resolution unit
-						unsigned char* ifd_resolution_unit = IFD_encode(296, 3, 1, TiffRead::resolution_unit_);	
+
+						unsigned char ifd_resolution_unit_content[4] =  {0x00, 0x00, ((unsigned char*)&TiffRead::resolution_unit_)[0], 0x00};
+						unsigned char* ifd_resolution_unit = IFD_encode(296, 3, 1, *((int*)ifd_resolution_unit_content));	
 						out_file.write((char*)ifd_resolution_unit,12);
 
+						//go back and fill strip_offset ifd
+
+						char strip_offset_content[4] = {
+							((char*)&end_of_jumped_address)[0], 
+							((char*)&end_of_jumped_address)[1],
+							((char*)&end_of_jumped_address)[2],
+							((char*)&end_of_jumped_address)[3]};	
+						ifd_strip_offset = IFD_encode(273, 4, 1, *((int*)strip_offset_content) );
+						write_on_address(out_file, strip_offset_address, ifd_strip_offset, 12);
 						#ifdef DEBUG	
+						/*
 							std::cout<<"=====DEBUG  INFO====="<<std::endl;
 							std::cout<<"ifd:0x ";
 							for(int i =0; i< 12; i++){
@@ -125,9 +304,35 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 
 							}
 							std::cout<<std::endl;
-
 							std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;	
+						*/
 						#endif
+
+						//========writing of image data==========
+
+						std::cout<<"end_of_jumped_address:"<<std::hex<<end_of_jumped_address<<std::endl;	
+						out_file.seekp(end_of_jumped_address);
+						unsigned char r;
+						unsigned char g;
+						unsigned char b;
+
+						for(int i = y0; i<yc; i++){
+							for(int j = x0; j<xc; j++){
+								r = checkImage[TiffRead::image_length_-i][j][0];
+								g = checkImage[TiffRead::image_length_-i][j][1];
+								b = checkImage[TiffRead::image_length_-i][j][2];
+								
+
+								unsigned char triplet[3] = {r,g,b};
+	
+								if((i==y0)&&(j==x0)){
+									std::cout<<"triplet:"<<std::hex<<*((int*)triplet)<<std::endl;
+								}
+								out_file.write((char*)triplet,3);
+							}
+						}	
+
+	
 					}
 				}		
 
@@ -164,20 +369,31 @@ TiffWrite::IFD_encode(short tag_no, short type, int count, int value_offset){
 	encoded_ifd[9] = ((unsigned char*)&value_offset)[2];	
 	encoded_ifd[10] = ((unsigned char*)&value_offset)[1];
 	encoded_ifd[11] = ((unsigned char*)&value_offset)[0];
-	std::cout<<"encoded ifd:0x";
-	for(int i =0; i< 12; i++){
 
-		std::cout<<std::hex<<std::setfill('0')<<std::setw(2)<<(int)encoded_ifd[i]<<" ";
+	#ifdef DEBUG
+	
+		std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		std::cout<<"encoded ifd:0x";
+		for(int i =0; i< 12; i++){
 
-	}
-	std::cout<<std::endl;
+			std::cout<<std::hex<<std::setfill('0')<<std::setw(2)<<(int)encoded_ifd[i]<<" ";
 
+		}
+		std::cout<<std::endl;
+
+		std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;	
+
+	#endif
 	return encoded_ifd;
 }
 
 int
-TiffWrite::write_on_address(std::ofstream file, int address, unsigned char* content, int n){
-
-	return 1;
+TiffWrite::write_on_address(std::ofstream& file, int address, unsigned char* content, int n){
+	int previous_address = file.tellp();
+	file.seekp(address);
+	file.write((char*)content, n);
+	int after_address = file.tellp();
+	file.seekp(previous_address);
+	return after_address;
 }
 

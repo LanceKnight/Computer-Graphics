@@ -20,7 +20,7 @@ public:
 private:
 
 	static unsigned char* IFD_encode(short tag_no, short type, int count, int value_offset);
-	int write_on_address(std::ofstream file, int address, unsigned char* content, int n);
+	static int write_on_address(std::ofstream & file, int address, unsigned char* content, int n);
 
 
 	static int image_length_;
