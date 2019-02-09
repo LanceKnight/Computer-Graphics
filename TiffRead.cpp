@@ -888,6 +888,7 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
 					checkImage[image_length_-i][j][2] = (GLubyte) 255-gray[0];
 				}
 				else if(photo_metric_==3){//Color Map
+					is_gray_image_=false;
 					checkImage[image_length_-i][j][0] = (GLubyte) r_color_map_[gray[0]];
 					checkImage[image_length_-i][j][1] = (GLubyte) g_color_map_[gray[0]];
 					checkImage[image_length_-i][j][2] = (GLubyte) b_color_map_[gray[0]];
