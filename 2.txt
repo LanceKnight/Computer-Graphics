@@ -1,0 +1,21 @@
+tiFFStat images/eeyore.tif
+tiFFStat images/eeyore2.tif
+tiFFStat images/eeyore3.tif
+tiFFStat images/eeyore4.tif
+
+
+tiFFStat images/p4_faces.tif
+tiFFStat images/p4_ortho.tif
+tiFFStat images/p4_persp.tif
+tiFFStat images/p4_simple.tif
+tiFFStat images/p4_test.tif
+
+
+tiFFStat images/play.tif
+tiffstat images/play2.tif
+tiffstat images/play3.tif
+tiffstat images/playpal.tif
+tiffstat images/playrgb.tif
+
+tiffstat images/pooh.tif
+tiffstat images/pooh_le.tif
