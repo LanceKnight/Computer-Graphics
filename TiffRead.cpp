@@ -437,7 +437,6 @@ TiffRead::IFD_intepret(unsigned char* IFD, bool should_reverse,  std::ifstream &
 
 			if(*((short*)ifd_tag)==257){// if tag is ImageLength
 				image_length_=*((int*)value);
-				std::cout<<"imageLength:"<<image_length_<<std::endl;
 				if(rows_per_strip_!=0){
 					strips_per_image_ = (image_length_+rows_per_strip_-1)/rows_per_strip_;
 				}
