@@ -1,1 +1,0 @@
-tiFFStat images/eeyore2.tif
