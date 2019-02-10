@@ -1,0 +1,21 @@
+#tiffread images/eeyore.tif
+#tiffread images/eeyore2.tif
+#tiffread images/eeyore3.tif
+#tiffread images/eeyore4.tif
+
+
+#tiffread images/p4_faces.tif
+#tiffread images/p4_ortho.tif
+#tiffread images/p4_persp.tif
+#tiffread images/p4_simple.tif
+#tiffread images/p4_test.tif
+
+
+#tiffread images/play.tif
+#tiffread images/play2.tif
+#tiffread images/play3.tif
+tiffread images/playpal.tif
+#tiffread images/playrgb.tif
+
+#tiffread images/pooh.tif
+#tiffread images/pooh_le.tif
