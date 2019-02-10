@@ -869,6 +869,11 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
 		int image_address = strip_offsets_[0];
 		unsigned char gray[1];
 		file.seekg(image_address,std::ios::beg);
+		
+		std::ofstream out_file("imageData.dat", std::ios::binary);
+		if(out_file.fail()){
+			std::cout<<"cannot write temp image data file."<<std::endl;
+		}
 		for (i = 0; i < image_length_; i++) {
 			for (j = 0; j < image_width_; j++) {
 				if(should_reverse){
@@ -878,26 +883,32 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
 					file.read((char*)gray,1);
 				}
 				if(photo_metric_==1){
-					checkImage[image_length_-i][j][0] = (GLubyte) gray[0];
-					checkImage[image_length_-i][j][1] = (GLubyte) gray[0];
-					checkImage[image_length_-i][j][2] = (GLubyte) gray[0];
+					checkImage[image_length_-i-1][j][0] = (GLubyte) gray[0];
+					checkImage[image_length_-i-1][j][1] = (GLubyte) gray[0];
+					checkImage[image_length_-i-1][j][2] = (GLubyte) gray[0];
 				}
 				else if(photo_metric_==0){//Whie is Zero
-					checkImage[image_length_-i][j][0] = (GLubyte) 255-gray[0];
-					checkImage[image_length_-i][j][1] = (GLubyte) 255-gray[0];
-					checkImage[image_length_-i][j][2] = (GLubyte) 255-gray[0];
+					checkImage[image_length_-i-1][j][0] = (GLubyte) 255-gray[0];
+					checkImage[image_length_-i-1][j][1] = (GLubyte) 255-gray[0];
+					checkImage[image_length_-i-1][j][2] = (GLubyte) 255-gray[0];
 				}
 				else if(photo_metric_==3){//Color Map
 					is_gray_image_=false;
-					checkImage[image_length_-i][j][0] = (GLubyte) r_color_map_[gray[0]];
-					checkImage[image_length_-i][j][1] = (GLubyte) g_color_map_[gray[0]];
-					checkImage[image_length_-i][j][2] = (GLubyte) b_color_map_[gray[0]];
+					if((i==50)&&(j==50)){
+						int value = (GLubyte) g_color_map_[gray[0]];
+						std::cout<<"color index:"<<(int)gray[0]<<",color value:"<<value<<std::endl;
+					}
+					out_file.write((char*)gray, 1);
+					checkImage[image_length_-i-1][j][0] = (GLubyte) r_color_map_[gray[0]];
+					checkImage[image_length_-i-1][j][1] = (GLubyte) g_color_map_[gray[0]];
+					checkImage[image_length_-i-1][j][2] = (GLubyte) b_color_map_[gray[0]];
 				}
 
 			}
 		}
+		file.close();
 	}
-	else if(bits_per_sample_.size()==3){//rgb image
+	else if(bits_per_sample_.size()==3){//full rgb image
 		is_gray_image_ = false;
 		int image_address = strip_offsets_[0];
 		char r[1];
@@ -917,9 +928,9 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
 					file.read(g,1);
 					file.read(b,1);
 				}
-				checkImage[image_length_-i][j][0] = (GLubyte) r[0];
-				checkImage[image_length_-i][j][1] = (GLubyte) g[0];
-				checkImage[image_length_-i][j][2] = (GLubyte) b[0];
+				checkImage[image_length_-i-1][j][0] = (GLubyte) r[0];
+				checkImage[image_length_-i-1][j][1] = (GLubyte) g[0];
+				checkImage[image_length_-i-1][j][2] = (GLubyte) b[0];
 			}
 		}
 	}
