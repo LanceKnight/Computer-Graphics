@@ -29,7 +29,7 @@ std::vector<int> TiffRead::r_color_map_(256,0);
 std::vector<int> TiffRead::g_color_map_(256,0);
 std::vector<int> TiffRead::b_color_map_(256,0);
 bool TiffRead::is_gray_image_= true;
-
+bool TiffRead::has_image_=false;
 TiffRead::TiffRead(){}
 
 TiffRead::~TiffRead(){}
@@ -863,7 +863,7 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
    int i, j;
 	//GLubyte checkImage[1024][1024][3];
    std::cout<<"displaying image..."<<std::endl;
-	
+	TiffRead::has_image_=true;	
 	if(bits_per_sample_.size() ==1){//gray image
 		is_gray_image_= true;
 		int image_address = strip_offsets_[0];
@@ -895,8 +895,7 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
 				else if(photo_metric_==3){//Color Map
 					is_gray_image_=false;
 					if((i==50)&&(j==50)){
-						int value = (GLubyte) g_color_map_[gray[0]];
-						std::cout<<"color index:"<<(int)gray[0]<<",color value:"<<value<<std::endl;
+						//int value = (GLubyte) g_color_map_[gray[0]];
 					}
 					out_file.write((char*)gray, 1);
 					checkImage[image_length_-i-1][j][0] = (GLubyte) r_color_map_[gray[0]];

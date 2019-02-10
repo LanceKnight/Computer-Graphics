@@ -46,6 +46,16 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 			int xc = std::stoi(xc_str);
 			int y0 = std::stoi(y0_str);
 			int yc = std::stoi(yc_str);
+			
+			if((x0 >=xc)||(y0>= yc)){
+				result = "(x0, y0) should be less than (xc,yc)";
+				return result;	
+			}			
+			if(TiffRead::has_image_==false){
+				result = "you should read before you write";
+				return result;
+			}
+
 
 			std::ofstream out_file(filename.c_str(), std::ios::binary);
 		  	if (out_file.fail()) {
@@ -68,7 +78,6 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 				out_file.write((char*)magicno,2);
 				out_file.write((char*)ifd_address,4);
 				if(TiffRead::is_gray_image_){//gray image
-					std::cout<<"This is gray image writing route"<<std::endl;
 					unsigned char ifd_num[2] ={0x00,0xb};
 					out_file.write((char*)ifd_num, 2);
 
@@ -286,8 +295,6 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 						unsigned char* ifd_color_map_address = IFD_encode(320, 3, 768, next_offset_value_address);
 						out_file.write((char*)ifd_color_map_address, 12);
 						for (int i=0; i<256;i++){
-							//char value_byte = ((char*)&(TiffRead::r_color_map[i]))[1]
-							//std::cout<<"r color map:"<<TiffRead::r_color_map_[i]
 							next_offset_value_address = write_on_address(out_file, next_offset_value_address, &(((unsigned char*)&(TiffRead::r_color_map_[i]))[0]), 2);
 						}
 						for (int i=0; i<256;i++){
@@ -299,7 +306,6 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 
 
 						int end_of_jumped_address = next_offset_value_address;
-						std::cout<<"end_of_jumped_address:"<<end_of_jumped_address<<std::endl;
 
 						//go back and fill strip_offset ifd
 
@@ -327,7 +333,6 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 
 						//========writing of color map image data==========
 
-						std::cout<<"end_of_jumped_address:"<<std::hex<<end_of_jumped_address<<std::endl;	
 						out_file.seekp(end_of_jumped_address);
 
 						std::string buffer_file = "imageData.dat";//"imageData.dat";
@@ -356,79 +361,16 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 	
 						for(int i = 0; i<length; i++){
 							for(int j = 0; j<width; j++){
-								//std::cout<<"data:"<<std::hex<<(int)image_data[i][j]<<std::endl;;
 							}
 						}	
 						for(int i = i_max; i>=i_min; i--){
 							for(int j = j_min; j<=j_max; j++){
-						//		std::cout<<"i:"<<i<<",j:"<<j<<", out data:"<<std::hex<<(int)image_data[length-1-i][j]<<std::endl;
 								byte = image_data[length-1-i][j];
 								out_file.write(&byte,1);
 							}
 						}
 						image_data_file.close();
 												
-/*
-						char image_data[TiffRead::image_length_][TiffRead::image_width_];
-						char byte;
-						std::ifstream image_data_file("imageData.dat",std::ios::binary); 
-						for(int i = 0; i<TiffRead::image_length_; i++){
-							for(int j = 0; j<TiffRead::image_width_; j++){
-								image_data_file.read(&byte,1);
-								image_data[i][j]=byte;
-							}
-						}
-
-						for(int i = yc;i>=y0;i--){
-							for(int j = x0; j<=xc; j++){
-								byte = image_data[TiffRead::image_length_-1-i][j];
-								out_file.write(&byte,1);
-							}
-						}
-						image_data_file.close();
-*/
-
-
-/*
-//						std::vector<int[]> combined_color_map;
-						for(int i =0; i<256; i++){
-					//		combined_color_map.push_back([1,1,1]);
-
-						}
-	
-						for(int i = y0; i<yc; i++){
-							for(int j = x0; j<xc; j++){
-			
-								int r = checkImage[TiffRead::image_length_-i][j][0];
-								int g = checkImage[TiffRead::image_length_-i][j][0];
-								int b = checkImage[TiffRead::image_length_-i][j][0];
-								//int index = Util::find_index(TiffRead::r_color_map_,r*257);
-								//unsigned char value = ((unsigned char*)&index)[0];
-*/								
-//	
-							//	if((i==y0)&&(j==x0)){
-								   
-									/*	
-									std::vector<int> r_index_vector = Util::find_index(TiffRead::r_color_map_,r*257);
-									std::vector<int> g_index_vector = Util::find_index(TiffRead::r_color_map_,g*257);
-									std::vector<int> b_index_vector = Util::find_index(TiffRead::r_color_map_,b*257);
-							
-									std::vector<int> first_common_vector;
-									std::vector<int> second_common_vector;
-									for(std::vector<int>::iterator r_it = r_index_vector.begin(); r_it!= r_index_vector.end(); ++r_it){
-										first_common_vector = Util::find_index(g_index_vector,*r_it);
-										for(std::vector<int>::iterator first_it = first_common_vector.begin(); first_it!= first_common_vector.end();++first_it){
-											//second_common_vector = Util::find_index(b_index_vector,*first_it);
-										}
-									}*/
-								//std::cout<<"final index is: "<<second_common_vector[0]<<",vector size:"<<second_common_vector.size()<<std::endl;
-
-		//Util::find_common_index(r_vector,g_vector, b_vector);
-	//								std::cout<<"index for "<<std::dec<< (int)(r*257) << " is: "<<Util::find_common_index(r_vector, g_vector, b_vector)<<std::endl;
-							//	}
-								//out_file.write((char*)&value,1);
-							//}
-						//}	
 
 	
 

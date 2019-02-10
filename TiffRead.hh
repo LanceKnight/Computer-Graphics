@@ -37,6 +37,7 @@ public:
 	static std::vector<int>b_color_map_;
 
 	static bool is_gray_image_;
+	static bool has_image_;
 	
 private:
 
