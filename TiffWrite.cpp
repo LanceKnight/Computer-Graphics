@@ -56,7 +56,10 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 				return result;
 			}
 
-
+			if( (x0<0)||(y0<0) || (xc>TiffRead::image_width_) || (yc>TiffRead::image_length_) ){
+				result = "clipped zone is bigger than original image!";
+				return result;
+			}
 			std::ofstream out_file(filename.c_str(), std::ios::binary);
 		  	if (out_file.fail()) {
 				result = "Unable to write to "+ filename;
@@ -188,14 +191,14 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 					//std::cout<<"end_of_jumped_address:"<<std::hex<<end_of_jumped_address<<std::endl;	
 					out_file.seekp(end_of_jumped_address);
 					int intensity;
-					for(int i = y0; i<yc; i++){
-						for(int j = x0; j<xc; j++){
+					for(int i = y0; i<=yc; i++){
+						for(int j = x0; j<=xc; j++){
 							intensity =  ((int)checkImage[TiffRead::image_length_-i-1][j][0] + (int)checkImage[TiffRead::image_length_-i-1][j][1]+ (int)checkImage[TiffRead::image_length_-i-1][j][2])/3;
 							
 							char intensity_byte = ((char*)&intensity)[0];
 
 							if((i==y0)&&(j==x0)){
-								std::cout<<"intensity:"<<std::hex<<(int)intensity_byte<<std::endl;
+							//	std::cout<<"intensity:"<<std::hex<<(int)intensity_byte<<std::endl;
 							}
 							out_file.write(&intensity_byte,1);
 						}
@@ -491,8 +494,8 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 						unsigned char g;
 						unsigned char b;
 
-						for(int i = y0; i<yc; i++){
-							for(int j = x0; j<xc; j++){
+						for(int i = y0; i<=yc; i++){
+							for(int j = x0; j<=xc; j++){
 								r = checkImage[TiffRead::image_length_-i-1][j][0];
 								g = checkImage[TiffRead::image_length_-i-1][j][1];
 								b = checkImage[TiffRead::image_length_-i-1][j][2];
