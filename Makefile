@@ -22,7 +22,7 @@ LINK = $(C++) $(CFLAGS) $(LDFLAGS) -o $@
 
 all: main
 
-CLI_OBJECTS=main.o Dispatcher.o Util.o Mover.o Drawer.o Colorer.o Reader.o TiffStat.o TiffRead.o TiffWrite.o 
+CLI_OBJECTS=main.o Dispatcher.o Util.o Mover.o Drawer.o Colorer.o Reader.o TiffStat.o TiffRead.o TiffWrite.o Resize.o Zoom.o
 
 main: $(CLI_OBJECTS)
 	$(LINK) $(CLI_OBJECTS) $(LDADD) $(LIBS)

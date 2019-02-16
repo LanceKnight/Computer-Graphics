@@ -9,6 +9,9 @@
 #include "TiffRead.hh"
 #include "TiffStat.hh"
 #include "TiffWrite.hh"
+#include "Resize.hh"
+#include "Zoom.hh"
+
 //static int nested_read_ = 0;//current nested read
 
 
@@ -133,6 +136,34 @@ Dispatcher::dispatch(char line[]){
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		#endif
 		strcpy(line, TiffWrite::tiff_write(paramList).c_str());
+
+
+	}
+
+//resize branch
+	if(!strcmp(line, "resize"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to Resize branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, Resize::resize(paramList).c_str());
+
+
+	}
+
+//zoom branch
+	if(!strcmp(line, "zoom"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to Zoom branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, Zoom::zoom(paramList).c_str());
 
 
 	}
