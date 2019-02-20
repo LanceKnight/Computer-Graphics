@@ -47,6 +47,11 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 			int y0 = std::stoi(y0_str);
 			int yc = std::stoi(yc_str);
 			
+			int temp1 = TiffRead::image_length_- yc;
+			int temp2 = TiffRead::image_length_- y0;
+			y0 = temp1;
+			yc = temp2;			
+
 			if((x0 >=xc)||(y0>= yc)){
 				result = "(x0, y0) should be less than (xc,yc)";
 				return result;	
