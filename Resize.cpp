@@ -182,7 +182,8 @@ Resize::resize(std::vector<std::string> paramList){
 			}
 		}
 
-
+		TiffRead::image_width_ = new_width;
+		TiffRead::image_length_ = new_length;
 
 		display();
 		std::cout<<"resizing"<<std::endl;
