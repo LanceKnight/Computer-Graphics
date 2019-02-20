@@ -61,12 +61,19 @@ Resize::resize(std::vector<std::string> paramList){
 		
 
 		float M_x = std::min(scale_x, (float)1);
+		float M_y = std::min(scale_y, (float)1);
 		GLubyte temp_img[TiffRead::image_length_][new_width][3];		
-      float norm = 0.0;
-      for(int k=0; k<TiffRead::image_width_; k++){
-        norm += h(M_x*k);
+//		GLubyte temp_img[TiffRead::image_length_][TiffRead::image_width_][3];
+		GLubyte temp_img2[new_length][new_width][3];		
+
+	   float norm = 0.0;
+      for(int k=0; k<4; k++){
+        norm += h(k);
 		}
       std::cout << norm << std::endl;
+
+
+
 		for(int i=0;i<TiffRead::image_length_;i++){
 			for(int n =0; n<new_width; n++){
 				int r = 0;
@@ -89,21 +96,94 @@ Resize::resize(std::vector<std::string> paramList){
 				if(b>255){
 					b =255;
 				}
-				//std::cout<<"r:"<<r<<std::endl;
+				if(r<0){
+					r =0; 
+				}
+				if(g<0){
+					g =0; 
+				}
+				if(b<0){
+					b =0; 
+				}
 				temp_img[TiffRead::image_length_-i-1][n][0] = r;
 				temp_img[TiffRead::image_length_-i-1][n][1] = g;
 				temp_img[TiffRead::image_length_-i-1][n][2] = b;
 				
 			}
 		}
-		 
-		for (int i = 0; i < TiffRead::image_length_; i++) {
-			for (int j = 0; j < new_width; j++) {
-				checkImage[TiffRead::image_length_-i-1][j][0] = temp_img[TiffRead::image_length_-i-1][j][0];
-				checkImage[TiffRead::image_length_-i-1][j][1] = temp_img[TiffRead::image_length_-i-1][j][1];
-				checkImage[TiffRead::image_length_-i-1][j][2] = temp_img[TiffRead::image_length_-i-1][j][2];
+/*
+		for(int i = 0; i< TiffRead::image_length_;i++){
+			for(int j = 0; j<TiffRead::image_width_;j++){
+				temp_img[TiffRead::image_length_-i-1][j][0] = checkImage[TiffRead::image_length_-i-1][j][0];
+				temp_img[TiffRead::image_length_-i-1][j][1] = checkImage[TiffRead::image_length_-i-1][j][1];
+				temp_img[TiffRead::image_length_-i-1][j][2] = checkImage[TiffRead::image_length_-i-1][j][2];
+			}
+
+		}
+		new_width = TiffRead::image_width_;
+*/
+
+		std::cout<<"new width"<<new_width<<std::endl;
+		std::cout<<"new length"<<new_length<<std::endl;
+		for(int j=0;j<new_width;j++){
+			for(int m =0; m<new_length; m++){
+				int r = 0;
+				int g = 0;
+				int b = 0;
+				for(int k=0; k<TiffRead::image_length_; k++){
+				//	std::cout<<"here"<<std::endl;
+					r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+					g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+					b+= float(temp_img[TiffRead::image_length_-k-1][j][2])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+				//	std::cout<<"here2"<<std::endl;
+
+				}
+				//std::cout<<"here3"<<std::endl;
+
+				r = M_y*r/norm;
+				g = M_y*g/norm;
+				b = M_y*b/norm;
+				if(r>255){
+					r =255;
+				}
+				if(g>255){
+					g =255;
+				}
+				if(b>255){
+					b =255;
+				}
+				if(r<0){
+					r=0;
+				}
+				if(g<0){
+					g=0;
+				}
+				if(b<0){
+					b=0;
+				}
+				//std::cout<<"r:"<<r<<std::endl;
+
+				//std::cout<<"r:"<<r<<std::endl;
+				temp_img2[new_length-m-1][j][0] = r;
+				temp_img2[new_length-m-1][j][1] = g;
+				temp_img2[new_length-m-1][j][2] = b;
+				//std::cout<<"here5"<<std::endl;
+
 			}
 		}
+
+
+		 
+		for (int i = 0; i < new_length; i++) {
+			for (int j = 0; j < new_width; j++) {
+				checkImage[new_length-i-1][j][0] = temp_img2[new_length-i-1][j][0];
+				checkImage[new_length-i-1][j][1] = temp_img2[new_length-i-1][j][1];
+				checkImage[new_length-i-1][j][2] = temp_img2[new_length-i-1][j][2];
+			}
+		}
+
+
+
 		display();
 		std::cout<<"resizing"<<std::endl;
 
