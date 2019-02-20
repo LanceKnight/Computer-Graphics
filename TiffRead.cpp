@@ -955,9 +955,9 @@ TiffRead::display_image(std::ifstream & file, bool should_reverse){
 					file.read(b,1);
 					file.read(skippable,1);
 				}
-				checkImage[image_length_-i][j][0] = (GLubyte) r[0];
-				checkImage[image_length_-i][j][1] = (GLubyte) g[0];
-				checkImage[image_length_-i][j][2] = (GLubyte) b[0];
+				checkImage[image_length_-i-1][j][0] = (GLubyte) r[0];
+				checkImage[image_length_-i-1][j][1] = (GLubyte) g[0];
+				checkImage[image_length_-i-1][j][2] = (GLubyte) b[0];
 			}
 		}
 
