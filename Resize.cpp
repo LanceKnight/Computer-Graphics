@@ -46,12 +46,9 @@ Resize::resize(std::vector<std::string> paramList){
 		catch(...){
 			return "invalid params";
 		}
-		std::cout<<scale_x<<std::endl;
-		std::cout<<scale_y<<std::endl;	
-		if((scale_x<=0)||(scale_y <=0)){
-			return "params should be bigger than 0";
-		}
-		
+		std::cout<<"width scale(scale x): "<<scale_x<<std::endl;
+		std::cout<<"length scale(scale y): "<<scale_y<<std::endl;	
+
 		int new_width = floor(TiffRead::image_width_*scale_x);
 		int new_length = floor(TiffRead::image_length_*scale_y);
 	
@@ -59,7 +56,7 @@ Resize::resize(std::vector<std::string> paramList){
 			return "scale factor is too big";
 		}
 		
-
+		
 		float M_x = std::min(scale_x, (float)1);
 		float M_y = std::min(scale_y, (float)1);
 		GLubyte temp_img[TiffRead::image_length_][new_width][3];		
@@ -79,10 +76,11 @@ Resize::resize(std::vector<std::string> paramList){
 				int r = 0;
 				int g = 0;
 				int b = 0;
-				for(int k=0; k<TiffRead::image_width_; k++){
-					r+= float(checkImage[TiffRead::image_length_-i-1][k][0])*h(M_x*(n/scale_x-k));
-					g+= float(checkImage[TiffRead::image_length_-i-1][k][1])*h(M_x*(n/scale_x-k));
-					b+= float(checkImage[TiffRead::image_length_-i-1][k][2])*h(M_x*(n/scale_x-k));
+//				for(int k =0; k<TiffRead::image_width_;k++){
+				for(int k=((n/scale_x)-(2/M_x)); k<=((n/scale_x)+(2/M_x)); k++){
+						r+= float(checkImage[TiffRead::image_length_-i-1][k][0])*h(M_x*(n/scale_x-k));
+						g+= float(checkImage[TiffRead::image_length_-i-1][k][1])*h(M_x*(n/scale_x-k));
+						b+= float(checkImage[TiffRead::image_length_-i-1][k][2])*h(M_x*(n/scale_x-k));
 				}
 				r = M_x*r/norm;
 				g = M_x*g/norm;
@@ -130,7 +128,8 @@ Resize::resize(std::vector<std::string> paramList){
 				int r = 0;
 				int g = 0;
 				int b = 0;
-				for(int k=0; k<TiffRead::image_length_; k++){
+				for(int k=((m/scale_y)-(2/M_y)); k<=((m/scale_y)+(2/M_y)); k++){
+//				for(int k=0; k<TiffRead::image_length_; k++){
 				//	std::cout<<"here"<<std::endl;
 					r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
 					g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
@@ -208,7 +207,7 @@ float Resize::sinc(float x){
 }
 
 float Resize::h(float x){
-	if((x<2)||x>-2){
+	if((x<=2)||x>=-2){
 		return sinc(x)*sinc(x/2);
 	}
 	else{
