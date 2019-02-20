@@ -214,7 +214,7 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 				else{//rgb image
 					unsigned char ifd_num[2] ={0x00,0xc};
 					out_file.write((char*)ifd_num, 2);
-					if(TiffRead::photo_metric_==3){//Palette Color
+					if(TiffRead::photo_metric_==4){//Palette Color. Note: it is changed to 4, which is never used, so it obiviate this section
 
 
 						unsigned char starting_offset_value_address_bytes[4] = {0x9a,0x00,0x00,0x00};
@@ -383,7 +383,7 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 	
 
 					}
-					else if(TiffRead::photo_metric_==2){//full rgb imag
+					else if((TiffRead::photo_metric_==2)||(TiffRead::photo_metric_==3)){//full rgb imag
 						unsigned char starting_offset_value_address_bytes[4] = {0x9a,0x00,0x00,0x00};
 
 						//image width
@@ -407,7 +407,7 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 						out_file.write((char*)ifd_compression,12);
 
 						//photometric_intepretation					
-						unsigned char photo_metric_content[4] =  {0x00, 0x00, ((unsigned char*)&TiffRead::photo_metric_)[0], 0x00};
+						unsigned char photo_metric_content[4] =  {0x00, 0x00, 0x02, 0x00};
 						unsigned char* ifd_photo_metric = IFD_encode(262, 3, 1, *((int*)photo_metric_content));	
 						out_file.write((char*)ifd_photo_metric,12);
 
