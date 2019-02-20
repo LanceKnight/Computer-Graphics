@@ -2,10 +2,11 @@
 #include <iostream>
 #include <GL/glut.h>
 #include <cmath>
+#include <string>
 #include "main.hh"
 #include "Resize.hh"
 #include "TiffRead.hh"
-
+#include "TiffWrite.hh"
 Resize::Resize(){}
 
 Resize::~Resize(){}
@@ -51,26 +52,28 @@ Resize::resize(std::vector<std::string> paramList){
 			return "params cannot be 0";
 
 		}
+	
+
+		bool is_scale_x_less_than_zero=false;
+		if(scale_x <0){
+			is_scale_x_less_than_zero = true;
+		}
+
+		bool is_scale_y_less_than_zero=false;
+		if(scale_y <0){
+			is_scale_y_less_than_zero = true;
+		}
+		scale_x = fabs(scale_x);
+		scale_y = fabs(scale_y);
+		int new_width = floor(TiffRead::image_width_*scale_x);
+		int new_length = floor(TiffRead::image_length_*scale_y);
+
+		if((new_length >1024)||(new_width>1024)){
+			return "scale factor is too big";
+		}
 
 
-		if(scale_x>0){// scale_x >0
-			bool is_scale_y_less_than_zero=false;
-			if(scale_y <0){
-				is_scale_y_less_than_zero = true;
-			}
-			scale_x = fabs(scale_x);
-			scale_y = fabs(scale_y);
-			
-		
-			int	new_width = floor(TiffRead::image_width_*scale_x);
-			int	new_length = floor(TiffRead::image_length_*scale_y);
-
-
-
-			if((new_length >1024)||(new_width>1024)){
-				return "scale factor is too big";
-			}
-			
+		if(!is_scale_x_less_than_zero){// scale_x >0			
 			
 			float M_x = std::min(scale_x, (float)1);
 			float M_y = std::min(scale_y, (float)1);
@@ -173,8 +176,6 @@ Resize::resize(std::vector<std::string> paramList){
 			}//scale_x>0 scale_y<0
 			else{//scale_x>0 scale_y>0
 
-				std::cout<<"new width"<<new_width<<std::endl;
-				std::cout<<"new length"<<new_length<<std::endl;
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
 						int r = 0;
@@ -183,14 +184,11 @@ Resize::resize(std::vector<std::string> paramList){
 						int k_lower_limit = floor(((m/scale_y)-(2/M_y)));
 						int k_upper_limit = ceil(((m/scale_y)+(2/M_y)));
 						for(int k=k_lower_limit; k<=k_upper_limit; k++){
-		//				for(int k=0; k<TiffRead::image_length_; k++){
 							r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
 							g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
 							b+= float(temp_img[TiffRead::image_length_-k-1][j][2])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
-						//	std::cout<<"here2"<<std::endl;
 
 						}
-						//std::cout<<"here3"<<std::endl;
 
 						r = M_y*r/norm;
 						g = M_y*g/norm;
@@ -213,13 +211,9 @@ Resize::resize(std::vector<std::string> paramList){
 						if(b<0){
 							b=0;
 						}
-						//std::cout<<"r:"<<r<<std::endl;
-
-						//std::cout<<"r:"<<r<<std::endl;
 						temp_img2[new_length-m-1][j][0] = r;
 						temp_img2[new_length-m-1][j][1] = g;
 						temp_img2[new_length-m-1][j][2] = b;
-						//std::cout<<"here5"<<std::endl;
 
 					}
 				}
@@ -238,29 +232,11 @@ Resize::resize(std::vector<std::string> paramList){
 			TiffRead::image_length_ = new_length;
 
 		}
-		else{//scale_x<0
-			bool is_scale_y_less_than_zero=false;
-			if(scale_y <0){
-				is_scale_y_less_than_zero = true;
-			}
-			scale_x = fabs(scale_x);
-			scale_y = fabs(scale_y);
-			
-		
-			int	new_width = floor(TiffRead::image_width_*scale_x);
-			int	new_length = floor(TiffRead::image_length_*scale_y);
-
-
-
-			if((new_length >1024)||(new_width>1024)){
-				return "scale factor is too big";
-			}
-			
+		else{//scale_x<0	
 			
 			float M_x = std::min(scale_x, (float)1);
 			float M_y = std::min(scale_y, (float)1);
 			GLubyte temp_img[TiffRead::image_length_][new_width][3];		
-	//		GLubyte temp_img[TiffRead::image_length_][TiffRead::image_width_][3];
 			GLubyte temp_img2[new_length][new_width][3];		
 
 			float norm = 0.0;
@@ -417,6 +393,16 @@ Resize::resize(std::vector<std::string> paramList){
 
 
 		display();
+/*
+		std::string param1 = std::to_string(0);
+		std::string param2 = std::to_string(0);
+		std::string param3 = std::to_string(new_width);
+		std::string param4 = std::to_string(new_length);
+
+		std::vector<std::string> write_param_list;
+		TiffWrite::tiff_write(write_param_list);	
+*/
+
 
 		return "image resized";
 	}
