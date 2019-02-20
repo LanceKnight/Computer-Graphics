@@ -15,6 +15,10 @@ public:
 
 	std::string static resize(std::vector<std::string> paramList);
 
+	float static sinc(float x);
+	
+	float static h(float x);	
+
 };
 
 

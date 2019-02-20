@@ -37,8 +37,8 @@ Resize::resize(std::vector<std::string> paramList){
 	
 		std::string x_str = paramList[0];
 		std::string y_str = paramList[1];
-		double scale_x = 0;
-		double scale_y = 0;	
+		float scale_x = 0;
+		float scale_y = 0;	
 		try{
 			scale_x = std::stof(x_str);
 			scale_y = std::stof(y_str);
@@ -51,87 +51,57 @@ Resize::resize(std::vector<std::string> paramList){
 		if((scale_x<=0)||(scale_y <=0)){
 			return "params should be bigger than 0";
 		}
-/*
-		int int_scale_x;
-		int int_scale_y;	
-		int adjusted_scale_x;
-		int adjusted_scale_y;
-		if(scale_x >=1){
-			if(scale_y >=1){
-				int_scale_x = (int)scale_x;
-				int_scale_y = (int)scale_y;	
-				adjusted_y = int_scale_y;
-			}
-			else{
-				int_scale_x = (int)scale_x;
-				int_scale_y = (int)(1/(scale_y));
-				adjusted_scale_y = 
-			}
-		}
-		else{
-			if(scale_y >
-
-		}
-*/	
-
+		
+		int new_width = floor(TiffRead::image_width_*scale_x);
+		int new_length = floor(TiffRead::image_length_*scale_y);
 	
-		if((TiffRead::image_length_*scale_x >1024)||(TiffRead::image_width_*scale_y>1024)){
+		if((new_length >1024)||(new_width>1024)){
 			return "scale factor is too big";
-		}	
-		if(scale_x >1){
-			if(scale_y>1){
-				//std::vector<std::vector<std::vector<int>>> temp;
+		}
+		
 
-				GLubyte temp[1024][1024][3];
-				for(int i = 0; i<TiffRead::image_length_*scale_y; i++){
-					for(int j=0; j<TiffRead::image_width_*scale_x;j++){
-
-						temp[i][j][0] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][0];				
-						temp[i][j][1] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][1];
-						temp[i][j][2] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][2];
-					}
-				}	
-				for(int i = 0; i<TiffRead::image_length_*scale_y; i++){
-					for(int j=0; j<TiffRead::image_width_*scale_x;j++){
-						checkImage[i][j][0] = temp[i][j][0];		
-						checkImage[i][j][1] = temp[i][j][1];
-						checkImage[i][j][2] = temp[i][j][2];
-					}
+		float M_x = std::min(scale_x, (float)1);
+		GLubyte temp_img[TiffRead::image_length_][new_width][3];		
+      float norm = 0.0;
+      for(int k=0; k<TiffRead::image_width_; k++){
+        norm += h(M_x*k);
+		}
+      std::cout << norm << std::endl;
+		for(int i=0;i<TiffRead::image_length_;i++){
+			for(int n =0; n<new_width; n++){
+				int r = 0;
+				int g = 0;
+				int b = 0;
+				for(int k=0; k<TiffRead::image_width_; k++){
+					r+= float(checkImage[TiffRead::image_length_-i-1][k][0])*h(M_x*(n/scale_x-k));
+					g+= float(checkImage[TiffRead::image_length_-i-1][k][1])*h(M_x*(n/scale_x-k));
+					b+= float(checkImage[TiffRead::image_length_-i-1][k][2])*h(M_x*(n/scale_x-k));
 				}
-
-			}
-			else{//if scale_y <=1
-
-				for(int i = 0; i<TiffRead::image_length_*scale_y; i++){
-					for(int j=0; j<TiffRead::image_width_*scale_x;j++){
-						checkImage[i][j][0] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][0];				
-						checkImage[i][j][1] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][1];
-						checkImage[i][j][2] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][2];
-					}
+				r = M_x*r/norm;
+				g = M_x*g/norm;
+				b = M_x*b/norm;
+				if(r>255){
+					r =255;
 				}
-
+				if(g>255){
+					g =255;
+				}
+				if(b>255){
+					b =255;
+				}
+				//std::cout<<"r:"<<r<<std::endl;
+				temp_img[TiffRead::image_length_-i-1][n][0] = r;
+				temp_img[TiffRead::image_length_-i-1][n][1] = g;
+				temp_img[TiffRead::image_length_-i-1][n][2] = b;
+				
 			}
 		}
-		else{//if scale_x <=1
-			if(scale_y>1){
-				for(int i = 0; i<TiffRead::image_length_*scale_y; i++){
-					for(int j=0; j<TiffRead::image_width_*scale_x;j++){
-						checkImage[i][j][0] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][0];				
-						checkImage[i][j][1] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][1];
-						checkImage[i][j][2] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][2];
-					}
-				}
-			}
-			else{//if scale_x <=1 and scale_y <=1
-
-				for(int i = 0; i<TiffRead::image_length_*scale_y; i++){
-					for(int j=0; j<TiffRead::image_width_*scale_x;j++){
-						checkImage[i][j][0] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][0];				
-						checkImage[i][j][1] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][1];
-						checkImage[i][j][2] = checkImage[(int)floor(i/scale_y)][(int)floor(j/scale_x)][2];
-					}
-				}
-
+		 
+		for (int i = 0; i < TiffRead::image_length_; i++) {
+			for (int j = 0; j < new_width; j++) {
+				checkImage[TiffRead::image_length_-i-1][j][0] = temp_img[TiffRead::image_length_-i-1][j][0];
+				checkImage[TiffRead::image_length_-i-1][j][1] = temp_img[TiffRead::image_length_-i-1][j][1];
+				checkImage[TiffRead::image_length_-i-1][j][2] = temp_img[TiffRead::image_length_-i-1][j][2];
 			}
 		}
 		display();
@@ -143,6 +113,27 @@ Resize::resize(std::vector<std::string> paramList){
 		return  "too many parameters";
 	}
 
+}
+
+float Resize::sinc(float x){
+	if(x==0){
+
+		return 1;
+	}
+	else{
+		return sin(x)/x;
+	}
+
+}
+
+float Resize::h(float x){
+	if((x<2)||x>-2){
+		return sinc(x)*sinc(x/2);
+	}
+	else{
+		return 0;
+
+	}
 }
 
 
