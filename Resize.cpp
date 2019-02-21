@@ -48,21 +48,14 @@ Resize::resize(std::vector<std::string> paramList){
 			return "invalid params";
 		}
 
-		if((scale_x==0) ||(scale_y==0)){
+		if( (scale_x==0) || (scale_y==0) ){
 			return "params cannot be 0";
 
 		}
 	
 
-		bool is_scale_x_less_than_zero=false;
-		if(scale_x <0){
-			is_scale_x_less_than_zero = true;
-		}
-
-		bool is_scale_y_less_than_zero=false;
-		if(scale_y <0){
-			is_scale_y_less_than_zero = true;
-		}
+		bool is_scale_x_less_than_zero= scale_x<0;
+		bool is_scale_y_less_than_zero= scale_y <0;
 		scale_x = fabs(scale_x);
 		scale_y = fabs(scale_y);
 		int new_width = floor(TiffRead::image_width_*scale_x);
@@ -81,47 +74,30 @@ Resize::resize(std::vector<std::string> paramList){
 	//		GLubyte temp_img[TiffRead::image_length_][TiffRead::image_width_][3];
 			GLubyte temp_img2[new_length][new_width][3];		
 
-			float norm = 0.0;
-			for(int k=0; k<4; k++){
-			  norm += h(k);
-			}
-
 
 
 			for(int i=0;i<TiffRead::image_length_;i++){
 				for(int n =0; n<new_width; n++){
-					int r = 0;
-					int g = 0;
-					int b = 0;
-					int k_lower_limit = floor(((n/scale_x)-(2/M_x)));
-					int k_upper_limit = ceil(((n/scale_x)+(2/M_x)));
-	//				for(int k =0; k<TiffRead::image_width_;k++){
+					float r = 0;
+					float g = 0;
+					float b = 0;
+					int k_lower_limit = std::max(0, (int) floor(((n/scale_x)-(2/M_x))));
+					int k_upper_limit = std::min(TiffRead::image_width_-1, (int)ceil(((n/scale_x)+(2/M_x))) );
+					float norm2(0.0);
 					for(int k=k_lower_limit; k<=k_upper_limit; k++){
-							r+= float(checkImage[TiffRead::image_length_-i-1][k][0])*h(M_x*(n/scale_x-k));
-							g+= float(checkImage[TiffRead::image_length_-i-1][k][1])*h(M_x*(n/scale_x-k));
-							b+= float(checkImage[TiffRead::image_length_-i-1][k][2])*h(M_x*(n/scale_x-k));
+						float lh = h(M_x*(n/scale_x-k));
+						r+= float(checkImage[TiffRead::image_length_-i-1][k][0])*lh;
+						g+= float(checkImage[TiffRead::image_length_-i-1][k][1])*lh;
+						b+= float(checkImage[TiffRead::image_length_-i-1][k][2])*lh;
+						norm2+=lh;
 					}
-					r = M_x*r/norm;
-					g = M_x*g/norm;
-					b = M_x*b/norm;
-					if(r>255){
-						r =255;
-					}
-					if(g>255){
-						g =255;
-					}
-					if(b>255){
-						b =255;
-					}
-					if(r<0){
-						r =0; 
-					}
-					if(g<0){
-						g =0; 
-					}
-					if(b<0){
-						b =0; 
-					}
+					r = r/norm2;
+					g = g/norm2;
+					b = b/norm2;
+					r = std::min(255, std::max(int(r),0));
+					g = std::min(255, std::max(int(g),0));
+					b = std::min(255, std::max(int(b),0));
+
 					temp_img[TiffRead::image_length_-i-1][n][0] = r;
 					temp_img[TiffRead::image_length_-i-1][n][1] = g;
 					temp_img[TiffRead::image_length_-i-1][n][2] = b;
@@ -132,40 +108,28 @@ Resize::resize(std::vector<std::string> paramList){
 			if(is_scale_y_less_than_zero){//scale_x >0 scale_y <0
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
-						int r = 0;
-						int g = 0;
-						int b = 0;
+						float r = 0;
+						float g = 0;
+						float b = 0;
 
-						int k_lower_limit = floor(((m/scale_y)-(2/M_y)));
-						int k_upper_limit = ceil(((m/scale_y)+(2/M_y)));
+						int k_lower_limit = std::max(0, (int)floor(((m/scale_y)-(2/M_y))));
+						int k_upper_limit = std::min(TiffRead::image_length_-1, (int)ceil(((m/scale_y)+(2/M_y))));
+						float norm2(0.0);
 						for(int k=k_lower_limit; k<=k_upper_limit; k++){
-							r+= float(temp_img[k][j][0])*h(M_y*(m/scale_y-k));
-							g+= float(temp_img[k][j][1])*h(M_y*(m/scale_y-k));
-							b+= float(temp_img[k][j][2])*h(M_y*(m/scale_y-k));
-
+							float lh = h(M_y*(m/scale_y-k));
+							r+= float(temp_img[k][j][0])*lh;
+							g+= float(temp_img[k][j][1])*lh;
+							b+= float(temp_img[k][j][2])*lh;
+							norm2+=lh;
 						}
 
-						r = M_y*r/norm;
-						g = M_y*g/norm;
-						b = M_y*b/norm;
-						if(r>255){
-							r =255;
-						}
-						if(g>255){
-							g =255;
-						}
-						if(b>255){
-							b =255;
-						}
-						if(r<0){
-							r=0;
-						}
-						if(g<0){
-							g=0;
-						}
-						if(b<0){
-							b=0;
-						}
+						r = M_y*r/norm2;
+						g = M_y*g/norm2;
+						b = M_y*b/norm2;
+
+						r = std::min(255, std::max(int(r),0));
+						g = std::min(255, std::max(int(g),0));
+						b = std::min(255, std::max(int(b),0));
 
 						temp_img2[new_length-m-1][j][0] = r;
 						temp_img2[new_length-m-1][j][1] = g;
@@ -178,45 +142,46 @@ Resize::resize(std::vector<std::string> paramList){
 
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
-						int r = 0;
-						int g = 0;
-						int b = 0;
-						int k_lower_limit = floor(((m/scale_y)-(2/M_y)));
-						int k_upper_limit = ceil(((m/scale_y)+(2/M_y)));
+						float r = 0;
+						float g = 0;
+						float b = 0;
+						int k_lower_limit = std::max(0,(int)floor(((m/scale_y)-(2/M_y))));
+						int k_upper_limit = std::min(TiffRead::image_length_-1,(int)ceil(((m/scale_y)+(2/M_y))));
+						float norm2(0.0);
 						for(int k=k_lower_limit; k<=k_upper_limit; k++){
-							r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
-							g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
-							b+= float(temp_img[TiffRead::image_length_-k-1][j][2])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+							float lh = h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+							r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*lh;
+							g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*lh;
+							b+= float(temp_img[TiffRead::image_length_-k-1][j][2])*lh;
+							norm2+=lh;
 
-						}
+							if(j == 55 && m == 55){
+								std::cout<<"ln:"<<lh<<" k:"<<k<<std::endl;
 
-						r = M_y*r/norm;
-						g = M_y*g/norm;
-						b = M_y*b/norm;
-						if(r>255){
-							r =255;
+								std::cout<<"tem_img:" <<int(temp_img[TiffRead::image_length_-(int)k-1][j][0])<<std::endl;
+							}
 						}
-						if(g>255){
-							g =255;
+						//std::cout <<"norm2:"<<norm2<<std::endl;
+						r = r/norm2;
+						g = g/norm2;
+						b = b/norm2;
+
+						if(j == 55 && m == 55){
+							std::cout<<"r: "<<r<<std::endl;
 						}
-						if(b>255){
-							b =255;
-						}
-						if(r<0){
-							r=0;
-						}
-						if(g<0){
-							g=0;
-						}
-						if(b<0){
-							b=0;
-						}
+						r = std::min(255, std::max((int)r,0));
+						g = std::min(255, std::max((int)g,0));
+						b = std::min(255, std::max((int)b,0));
+	
 						temp_img2[new_length-m-1][j][0] = r;
 						temp_img2[new_length-m-1][j][1] = g;
 						temp_img2[new_length-m-1][j][2] = b;
 
 					}
 				}
+
+				std::cout<<"shit"<<std::endl;
+
 			}
 
 			 
@@ -239,46 +204,31 @@ Resize::resize(std::vector<std::string> paramList){
 			GLubyte temp_img[TiffRead::image_length_][new_width][3];		
 			GLubyte temp_img2[new_length][new_width][3];		
 
-			float norm = 0.0;
-			for(int k=0; k<4; k++){
-			  norm += h(k);
-			}
-
-
 
 			for(int i=0;i<TiffRead::image_length_;i++){
 				for(int n =0; n<new_width; n++){
-					int r = 0;
-					int g = 0;
-					int b = 0;
-					int k_lower_limit = floor(((n/scale_x)-(2/M_x)));
-					int k_upper_limit = ceil(((n/scale_x)+(2/M_x)));
+					float r = 0;
+					float g = 0;
+					float b = 0;
+					int k_lower_limit = std::max(0, (int)floor(((n/scale_x)-(2/M_x))));
+					int k_upper_limit = std::min(TiffRead::image_width_-1,(int)ceil(((n/scale_x)+(2/M_x))));
+
+               float norm2(0.0);
 					for(int k=k_lower_limit; k<=k_upper_limit; k++){
-							r+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-k-1][0])*h(M_x*((new_width-n-1)/scale_x-(TiffRead::image_width_-k-1)));
-							g+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-k-1][1])*h(M_x*((new_width-n-1)/scale_x-(TiffRead::image_width_-k-1)));
-							b+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-k-1][2])*h(M_x*((new_width-n-1)/scale_x-(TiffRead::image_width_-k-1)));
+							float lh = h(M_x*((new_width-n-1)/scale_x-(TiffRead::image_width_-k-1)));
+							r+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-k-1][0])*lh;
+							g+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-k-1][1])*lh;
+							b+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-k-1][2])*lh;
+							norm2+=lh;
 					}
-					r = M_x*r/norm;
-					g = M_x*g/norm;
-					b = M_x*b/norm;
-					if(r>255){
-						r =255;
-					}
-					if(g>255){
-						g =255;
-					}
-					if(b>255){
-						b =255;
-					}
-					if(r<0){
-						r =0; 
-					}
-					if(g<0){
-						g =0; 
-					}
-					if(b<0){
-						b =0; 
-					}
+					r = r/norm2;
+					g = g/norm2;
+					b = b/norm2;
+
+					r = std::min(255, std::max(int(r),0));
+					g = std::min(255, std::max(int(g),0));
+					b = std::min(255, std::max(int(b),0));
+
 					temp_img[TiffRead::image_length_-i-1][n][0] = r;
 					temp_img[TiffRead::image_length_-i-1][n][1] = g;
 					temp_img[TiffRead::image_length_-i-1][n][2] = b;
@@ -289,39 +239,28 @@ Resize::resize(std::vector<std::string> paramList){
 			if(is_scale_y_less_than_zero){//scale_x<0 scale_y<0;
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
-						int r = 0;
-						int g = 0;
-						int b = 0;
-						int k_lower_limit = floor(((m/scale_y)-(2/M_y)));
-						int k_upper_limit = ceil(((m/scale_y)+(2/M_y)));
+						float r = 0;
+						float g = 0;
+						float b = 0;
+					
+						int k_lower_limit = std::max(0, (int)floor(((m/scale_y)-(2/M_y))));	
+						int k_upper_limit = std::min(TiffRead::image_length_-1,(int)ceil(((m/scale_y)+(2/M_y))));
+                  float norm2(0.0);
 						for(int k=k_lower_limit; k<=k_upper_limit; k++){
-							r+= float(temp_img[k][j][0])*h(M_y*(m/scale_y-k));
-							g+= float(temp_img[k][j][1])*h(M_y*(m/scale_y-k));
-							b+= float(temp_img[k][j][2])*h(M_y*(m/scale_y-k));
-
+                     float lh =h(M_y*(m/scale_y-k));
+							r+= float(temp_img[k][j][0])*lh;
+							g+= float(temp_img[k][j][1])*lh;
+							b+= float(temp_img[k][j][2])*lh;
+                     norm2 += lh;
 						}
 
-						r = M_y*r/norm;
-						g = M_y*g/norm;
-						b = M_y*b/norm;
-						if(r>255){
-							r =255;
-						}
-						if(g>255){
-							g =255;
-						}
-						if(b>255){
-							b =255;
-						}
-						if(r<0){
-							r=0;
-						}
-						if(g<0){
-							g=0;
-						}
-						if(b<0){
-							b=0;
-						}
+						r = r/norm2;
+						g = g/norm2;
+						b = b/norm2;
+
+						r = std::min(255, std::max(int(r),0));
+						g = std::min(255, std::max(int(g),0));
+						b = std::min(255, std::max(int(b),0));
 
 						temp_img2[new_length-m-1][j][0] = r;
 						temp_img2[new_length-m-1][j][1] = g;
@@ -333,40 +272,29 @@ Resize::resize(std::vector<std::string> paramList){
 			else{//scale_x <0 scale_y>0
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
-						int r = 0;
-						int g = 0;
-						int b = 0;
+						float r = 0;
+						float g = 0;
+						float b = 0;
 
-						int k_lower_limit = floor(((m/scale_y)-(2/M_y)));
-						int k_upper_limit = ceil(((m/scale_y)+(2/M_y)));
+						int k_lower_limit = std::max(0,(int)floor(((m/scale_y)-(2/M_y))));
+						int k_upper_limit = std::min(TiffRead::image_length_-1,(int)ceil(((m/scale_y)+(2/M_y))));
+                  float norm2(0.0);
 						for(int k=k_lower_limit; k<=k_upper_limit; k++){
-							r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
-							g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
-							b+= float(temp_img[TiffRead::image_length_-k-1][j][2])*h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+							float lh = h(M_y*((new_length-m-1)/scale_y-(TiffRead::image_length_-k-1)));
+							r+= float(temp_img[TiffRead::image_length_-k-1][j][0])*lh;
+							g+= float(temp_img[TiffRead::image_length_-k-1][j][1])*lh;
+							b+= float(temp_img[TiffRead::image_length_-k-1][j][2])*lh;
+							norm2+=lh;
+						}
+						
 
-						}
+						r = r/norm2;
+						g = g/norm2;
+						b = b/norm2;
 
-						r = M_y*r/norm;
-						g = M_y*g/norm;
-						b = M_y*b/norm;
-						if(r>255){
-							r =255;
-						}
-						if(g>255){
-							g =255;
-						}
-						if(b>255){
-							b =255;
-						}
-						if(r<0){
-							r=0;
-						}
-						if(g<0){
-							g=0;
-						}
-						if(b<0){
-							b=0;
-						}
+						r = std::min(255, std::max(int(r),0));
+						g = std::min(255, std::max(int(g),0));
+						b = std::min(255, std::max(int(b),0));
 
 						temp_img2[new_length-m-1][j][0] = r;
 						temp_img2[new_length-m-1][j][1] = g;
