@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include "Resize.hh"
 #include "Zoom.hh"
 
 
@@ -12,9 +13,9 @@ std::string
 Zoom::zoom(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=3){
-		while(paramList.size()<3){
-			paramList.push_back("0");
+	if(paramList.size()<=1){
+		if(paramList.size()<1){
+			return "you should enter a param.";
 		}
 		#ifdef DEBUG
 			std::cout<<"=====DEBUG  INFO====="<< std::endl;
@@ -24,19 +25,24 @@ Zoom::zoom(std::vector<std::string> paramList){
 
 			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		#endif
-		std::string result = "";	
-		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			try{
-				std::stod(*it);
-			}
-			catch(...)
-			{
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0"; 
-			}
-			result += *it + " ";
+
+
+		float scale =0;
+		try{
+			scale = std::stod(paramList[0]);
 		}
-		return result;
+		catch(...)
+		{
+			return "illegal param";
+		}		
+
+		std::vector<std::string> new_param_list;
+		new_param_list.push_back(std::to_string(scale));
+		new_param_list.push_back(std::to_string(scale));
+
+
+
+		return Resize::resize(new_param_list);
 	}
 	else{
 		return  "too many parameters";
