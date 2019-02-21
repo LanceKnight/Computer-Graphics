@@ -38,7 +38,6 @@ public:
 
 	static bool is_gray_image_;
 	static bool has_image_;
-	
 private:
 
 	static void IFD_intepret(unsigned char* IFD, bool should_reverse, std::ifstream& file);
