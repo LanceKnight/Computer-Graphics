@@ -90,26 +90,24 @@ Resize::resize(std::vector<std::string> paramList){
 		int new_width = floor(TiffRead::image_width_*scale_x);
 		int new_length = floor(TiffRead::image_length_*scale_y);
 
+
 		if((new_length >1024)||(new_width>1024)){
 			return "scale factor is too big";
 		}
+		
+		float r = 0;
+		float g = 0;
+		float b = 0;
 
-
+		float M_x = std::min(scale_x, (float)1);
+		float M_y = std::min(scale_y, (float)1);
+		GLubyte temp_img[TiffRead::image_length_][new_width][3];		
+		GLubyte temp_img2[new_length][new_width][3];	
+	
 		if(!is_scale_x_less_than_zero){// scale_x >0			
-			
-			float M_x = std::min(scale_x, (float)1);
-			float M_y = std::min(scale_y, (float)1);
-			GLubyte temp_img[TiffRead::image_length_][new_width][3];		
-	//		GLubyte temp_img[TiffRead::image_length_][TiffRead::image_width_][3];
-			GLubyte temp_img2[new_length][new_width][3];		
-
-
-
 			for(int i=0;i<TiffRead::image_length_;i++){
 				for(int n =0; n<new_width; n++){
-					float r = 0;
-					float g = 0;
-					float b = 0;
+					r = g = b =0;
 					int k_lower_limit = std::max(0, (int) floor(((n/scale_x)-(2/M_x))));
 					int k_upper_limit = std::min(TiffRead::image_width_-1, get_upper_limit(n, scale_x, M_x) );
 					float norm2(0.0);
@@ -137,10 +135,8 @@ Resize::resize(std::vector<std::string> paramList){
 			if(is_scale_y_less_than_zero){//scale_x >0 scale_y <0
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
-						float r = 0;
-						float g = 0;
-						float b = 0;
-
+						
+						r = g = b =0;
 						int k_lower_limit = std::max(0, get_lower_limit(m, scale_y, M_y));
 						int k_upper_limit = std::min(TiffRead::image_length_-1, get_upper_limit(m, scale_y, M_y));
 						float norm2(0.0);
@@ -171,9 +167,7 @@ Resize::resize(std::vector<std::string> paramList){
 
 				for(int j=0;j<new_width;j++){
 					for(int m =0; m<new_length; m++){
-						float r = 0;
-						float g = 0;
-						float b = 0;
+						r = g = b =0;
 						int k_lower_limit = std::max(0,get_lower_limit(m, scale_y, M_y));
 						int k_upper_limit = std::min(TiffRead::image_length_-1,get_upper_limit(m, scale_y, M_y));
 						float norm2(0.0);
@@ -218,18 +212,10 @@ Resize::resize(std::vector<std::string> paramList){
 
 		}
 		else{//scale_x<0	
-			
-			float M_x = std::min(scale_x, (float)1);
-			float M_y = std::min(scale_y, (float)1);
-			GLubyte temp_img[TiffRead::image_length_][new_width][3];		
-			GLubyte temp_img2[new_length][new_width][3];		
-
 
 			for(int i=0;i<TiffRead::image_length_;i++){
 				for(int n =0; n<new_width; n++){
-					float r = 0;
-					float g = 0;
-					float b = 0;
+					r = g = b =0;
 					int k_lower_limit = std::max(0, get_lower_limit(n, scale_x, M_x));
 					int k_upper_limit = std::min(TiffRead::image_width_-1,get_upper_limit(n, scale_x, M_x));
 
@@ -341,16 +327,6 @@ Resize::resize(std::vector<std::string> paramList){
 
 
 		display();
-/*
-		std::string param1 = std::to_string(0);
-		std::string param2 = std::to_string(0);
-		std::string param3 = std::to_string(new_width);
-		std::string param4 = std::to_string(new_length);
-
-		std::vector<std::string> write_param_list;
-		TiffWrite::tiff_write(write_param_list);	
-*/
-
 
 		return "image resized";
 	}
