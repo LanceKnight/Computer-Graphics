@@ -15,6 +15,18 @@ public:
 
 	std::string static select(std::vector<std::string> paramList);
 
+
+	//data
+	enum FilterType{
+		gaussian,
+		mitchell,
+		lanczos,
+		triangle,
+		box
+	};
+
+	static FilterType filter_;
+
 };
 
 

@@ -3,6 +3,8 @@
 #include "Select.hh"
 
 
+Select::FilterType Select::filter_ = lanczos;
+
 Select::Select(){}
 
 Select::~Select(){}
@@ -12,31 +14,34 @@ std::string
 Select::select(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=3){
-		while(paramList.size()<3){
-			paramList.push_back("0");
+	if(paramList.size()<=2){
+		if(paramList.size()==0){
+			return "at least one param needs to be provided";
 		}
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<< std::endl;
-			for (auto it = paramList.begin(); it!= paramList.end(); it++){
-				std::cout<<"param:"<<*it<<std::endl;
-			}
-
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-		std::string result = "";	
-		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			try{
-				std::stod(*it);
-			}
-			catch(...)
-			{
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0"; 
-			}
-			result += *it + " ";
+		if(paramList[0]=="gaussian"){
+			Select::filter_ = gaussian;
+			std::cout<< "Gaussian filter selected"<<std::endl;
 		}
-		return result;
+		else if(paramList[0] == "lanczos"){
+			Select::filter_ = lanczos;
+			std::cout<< "Lanczos filter selected"<<std::endl;
+		}
+		else if(paramList[0] == "triangle"){
+			Select::filter_ = lanczos;
+			std::cout<< "Triangle filter selected"<<std::endl;
+		}
+		else if(paramList[0] == "box"){
+			Select::filter_ = lanczos;
+			std::cout<< "Box filter selected"<<std::endl;
+		}
+		else if(paramList[0] == "mitchell"){
+			Select::filter_ = lanczos;
+			std::cout<< "Mitchell filter selected"<<std::endl;
+		}
+		else{
+			std::cout<< "unknown filter. Filter name should be lower-cased"<<std::endl;
+		}
+		return "Select Done";
 	}
 	else{
 		return  "too many parameters";
