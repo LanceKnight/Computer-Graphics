@@ -1,0 +1,52 @@
+#resize 3 2 # resize before loading image
+
+#TIFFREAD images/playrgb.tif
+#TIFFREAD images/eeyore.tif
+tiffread images/playpal.tif
+
+#resize 1 1
+
+#resize 3 3 
+
+#resize 1 1.2
+
+#resize 1.2 1.2
+
+#resize 2 2
+
+#resize 0.5 0.5
+
+#resize 1 0.5
+
+#resize 0.3 0.2
+
+#resize 0.25 2
+
+#resize 4 0.5
+
+#resize 1.8 1.8
+
+#resize -1.8 1
+
+#resize 1 -1.8
+
+#resize -1.8 -1.9
+
+resize -1 -1
+
+#resize -2 -2
+
+#resize 2 2
+
+#zoom 2
+
+#zoom -2
+
+
+#resize 0 1 #resize with 0 as param
+
+#resize c.f2 2 # resize with illegal params
+ 
+#resize 1000 2 #resized image has edge of >1024
+
+tiffwrite images/test.tif 0 0 511 511
