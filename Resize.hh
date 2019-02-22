@@ -26,6 +26,8 @@ private:
 	static int get_lower_limit(int m, float scale_y, float M_y);
 
 	static int get_upper_limit(int m, float scale_y, float M_y);
+
+
 };
 
 
