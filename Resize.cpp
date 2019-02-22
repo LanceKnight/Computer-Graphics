@@ -18,7 +18,33 @@ Resize::~Resize(){}
 std::string
 Resize::resize(std::vector<std::string> paramList){
 
+	#ifdef DEBUG
+	
+		std::cout<<"=====DEBUG  INFO====="<< std::endl;
 
+			std::cout<<"Resize.cpp:"<<std::endl;
+			switch(Select::filter_){
+				case Select::lanczos:
+					std::cout<<"lanczos"<<std::endl;
+					break;
+				case Select::gaussian:
+					std::cout<<"gaussian"<<std::endl;
+					break;
+				case Select::mitchell:
+					std::cout<<"mitchell"<<std::endl;
+					break;
+				case Select::triangle:
+					std::cout<<"triangle"<<std::endl;
+					break;
+				case Select::box:
+					std::cout<<"box"<<std::endl;
+					break;
+
+			}
+
+		std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+	
+	#endif
 	if(paramList.size()<=2){
 		if(paramList.size()<2){
 			return "too few params";
@@ -344,20 +370,19 @@ float Resize::sinc(float x){
 	}
 
 }
-float alpha = 3;
 float Resize::kernel(float x){
 	switch(Select::filter_){	
 		case Select::lanczos:
-			if(fabs(x)<alpha){
-				return sinc(x)*sinc(x/alpha);
+			if(fabs(x)<Select::alpha_){
+				return sinc(x)*sinc(x/Select::alpha_);
 			}
 			else{
 				return 0;
 
 			}
 		case Select::gaussian:
-			if(fabs(x)<alpha){
-				return 1/(alpha*(sqrt(2*M_PI))) * exp(-1/2 * pow(x/alpha,2));
+			if(fabs(x)<Select::alpha_){
+				return 1/(Select::alpha_*(sqrt(2*M_PI))) * exp(-1/2 * pow(x/Select::alpha_,2));
 			}
 			else{
 				return 0;
@@ -373,16 +398,16 @@ float Resize::kernel(float x){
 				return 0;
 			}
 		case Select::triangle:
-			if(fabs(x/alpha)<1){
-				return (1-fabs(x/alpha))/alpha;
+			if(fabs(x/Select::alpha_)<1){
+				return (1-fabs(x/Select::alpha_))/Select::alpha_;
 			}
 			else{
 				return 0;
 			}
 			return 0;
 		case Select::box:
-			if( x>= -alpha && x < alpha){
-				return 1/(2*alpha);
+			if( x>= -Select::alpha_ && x < Select::alpha_){
+				return 1/(2*Select::alpha_);
 			}
 			else{
 				return 0;
@@ -395,15 +420,15 @@ float Resize::kernel(float x){
 int Resize::get_lower_limit(int m, float scale_y, float M_y){
 	switch(Select::filter_){	
 		case Select::lanczos:
-			return floor(((m/scale_y)-(alpha/M_y)));
+			return floor(((m/scale_y)-(Select::alpha_/M_y)));
 		case Select::gaussian:
-			return floor(((m/scale_y)-(alpha/M_y)));
+			return floor(((m/scale_y)-(Select::alpha_/M_y)));
 		case Select::mitchell:
-			return 0;
+			return floor(((m/scale_y)-(2/M_y)));
 		case Select::triangle:
-			return 0;
+			return floor(((m/scale_y)-(Select::alpha_/M_y)));
 		case Select::box:
-			return 0;
+			return floor(((m/scale_y)-(Select::alpha_/M_y)));
 	}
 	return -1;
 }
@@ -412,15 +437,16 @@ int Resize::get_lower_limit(int m, float scale_y, float M_y){
 int Resize::get_upper_limit(int m, float scale_y, float M_y){
 	switch(Select::filter_){	
 		case Select::lanczos:
-			return ceil(((m/scale_y)+(alpha/M_y)));
+			return ceil(((m/scale_y)+(Select::alpha_/M_y)));
 		case Select::gaussian:
-			return ceil(((m/scale_y)+(alpha/M_y)));
+			return ceil(((m/scale_y)+(Select::alpha_/M_y)));
 		case Select::mitchell:
-			return 0;
+			return ceil(((m/scale_y)+(2/M_y)));
 		case Select::triangle:
-			return 0;
+			return ceil(((m/scale_y)+(Select::alpha_/M_y)));
 		case Select::box:
-			return 0;
+			return ceil(((m/scale_y)+(Select::alpha_/M_y)));
+
 	}
 	return -1;
 }

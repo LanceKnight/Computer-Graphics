@@ -27,6 +27,9 @@ public:
 
 	static FilterType filter_;
 
+	static float alpha_;
+	
+
 };
 
 
