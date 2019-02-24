@@ -3,6 +3,9 @@
 #include "Border.hh"
 
 
+Border::BorderType Border::border_ = Border::zero;
+
+
 Border::Border(){}
 
 Border::~Border(){}
@@ -12,31 +15,24 @@ std::string
 Border::border(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=3){
-		while(paramList.size()<3){
-			paramList.push_back("0");
+	if(paramList.size()<=1){
+		if(paramList.size()<1){
+			return "you need to provide a param";
 		}
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<< std::endl;
-			for (auto it = paramList.begin(); it!= paramList.end(); it++){
-				std::cout<<"param:"<<*it<<std::endl;
-			}
+		std::string param = paramList[0];
+		if(param == "zero"){
+			Border::border_ = Border::zero;
 
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-		std::string result = "";	
-		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			try{
-				std::stod(*it);
-			}
-			catch(...)
-			{
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0"; 
-			}
-			result += *it + " ";
 		}
-		return result;
+		else if(param == "freeze"){
+			Border::border_ = Border::freeze;
+
+		}
+		else if(param == "circular"){
+			Border::border_ = Border::circular;
+
+		}
+		return "Border done";
 	}
 	else{
 		return  "too many parameters";

@@ -15,6 +15,15 @@ public:
 
 	std::string static border(std::vector<std::string> paramList);
 
+
+	enum BorderType{
+		zero,
+		freeze,
+		circular
+	};
+
+	static BorderType border_;
+
 };
 
 
