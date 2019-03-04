@@ -177,7 +177,7 @@ Resize::resize(std::vector<std::string> paramList){
 					norm2+=lh;
 				}
 				if( (i == 0 && n ==0 )  ||  ( i==50 && n ==50  )){
-					std::cout<<"i:"<<i<<", norm2:      "<<norm2<<std::endl;
+					//std::cout<<"i:"<<i<<", norm2:      "<<norm2<<std::endl;
 
 				}	
 
