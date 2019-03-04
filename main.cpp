@@ -29,15 +29,21 @@ void motion(int x, int y);
 void mouse(int button, int press, int x, int y);
 void read_next_command(unsigned char key, int x, int y);
 }
-#include <string>
 #include <vector>
 #include <iostream>
 #include <locale>
 #include <fstream>
+#include "Dispatcher.hh"
+#include "Mover.hh"
+#include "Drawer.hh"
+#include "Colorer.hh"
+#include "Reader.hh"
+//#include "Util.hh"
+
+const int numNested=6;
+
 void main_loop(char line[]);
 
-const int numNested = 6;// the maxium number of nested read
-static int nestedRead = 0;//current nested read
 /*	Create checkerboard image	*/
 #define	checkImageWidth 1024
 #define	checkImageHeight 1024
@@ -222,7 +228,7 @@ bool is_number(const std::string& s)
  * Globals: none
  * Returns: std::string
  */
-
+/*
 std::string
 move(std::vector<std::string> paramList){
 
@@ -248,10 +254,6 @@ move(std::vector<std::string> paramList){
 				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
 				*it = "0"; 
 			}
-	/*		if(!is_number(*it)){
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0";
-			}*/
 			result += *it + " ";
 		}
 		return result;
@@ -261,7 +263,7 @@ move(std::vector<std::string> paramList){
 	}
 
 }
-
+*/
 
 /*
  * Function name: draw
@@ -401,7 +403,7 @@ read(std::vector<std::string> paramList){
 
 			#ifdef DEBUG
 				std::cout<<"=====DEBUG  INFO====="<< std::endl;
-					std::cout<<"File closed, nestRead:"<<nestedRead<<std::endl;
+					std::cout<<"File closed, nestRead:"<<Dispatcher::get_max_read_recursion_depth()<<std::endl;
 
 				std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 			#endif
@@ -428,70 +430,9 @@ void
 main_loop(char line[])
 {
    /* PUT YOUR CLI CODE HERE! */
-	char * pch = strtok(line, " 	,");
-	std::vector<std::string> paramList;
-	pch = strtok(NULL, " 	,");
-	while(pch!=NULL){
-		std::string param(pch);
-		paramList.push_back( param ); 
-		pch = strtok(NULL, " 	,");
-	}	
-	
-	for(int i(0), sz(strlen(line)); i < sz; i++){
-		line[i] = tolower(line[i]);
-	}
-// move branch
-	if(!strcmp(line,"move"))
-	{
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
-			std::cout<<"dispatching to MOVE branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-	
-		strcpy(line, move(paramList).c_str());
-	}
-//draw branch
-	if(!strcmp(line,"draw"))
-	{
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
-			std::cout<<"dispatching to DRAW branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-	
-		strcpy(line, draw(paramList).c_str());
-	}
-//color branch
-	if(!strcmp(line,"color"))
-	{
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
-			std::cout<<"dispatching to COLOR branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-	
-		strcpy(line, color(paramList).c_str());
-	}
-//read branch
-	if(!strcmp(line,"read"))
-	{
-		nestedRead++;
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
-			std::cout<<"dispatching to READ branch"<<std::endl;
-			std::cout<<"# of nested READ:"<< nestedRead<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-		if(nestedRead < (numNested+1)){
-			strcpy(line, read(paramList).c_str());
-		}
-		else{
-			std::cout<< "WARNING:maxium number of nested read reached. Read command abandoned"<<std::endl;
-		}
-		nestedRead--;
-	}
-
+	//Util util(numNested);
+	Dispatcher::dispatch(line);
+/*
 //other processing
    if (line == NULL)
    {
@@ -503,7 +444,7 @@ main_loop(char line[])
      
    printf("CLI> ");
    fflush(stdout);
-
+*/
    return;
 }
 
@@ -583,6 +524,8 @@ read_next_command(unsigned char key, int x, int y)
 int 
 main(int argc, char** argv)
 {
+
+   Dispatcher::get_max_read_recursion_depth()=numNested;
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
    glutInitWindowSize(250, 250);
