@@ -60,8 +60,8 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 				result = "you should read before you write";
 				return result;
 			}
-			std::cout<<"xc:"<<xc<<" yc:"<<yc<<std::endl;
-			std::cout<<"width:"<<TiffRead::image_width_<<" length:"<<TiffRead::image_length_<<std::endl;
+//			std::cout<<"xc:"<<xc<<" yc:"<<yc<<std::endl;
+//			std::cout<<"width:"<<TiffRead::image_width_<<" length:"<<TiffRead::image_length_<<std::endl;
 			if( (x0<0)||(y0<0) || (xc>=TiffRead::image_width_) || (yc>=TiffRead::image_length_) ){
 				result = "clipped zone is bigger than original image!";
 				return result;
