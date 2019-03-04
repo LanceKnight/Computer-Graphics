@@ -1,5 +1,5 @@
 #invalid params test
-#tiffread images/play.tif
+tiffread images/play.tif
 #tiffwrite images/test.tif 128 128  60, 384
 #tiffread images/test.tif
 

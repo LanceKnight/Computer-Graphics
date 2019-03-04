@@ -30,9 +30,9 @@ tiffread images/playpal.tif
 
 #resize 1 -1.8
 
-#resize -1.8 -1.9
+resize -1.8 -1.9
 
-resize -1 -1
+#resize -1 -1
 
 #resize -2 -2
 
