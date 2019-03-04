@@ -133,10 +133,10 @@ Resize::resize(std::vector<std::string> paramList){
 					int adjusted_k = is_scale_x_less_than_zero? TiffRead::image_width_-k-1:k;
 					float lh = kernel(M_x*(adjusted_n/scale_x-adjusted_k));
 
-					if(k<0 || k>TiffRead::image_width_-1){
+					if(adjusted_k<0 || adjusted_k>TiffRead::image_width_-1){
 						switch(Border::border_)	{
 							case Border::freeze:
-									if( (k<0) == !is_scale_x_less_than_zero ){	
+									if( adjusted_k<0 ){	
 										r+= float(checkImage[TiffRead::image_length_-i-1][0][0])*lh;
 										g+= float(checkImage[TiffRead::image_length_-i-1][0][1])*lh;
 										b+= float(checkImage[TiffRead::image_length_-i-1][0][2])*lh;
@@ -148,7 +148,7 @@ Resize::resize(std::vector<std::string> paramList){
 									}	
 								break;
 							case Border::circular:
-									if((k<0)){	
+									if(adjusted_k<0){	
 										r+= float(checkImage[TiffRead::image_length_-i-1][-adjusted_k][0])*lh;
 										g+= float(checkImage[TiffRead::image_length_-i-1][-adjusted_k][1])*lh;
 										b+= float(checkImage[TiffRead::image_length_-i-1][-adjusted_k][2])*lh;
