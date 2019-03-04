@@ -4,6 +4,7 @@
 #include <cmath>
 #include <string>
 #include "main.hh"
+#include "Border.hh"
 #include "Resize.hh"
 #include "Select.hh"
 #include "TiffRead.hh"
@@ -21,8 +22,8 @@ Resize::resize(std::vector<std::string> paramList){
 	#ifdef DEBUG
 	
 		std::cout<<"=====DEBUG  INFO====="<< std::endl;
-
 			std::cout<<"Resize.cpp:"<<std::endl;
+			std::cout<<"filter:";
 			switch(Select::filter_){
 				case Select::lanczos:
 					std::cout<<"lanczos"<<std::endl;
@@ -39,7 +40,18 @@ Resize::resize(std::vector<std::string> paramList){
 				case Select::box:
 					std::cout<<"box"<<std::endl;
 					break;
-
+			}
+			std::cout<<"border:";
+			switch(Border::border_){
+				case Border::zero:
+					std::cout<<"zero"<<std::endl;
+					break;
+				case Border::freeze:
+					std::cout<<"freeze"<<std::endl;
+					break;
+				case Border::circular:
+					std::cout<<"circular"<<std::endl;
+					break;
 			}
 
 		std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
@@ -110,20 +122,64 @@ Resize::resize(std::vector<std::string> paramList){
 		for(int i=0;i<TiffRead::image_length_;i++){
 			for(int n =0; n<new_width; n++){
 				r = g = b =0;
-				int k_lower_limit = std::max(0, get_lower_limit(n, scale_x, M_x));
-				int k_upper_limit = std::min(TiffRead::image_width_-1,get_upper_limit(n, scale_x, M_x));
+//				int k_lower_limit = std::max(0, get_lower_limit(n, scale_x, M_x));
+//				int k_upper_limit = std::min(TiffRead::image_width_-1,get_upper_limit(n, scale_x, M_x));
 
+				int k_lower_limit = get_lower_limit(n, scale_x, M_x);
+				int k_upper_limit = get_upper_limit(n, scale_x, M_x);	
 				float norm2(0.0);
 				for(int k=k_lower_limit; k<=k_upper_limit; k++){
-						int adjusted_n = is_scale_x_less_than_zero? new_width-n-1:n;
-						int adjusted_k = is_scale_x_less_than_zero? TiffRead::image_width_-k-1:k;
-						float lh = kernel(M_x*(adjusted_n/scale_x-adjusted_k));
+					int adjusted_n = is_scale_x_less_than_zero? new_width-n-1:n;
+					int adjusted_k = is_scale_x_less_than_zero? TiffRead::image_width_-k-1:k;
+					float lh = kernel(M_x*(adjusted_n/scale_x-adjusted_k));
+
+					if(k<0 || k>TiffRead::image_width_-1){
+						switch(Border::border_)	{
+							case Border::freeze:
+									if( (k<0) == !is_scale_x_less_than_zero ){	
+										r+= float(checkImage[TiffRead::image_length_-i-1][0][0])*lh;
+										g+= float(checkImage[TiffRead::image_length_-i-1][0][1])*lh;
+										b+= float(checkImage[TiffRead::image_length_-i-1][0][2])*lh;
+									}
+									else{
+										r+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-1][0])*lh;
+										g+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-1][1])*lh;
+										b+= float(checkImage[TiffRead::image_length_-i-1][TiffRead::image_width_-1][2])*lh;
+									}	
+								break;
+							case Border::circular:
+									if((k<0)){	
+										r+= float(checkImage[TiffRead::image_length_-i-1][-adjusted_k][0])*lh;
+										g+= float(checkImage[TiffRead::image_length_-i-1][-adjusted_k][1])*lh;
+										b+= float(checkImage[TiffRead::image_length_-i-1][-adjusted_k][2])*lh;
+									}
+									else{
+										//std::cout<<"adjusted_k:"<<adjusted_k<<std::endl;
+										//std::cout<<"2*width - adjusted_k"<<2*TiffRead::image_width_ - adjusted_k<<std::endl;
+										r+= float(checkImage[TiffRead::image_length_-i-1][2*TiffRead::image_width_ - adjusted_k-1][0])*lh;
+										g+= float(checkImage[TiffRead::image_length_-i-1][2*TiffRead::image_width_ - adjusted_k-1][1])*lh;
+										b+= float(checkImage[TiffRead::image_length_-i-1][2*TiffRead::image_width_ - adjusted_k-1][2])*lh;
+									}
+								break;
+							case Border::zero:
+										
+								break;
+						}												
+
+					}
+					else{
 						r+= float(checkImage[TiffRead::image_length_-i-1][adjusted_k][0])*lh;
 						g+= float(checkImage[TiffRead::image_length_-i-1][adjusted_k][1])*lh;
 						b+= float(checkImage[TiffRead::image_length_-i-1][adjusted_k][2])*lh;
-						norm2+=lh;
+
+					}
+
+					norm2+=lh;
 				}
-				
+				if( (i == 0 && n ==0 )  ||  ( i==50 && n ==50  )){
+					std::cout<<"i:"<<i<<", norm2:      "<<norm2<<std::endl;
+
+				}	
 
 				r = r/norm2;
 				g = g/norm2;
@@ -145,16 +201,61 @@ Resize::resize(std::vector<std::string> paramList){
 		for(int j=0;j<new_width;j++){
 			for(int m =0; m<new_length; m++){
 				r = g = b =0;
-				int k_lower_limit = std::max(0,get_lower_limit(m, scale_y, M_y));
-				int k_upper_limit = std::min(TiffRead::image_length_-1,get_upper_limit(m, scale_y, M_y));
+			//	int k_lower_limit = std::max(0,get_lower_limit(m, scale_y, M_y));
+			//	int k_upper_limit = std::min(TiffRead::image_length_-1,get_upper_limit(m, scale_y, M_y));
+
+				int k_lower_limit = get_lower_limit(m, scale_y, M_y);
+				int k_upper_limit = get_upper_limit(m, scale_y, M_y);	
 				float norm2(0.0);
 				for(int k=k_lower_limit; k<=k_upper_limit; k++){
 					int adjusted_m = is_scale_y_less_than_zero? m : new_length-m-1;
 					int adjusted_k = is_scale_y_less_than_zero? k : TiffRead::image_length_-k-1;
 					float lh = kernel(M_y*adjusted_m/scale_y-adjusted_k);
-					r+= float(temp_img[adjusted_k][j][0])*lh;
-					g+= float(temp_img[adjusted_k][j][1])*lh;
-					b+= float(temp_img[adjusted_k][j][2])*lh;
+
+
+					if(adjusted_k<0||adjusted_k>TiffRead::image_length_-1){	
+						switch(Border::border_)	{
+							case Border::freeze:
+								if( (adjusted_k<0) == !is_scale_y_less_than_zero ){	
+									r+=float(temp_img[0][j][0])*lh;//100;// float(temp_img[TiffRead::image_length_-1][j][0])*lh;
+									g+=float(temp_img[0][j][1])*lh;//100;// float(temp_img[TiffRead::image_length_-1][j][1])*lh;
+									b+=float(temp_img[0][j][2])*lh;//100;// float(temp_img[TiffRead::image_length_-1][j][2])*lh;
+								}
+								else{
+									r+= float(temp_img[0][j][0])*lh;
+									g+= float(temp_img[0][j][1])*lh;
+									b+= float(temp_img[0][j][2])*lh;
+								}	
+								break;
+							case Border::circular:
+								if((adjusted_k<0)){
+									r+= float(temp_img[-adjusted_k][j][0])*lh;
+									g+= float(temp_img[-adjusted_k][j][1])*lh;
+									b+= float(temp_img[-adjusted_k][j][2])*lh;
+									//std::cout<<"adjusted_k(<0):"<<adjusted_k<<std::endl;	
+								}
+								else{
+									//std::cout<<"adjusted_k:"<<adjusted_k<<std::endl;
+									//std::cout<<"2*TiffRead::image_length_ - adjusted_k-1:" << 2*TiffRead::image_length_ - adjusted_k-1<<std::endl;
+
+									r+= float(temp_img[2*TiffRead::image_length_ -adjusted_k-1][j][0])*lh;
+									g+= float(temp_img[2*TiffRead::image_length_ -adjusted_k-1][j][1])*lh;
+									b+= float(temp_img[2*TiffRead::image_length_ -adjusted_k-1][j][2])*lh;
+
+								//	g+= float(checkImage[TiffRead::image_length_-i-1][2*TiffRead::image_width_ - adjusted_k][1])*lh;
+								//	b+= float(checkImage[TiffRead::image_length_-i-1][2*TiffRead::image_width_ - adjusted_k][2])*lh;
+								}
+								break;
+							case Border::zero:		
+								break;
+						}
+					}
+					else{
+//						std::cout<<"adjusted_k: "<<adjusted_k<<", j: "<< j<<std::endl; 
+						r+= float(temp_img[adjusted_k][j][0])*lh;
+						g+= float(temp_img[adjusted_k][j][1])*lh;
+						b+= float(temp_img[adjusted_k][j][2])*lh;
+					}
 					norm2+=lh;
 
 				}
