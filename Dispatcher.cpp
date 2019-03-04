@@ -6,8 +6,9 @@
 #include "Drawer.hh"
 #include "Colorer.hh"
 #include "Reader.hh"
-//#include "Util.hh"
-
+#include "TiffRead.hh"
+#include "TiffStat.hh"
+#include "TiffWrite.hh"
 //static int nested_read_ = 0;//current nested read
 
 
@@ -19,7 +20,6 @@ Dispatcher::~Dispatcher(){}
 
 void
 Dispatcher::dispatch(char line[]){
-	std::cout<<"dispatching"<<std::endl;
 
 	char * pch = strtok(line, " 	,");
 	std::vector<std::string> paramList;
@@ -79,11 +79,14 @@ Dispatcher::dispatch(char line[]){
 		#endif
 	
 		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<< "nested_read:"<< nested_read_ <<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		#endif
 		if(nested_read_ < (get_max_read_recursion_depth()+1)){
 			
 			strcpy(line, Reader::read(paramList).c_str());
+			
 		}
 		else{
 			std::cout<< "WARNING:maxium number of nested read reached. Read command abandoned"<<std::endl;
@@ -91,8 +94,48 @@ Dispatcher::dispatch(char line[]){
 		nested_read_--;
 	}
 
+//tiffstat branch
+	if(!strcmp(line, "tiffstat"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to TiffStat branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, TiffStat::tiff_stat(paramList).c_str());
 
 
+	}
+
+
+//tiffread branch
+	if(!strcmp(line, "tiffread"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to TiffRead branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, TiffRead::tiff_read(paramList).c_str());
+
+
+	}
+
+//tiffwrite branch
+	if(!strcmp(line, "tiffwrite"))
+	{
+
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to TiffWrite branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, TiffWrite::tiff_write(paramList).c_str());
+
+
+	}
 //other processing
    if (line == NULL)
    {
@@ -100,7 +143,8 @@ Dispatcher::dispatch(char line[]){
       exit(0);
    }
    else
-      printf("RESULT: %s\n",line);
+		//std::cout<<"RESULT:" << line <<std::endl;
+      printf("RESULT: %s\n", line);
      
    printf("CLI> ");
    fflush(stdout);

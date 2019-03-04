@@ -21,13 +21,13 @@ extern "C"{
 #include <stdio.h>
 #include <string.h>
 
-void makeCheckImage(void);
-void init(void);
-void display(void);
-void reshape(int w, int h);
-void motion(int x, int y);
-void mouse(int button, int press, int x, int y);
-void read_next_command(unsigned char key, int x, int y);
+//void makeCheckImage(void);
+//void init(void);
+//void display(void);
+//void reshape(int w, int h);
+//void motion(int x, int y);
+//void mouse(int button, int press, int x, int y);
+//void read_next_command(unsigned char key, int x, int y);
 }
 #include <vector>
 #include <iostream>
@@ -38,11 +38,10 @@ void read_next_command(unsigned char key, int x, int y);
 #include "Drawer.hh"
 #include "Colorer.hh"
 #include "Reader.hh"
-//#include "Util.hh"
-
+#include "main.hh"
 const int numNested=6;
 
-void main_loop(char line[]);
+//void main_loop(char line[]);
 
 /*	Create checkerboard image	*/
 #define	checkImageWidth 1024
@@ -207,219 +206,6 @@ mouse(int button, int press, int x, int y)
 
 
 /*
- * Function name: is_number
- * Description: check if a string contains all legal digits
- * Arguments: string- input string
- * Globals: none
- * Returns: bool- true for number, false for not a number
- */
-
-bool is_number(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}
-
-/*
- * Function name: move
- * Description: Move
- * Arguments: paramList-the list of parameters
- * Globals: none
- * Returns: std::string
- */
-/*
-std::string
-move(std::vector<std::string> paramList){
-
-	if(paramList.size()<=3){
-		while(paramList.size()<3){
-			paramList.push_back("0");
-		}
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<< std::endl;
-			for (auto it = paramList.begin(); it!= paramList.end(); it++){
-				std::cout<<"param:"<<*it<<std::endl;
-			}
-
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-		std::string result = "";	
-		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-			try{
-				std::stod(*it);
-			}
-			catch(...)
-			{
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0"; 
-			}
-			result += *it + " ";
-		}
-		return result;
-	}
-	else{
-		return  "too many parameters";
-	}
-
-}
-*/
-
-/*
- * Function name: draw
- * Description: Draw
- * Arguments: paramList-the list of parameters
- * Globals: none
- * Returns: std::string
- */
-
-std::string
-draw(std::vector<std::string> paramList){
-
-	if(paramList.size()<=3){
-		while(paramList.size()<3){
-			paramList.push_back("0");
-		}
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<< std::endl;
-			for (auto it = paramList.begin(); it!= paramList.end(); it++){
-				std::cout<<"param:"<<*it<<std::endl;
-			}
-
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-		std::string result = "";	
-		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-
-			try{
-				std::stod(*it);
-			}
-			catch(...)
-			{
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0"; 
-			}
-			result += *it + " ";
-		}
-		return result;
-	}
-	else{
-		return  "too many parameters";
-	}
-
-}
-
-
-/*
- * Function name: color
- * Description: Color
- * Arguments: paramList-the list of parameters
- * Globals: none
- * Returns: std::string
- */
-
-std::string
-color(std::vector<std::string> paramList){
-
-	if(paramList.size()<=3){
-		while(paramList.size()<3){
-			paramList.push_back("0");
-		}
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<< std::endl;
-			for (auto it = paramList.begin(); it!= paramList.end(); it++){
-				std::cout<<"param:"<<*it<<std::endl;
-			}
-
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
-		std::string result = "";	
-		for (auto it = paramList.begin(); it!= paramList.end(); it++){
-		
-			try{
-				std::stod(*it);
-			}
-			catch(...)
-			{
-				std::cout <<"WARNING: illegal parameter has been replace with 0"<< std::endl;
-				*it = "0"; 
-			}
-			result += *it + " ";
-		}
-		return result;
-	}
-	else{
-		return  "too many parameters";
-	}
-
-}
-
-
-
-/*
- * Function name: read
- * Description: read a file
- * Arguments: filename- name of the file
- * Globals: none
- * Returns: std::string -result
- */
-
-std::string
-read(std::vector<std::string> paramList){
-	std::string result;
-   static char line[1024];
-	if(paramList.size()<=1){
-		if(paramList.size()==1){
-			std::ifstream file;
-			std::string filename = *paramList.begin();
-			std::string command; //the command read from lines of the file.
-			file.open(filename);
-		  	if (!file) {
-				result = "Unable to open "+ filename;
-				return result;
-			}
-			while (std::getline(file, command)) {
-				if(command.empty()!= true){
-					if(command.at(0)!='#'){
-					
-					std::cout<<"executing a command from the file..."<<std::endl;
-					std::cout<<"command:"<<command<<std::endl;
-					strcpy(line, command.c_str());
-					strtok(line, "#");
-					#ifdef DEBUG
-						std::cout<<"=====DEBUG  INFO====="<< std::endl;
-							std::cout<<"line:"<<line<<std::endl;
-
-						std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-					#endif
-					main_loop(line);
-
-					result = "File was processed succefully";
-					}	
-				}
-			}
-
-			file.close();
-
-			#ifdef DEBUG
-				std::cout<<"=====DEBUG  INFO====="<< std::endl;
-					std::cout<<"File closed, nestRead:"<<Dispatcher::get_max_read_recursion_depth()<<std::endl;
-
-				std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-			#endif
-		}
-		else{
-			result = "No file specified!";
-		}
-		
-	}
-	else{
-		result =  "too many parameters";
-	}
-	return result;
-}
-
-/*
  * Function name: main_loop
  * Description:   Process the line of input
  * Arguments:	  line - the line of input
@@ -430,21 +216,8 @@ void
 main_loop(char line[])
 {
    /* PUT YOUR CLI CODE HERE! */
-	//Util util(numNested);
 	Dispatcher::dispatch(line);
-/*
-//other processing
-   if (line == NULL)
-   {
-      printf("Exiting...\n");
-      exit(0);
-   }
-   else
-      printf("RESULT: %s\n",line);
-     
-   printf("CLI> ");
-   fflush(stdout);
-*/
+
    return;
 }
 

@@ -6,8 +6,9 @@ Also, the maxium allowed nested read is 6. To change this setting, change the va
 
 you can execute:
 
-read text1.txt
-read text2.txt
-read text3.txt
+read 1.txt 
+read 2.txt
+read 3.txt
 
-for testing
+for testing of TiffWrite, TiffStat, TiffRead respectively
+ 
