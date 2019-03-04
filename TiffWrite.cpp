@@ -61,7 +61,7 @@ TiffWrite::tiff_write(std::vector<std::string> paramList){
 				return result;
 			}
 
-			if( (x0<0)||(y0<0) || (xc>TiffRead::image_width_) || (yc>TiffRead::image_length_) ){
+			if( (x0<0)||(y0<0) || (xc>=TiffRead::image_width_) || (yc>=TiffRead::image_length_) ){
 				result = "clipped zone is bigger than original image!";
 				return result;
 			}
