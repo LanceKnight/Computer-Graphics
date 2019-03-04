@@ -1,0 +1,116 @@
+#invalid params test
+tiffread ../images/play.tif
+#tiffwrite ../images/test.tif 128 128  60, 384
+#tiffread ../images/test.tif
+
+#test of writing before reading
+#tiffwrite ../images/test.tif 30,22, 100 100
+
+#test of clipped zone is bigger than original pic
+#tiffread ../images/pooh.tif
+#tiffstat ../images/pooh.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#test of gray image
+#tiffread ../images/play.tif
+#tiffstat ../images/play.tif
+#tiffwrite ../images/test.tif 128 128  384, 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#test of color map image
+#tiffread ../images/playpal.tif
+#tiffstat ../images/playpal.tif
+#tiffwrite ../images/test.tif 128 64  384, 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#test of full rgb image
+#tiffread ../images/eeyore2.tif
+#tiffstat ../images/eeyore2.tif
+#tiffwrite ../images/test.tif 50 50  100, 150
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#test of the rest
+
+#tiffread ../images/eeyore.tif
+#tiffstat ../images/eeyore.tif
+#tiffwrite ../images/test.tif 50 50  100, 150
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#tiffread ../images/eeyore3.tif
+#tiffstat ../images/eeyore3.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+
+#tiffread ../images/eeyore4.tif
+#tiffstat ../images/eeyore4.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+
+#tiffread ../images/play.tif
+#tiffstat ../images/play.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#tiffread ../images/play2.tif
+#tiffstat ../images/play2.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#tiffread ../images/play3.tif
+#tiffstat ../images/play3.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#tiffread ../images/playrgb.tif
+#tiffstat ../images/playrgb.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+
+#tiffread ../images/p4_faces.tif
+#tiffstat ../images/p4_faces.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+
+
+#tiffread ../images/p4_ortho.tif
+#tiffstat ../images/p4_ortho.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+
+#tiffread ../images/p4_persp.tif
+#tiffstat ../images/p4_persp.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+#tiffread ../images/p4_simple.tif
+#tiffstat ../images/p4_simple.tif
+#tiffwrite ../images/test.tif 128 128 384 384
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+
+#tiffread ../images/pooh.tif
+#tiffstat ../images/pooh.tif
+#tiffwrite ../images/test.tif 50 50 100 100
+#tiffstat ../images/test.tif
+#tiffread ../images/test.tif
+
+tiffread ../images/pooh_le.tif
+tiffstat ../images/pooh_le.tif
+tiffwrite ../images/test.tif 0,0 50 100
+tiffstat ../images/test.tif
+tiffread ../images/test.tif

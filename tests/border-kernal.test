@@ -6,18 +6,18 @@ select k # invalid param
 border 34 # invalid filter
 border    # lack of params
 
-border zero
-#border circular
+#border zero
+border circular
 #border freeze 
 
-tiffread images/playrgb.tif
-#tiffread images/play.tif
-#tiffread images/eeyore.tif
-#tiffread images/pooh.tif
+tiffread ../images/playrgb.tif
+#tiffread ../images/play.tif
+#tiffread ../images/eeyore.tif
+#tiffread ../images/pooh.tif
 
 #select box
 #select box 3
-select box 20
+#select box 20
 
 #select triangle
 #select triangle 3
@@ -34,7 +34,8 @@ select box 20
 
 
 #select gaussian
-#select gaussian 3
+select gaussian 3
 #select gaussian 30
 
-resize -1 -1
+resize -2 -2
+tiffwrite ../results/gaussian_3.tif 0 0 1023 1023
