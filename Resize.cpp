@@ -216,15 +216,15 @@ Resize::resize(std::vector<std::string> paramList){
 					if(adjusted_k<0||adjusted_k>TiffRead::image_length_-1){	
 						switch(Border::border_)	{
 							case Border::freeze:
-								if( (adjusted_k<0) == !is_scale_y_less_than_zero ){	
+								if( adjusted_k<0 ){	
 									r+=float(temp_img[0][j][0])*lh;//100;// float(temp_img[TiffRead::image_length_-1][j][0])*lh;
 									g+=float(temp_img[0][j][1])*lh;//100;// float(temp_img[TiffRead::image_length_-1][j][1])*lh;
 									b+=float(temp_img[0][j][2])*lh;//100;// float(temp_img[TiffRead::image_length_-1][j][2])*lh;
 								}
 								else{
-									r+= float(temp_img[0][j][0])*lh;
-									g+= float(temp_img[0][j][1])*lh;
-									b+= float(temp_img[0][j][2])*lh;
+									r+= float(temp_img[TiffRead::image_length_-1][j][0])*lh;
+									g+= float(temp_img[TiffRead::image_length_-1][j][1])*lh;
+									b+= float(temp_img[TiffRead::image_length_-1][j][2])*lh;
 								}	
 								break;
 							case Border::circular:
