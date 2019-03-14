@@ -24,9 +24,6 @@ tiffread ../images/playrgb.tif
 #select triangle 20
 
 
-#select mitchell
-#select mitchell 3
-#select mitchell 30
 
 #select lanczos
 #select lanczos 3
@@ -36,6 +33,14 @@ tiffread ../images/playrgb.tif
 #select gaussian
 select gaussian 3
 #select gaussian 30
+
+#select mitchell
+
+select hemming
+
+#select b-spline
+
+#select catmull-rom
 
 resize -2 -2
 tiffwrite ../results/gaussian_3.tif 0 0 1023 1023
