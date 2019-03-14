@@ -21,7 +21,7 @@ in the convolution, I didn't go over all pixels in the original image since most
 2. The border with edge value extends the edge values, it is not very obseravle with small window size, but more salient with bigger window size (see results/freeze_border_20.tif for window of 20, results/freeze_border_3.tif for window of 3)
 3. The border with mirror image value has the most natural result, thus the best by comparison with others (see results/circular_border_20.tif for window of 20, results/circular_border_3.tif for window of 3)
 ### tests of filter. Circular border was used. see results in results/filters 
-1. mitchell seems to give the best result in terms of resolution
+1. mitchell, hemming, b-spline, catmull-rom  all seems to give the best result in terms of resolution
 2. box filter seems to give grid-like result
 3. triangle and lanczos both seem to improve the grid-like result over box filter
 4. gaussian filter smoothes the image a lot, making it more blurry.
