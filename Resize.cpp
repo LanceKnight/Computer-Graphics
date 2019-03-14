@@ -40,6 +40,9 @@ Resize::resize(std::vector<std::string> paramList){
 				case Select::box:
 					std::cout<<"box"<<std::endl;
 					break;
+				case Select::hemming:
+					std::cout<<"hemming"<<std::endl;
+					break;
 			}
 			std::cout<<"border:";
 			switch(Border::border_){
@@ -330,10 +333,10 @@ float Resize::kernel(float x){
 			}
 		case Select::mitchell:
 			if(x>=-1 && x<=1 ){
-				return -21 * pow(1-fabs(x),3) + 27*pow(1-fabs(x),2) + 9 *(1-fabs(x)) +1;
+				return 1.0/18.0*(-21 * pow(1-fabs(x),3) + 27*pow(1-fabs(x),2) + 9 *(1-fabs(x)) +1);
 			}
 			else if(fabs(x) >=1 && fabs(x) <=2){
-				return 7*pow(2-fabs(x),3) - 6*pow(2-fabs(x),2);
+				return 1.0/18.0*(7*pow(2-fabs(x),3) - 6*pow(2-fabs(x),2));
 			}
 			else{
 				return 0;
@@ -349,6 +352,51 @@ float Resize::kernel(float x){
 		case Select::box:
 			if( x>= -Select::alpha_ && x < Select::alpha_){
 				return 1/(2*Select::alpha_);
+			}
+			else{
+				return 0;
+			}
+		case Select::hemming:
+		//testing codes
+		/* 
+		double scaling = 2;
+		double radius = 2;
+		double newpos = x/scaling;
+		if(fabs(newpos)>	radius +0.1){
+			return 0;
+		}	
+		else{
+			if(fabs(newpos)<=radius +0.1){
+				return (0.5+0.46*cos(M_PI*newpos/radius))/scaling;
+			}else return 0;
+		}
+		*/
+		
+			if(x>=0 && x<=Select::alpha_){
+				return 0.54-0.46*cos(2*M_PI*x/(Select::alpha_-1));
+			}
+			else{
+				return 0;
+			}
+
+		case Select::b_spline:
+			if(fabs(x)<=1){
+				return 1.0/6.0*( -3*pow(1-fabs(x),3) + 3*pow(1-fabs(x),2) + 3*(1-fabs(x)) +1);
+			}
+			else if(fabs(x) >=1 && fabs(x) <=2){
+				return 1.0/6.0*pow(2-fabs(x),3);
+			}
+			else{
+				return 0;
+			}
+		case Select::catmull_rom:
+			if(fabs(x)<=1){
+				return 1.0/2.0 *pow((1-fabs(x)),3)+4*pow(1-fabs(x),2)+(1-fabs(x));
+			}
+			else if(fabs(x) >=1 && fabs(x) <=2){
+
+				return 1.0/2.0* pow((2-fabs(x)),3)-pow((2-fabs(x)),2);
+
 			}
 			else{
 				return 0;
@@ -370,6 +418,15 @@ int Resize::get_lower_limit(int m, float scale_y, float M_y){
 			return floor(((m/scale_y)-(Select::alpha_/M_y)));
 		case Select::box:
 			return floor(((m/scale_y)-(Select::alpha_/M_y)));
+	
+		case Select::hemming:
+			return floor(((m/scale_y)-(Select::alpha_/M_y)));
+
+		case Select::b_spline: 
+			return floor(((m/scale_y)-(2/M_y)));
+
+		case Select::catmull_rom:
+			return floor(((m/scale_y)-(2/M_y)));
 	}
 	return -1;
 }
@@ -388,6 +445,13 @@ int Resize::get_upper_limit(int m, float scale_y, float M_y){
 		case Select::box:
 			return ceil(((m/scale_y)+(Select::alpha_/M_y)));
 
+		case Select::hemming:
+			return ceil(((m/scale_y)+(Select::alpha_/M_y)));
+
+		case Select::b_spline:
+			return ceil(((m/scale_y)+(2/M_y)));
+		case Select::catmull_rom:
+			return ceil(((m/scale_y)+(2/M_y)));
 	}
 	return -1;
 }

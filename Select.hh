@@ -22,7 +22,10 @@ public:
 		mitchell,
 		lanczos,
 		triangle,
-		box
+		box,
+		hemming,
+		b_spline,
+		catmull_rom
 	};
 
 	static FilterType filter_;

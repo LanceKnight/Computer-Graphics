@@ -41,6 +41,18 @@ Select::select(std::vector<std::string> paramList){
 			Select::filter_ = mitchell;
 			std::cout<< "Mitchell filter selected"<<std::endl;
 		}
+		else if(paramList[0] == "hemming"){
+			Select::filter_ = hemming;
+			std::cout<< "Hemming filter selected"<<std::endl;
+		}
+		else if(paramList[0] == "b-spline"){
+			Select::filter_ = b_spline;
+			std::cout<< "B-spline filter selected"<<std::endl;
+		}
+		else if(paramList[0] == "catmull-rom"){
+			Select::filter_ = catmull_rom;
+			std::cout<< "Catmull-rom filter selected"<<std::endl;
+		}
 		else{
 			std::cout<< "unknown filter. Filter name should be lower-cased"<<std::endl;
 		}
