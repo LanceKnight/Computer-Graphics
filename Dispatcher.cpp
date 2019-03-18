@@ -13,6 +13,7 @@
 #include "Zoom.hh"
 #include "Border.hh"
 #include "Select.hh"
+#include "Push.hh"
 //static int nested_read_ = 0;//current nested read
 
 
@@ -199,7 +200,19 @@ Dispatcher::dispatch(char line[]){
 
 	}
 
+//push branch
+	if(!strcmp(line, "push"))
+	{
 
+		#ifdef DEBUG
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to Push branch"<<std::endl;
+			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+		#endif
+		strcpy(line, Push::push(paramList).c_str());
+
+
+	}
 
 
 //other processing
