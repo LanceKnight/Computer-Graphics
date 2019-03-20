@@ -50,7 +50,6 @@ Dispatcher::dispatch(char line[]){
 	{
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to MOVE branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		Util::debug_tail();
 		
 		strcpy(line, Mover::move(paramList).c_str());
@@ -61,7 +60,6 @@ Dispatcher::dispatch(char line[]){
 	{
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to DRAW branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		Util::debug_tail();
 		
 		strcpy(line, Drawer::draw(paramList).c_str());
@@ -72,7 +70,7 @@ Dispatcher::dispatch(char line[]){
 	{
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to COLOR branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 	
 		strcpy(line, Colorer::color(paramList).c_str());
@@ -83,12 +81,11 @@ Dispatcher::dispatch(char line[]){
 		nested_read_++;
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to READ branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 		Util::debug_tail();
 	
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<< "nested_read:"<< nested_read_ <<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		if(nested_read_ < (get_max_read_recursion_depth()+1)){
 			
@@ -107,7 +104,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to TiffStat branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, TiffStat::tiff_stat(paramList).c_str());
 
@@ -121,7 +118,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to TiffRead branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, TiffRead::tiff_read(paramList).c_str());
 
@@ -134,7 +131,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to TiffWrite branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, TiffWrite::tiff_write(paramList).c_str());
 
@@ -147,7 +144,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Resize branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Resize::resize(paramList).c_str());
 
@@ -160,7 +157,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Zoom branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Zoom::zoom(paramList).c_str());
 
@@ -173,7 +170,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Border branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Border::border(paramList).c_str());
 
@@ -186,7 +183,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Select branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Select::select(paramList).c_str());
 
@@ -199,7 +196,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Push branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Push::push(paramList).c_str());
 
@@ -211,7 +208,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Push branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Push::push(paramList).c_str());
 
@@ -224,7 +221,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Translate branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Translate::translate(paramList).c_str());
 
@@ -237,7 +234,7 @@ Dispatcher::dispatch(char line[]){
 
 			Util::debug_head("Dispatcher.cpp");
 				std::cout<<"dispatching to Ortho branch"<<std::endl;
-				std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 			Util::debug_tail();
 			strcpy(line, Ortho::ortho(paramList).c_str());
 
@@ -250,7 +247,7 @@ Dispatcher::dispatch(char line[]){
 
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to LookAt branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Lookat::lookat(paramList).c_str());
 
@@ -263,7 +260,7 @@ Dispatcher::dispatch(char line[]){
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to Vertex branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Vertex::vertex(paramList).c_str());
 
@@ -277,7 +274,7 @@ Dispatcher::dispatch(char line[]){
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to Reset branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+
 		Util::debug_tail();
 		strcpy(line, Reset::reset(paramList).c_str());
 
