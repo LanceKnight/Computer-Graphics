@@ -33,7 +33,7 @@ Zoom::zoom(std::vector<std::string> paramList){
 		}
 		catch(...)
 		{
-			return "illegal param";
+			return "illegal params";
 		}		
 
 		std::vector<std::string> new_param_list;
