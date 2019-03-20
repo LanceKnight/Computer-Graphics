@@ -17,7 +17,7 @@ public:
 	
 	static void reverse(unsigned char * bytes, int n);
 
-	static void print_mat(matrix_unit matrix);
+	static void print_mat(matrix_unit * matrix);
 
 	static void debug_head(std::string filename);
 
