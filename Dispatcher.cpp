@@ -14,6 +14,7 @@
 #include "Border.hh"
 #include "Select.hh"
 #include "Push.hh"
+#include "Pop.hh"
 #include "Translate.hh"
 #include "Ortho.hh"
 #include "Lookat.hh"
