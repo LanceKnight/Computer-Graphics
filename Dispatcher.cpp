@@ -207,10 +207,10 @@ Dispatcher::dispatch(char line[]){
 	{
 
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"dispatching to Push branch"<<std::endl;
+			std::cout<<"dispatching to Pop branch"<<std::endl;
 
 		Util::debug_tail();
-		strcpy(line, Push::push(paramList).c_str());
+		strcpy(line, Pop::pop(paramList).c_str());
 
 
 	}
