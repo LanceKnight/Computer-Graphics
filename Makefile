@@ -26,7 +26,7 @@ all: main
 
 CLI_OBJECTS=main.o Dispatcher.o Util.o Mover.o Drawer.o Colorer.o Reader.o \
 			TiffStat.o TiffRead.o TiffWrite.o Resize.o Zoom.o Border.o Select.o\
-			3D.o Push.o Pop.o Translate.o Ortho.o Lookat.o Vertex.o Reset.o
+			3D.o Push.o Pop.o Translate.o Ortho.o Perspective.o Lookat.o Vertex.o Reset.o
 
 main: $(CLI_OBJECTS)
 	$(LINK) $(CLI_OBJECTS) $(LDADD) $(LIBS)

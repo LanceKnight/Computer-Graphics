@@ -17,6 +17,7 @@
 #include "Pop.hh"
 #include "Translate.hh"
 #include "Ortho.hh"
+#include "Perspective.hh"
 #include "Lookat.hh"
 #include "Vertex.hh"
 #include "Reset.hh"
@@ -241,6 +242,20 @@ Dispatcher::dispatch(char line[]){
 
 
 		}
+
+//Perspective branch
+		if(!strcmp(line, "perspective"))
+		{
+
+			Util::debug_head("Dispatcher.cpp");
+				std::cout<<"dispatching to Perspective branch"<<std::endl;
+
+			Util::debug_tail();
+			strcpy(line, Perspective::perspective(paramList).c_str());
+
+
+		}
+
 
 //lookat branch
 	if(!strcmp(line, "lookat"))
