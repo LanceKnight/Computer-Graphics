@@ -1,6 +1,7 @@
 #include <iostream>
 #include "3D.h"
-#include "POP.hh"
+#include "Pop.hh"
+#include "Util.hh"
 
 
 Pop::Pop(){}
@@ -14,10 +15,15 @@ Pop::pop(std::vector<std::string> paramList){
 
 	if(paramList.size()<1){
 
-		top++;
-		std::cout<<"Pop.c:"<<"top:"<<top<<std::endl;
-		if(top>1){
-			stack[top] = &current;
+		if(top>0){
+			delete stack[top];
+			top--;
+			Util::debug_head("Pop.cpp");
+				std::cout<<"stack["<<top<<"]:"<<std::endl;
+				Util::print_mat(stack[top]);
+				std::cout<<"I:"<<std::endl;
+				Util::print_mat(&I);
+			Util::debug_tail();
 		}
 		else{
 			return "at least one identity matrix should be remained in the stack";

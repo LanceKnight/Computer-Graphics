@@ -17,20 +17,7 @@ public:
 
 
 	//data
-	enum FilterType{
-		gaussian,
-		mitchell,
-		lanczos,
-		triangle,
-		box,
-		hemming,
-		b_spline,
-		catmull_rom
-	};
 
-	static FilterType filter_;
-
-	static float alpha_;
 	
 
 };
