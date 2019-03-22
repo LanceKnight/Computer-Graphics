@@ -52,16 +52,15 @@ Util::reverse(unsigned char * bytes, int n){
 }
 
 void
-Util::print_mat(matrix_unit * matrix){
-
+Util::print_mat(const matrix_unit * matrix){
 	for(int i = 0; i <4; i++){
 		for(int j = 0; j<4; j++){
 			std::cout<<matrix->mat[i][j]<< " ";
 		}
 		std::cout<<std::endl;
 	}
-
 }
+
 
 
 void
