@@ -2,6 +2,7 @@
 extern "C" {
 #endif
 
+
 /*-- NOTE: You will have to manipulate this code to correspond with the
             structures and stack implementation you chose to use. 
 	    Don't forget to put declarations in your .h files. 
@@ -22,6 +23,7 @@ extern "C" {
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <stdlib.h>
+#include "3D.h"
 
 
 /* the clipping window */
@@ -66,11 +68,14 @@ void draw_line(float x0, float y0, float x1, float y1)
   int result;
   int width,height;
 
+
+
   /* set the clipping window */
   
   glGetIntegerv(GL_VIEWPORT, viewport);
   width = abs(viewport[2]-viewport[0]);
   height = abs(viewport[3]-viewport[1]);
+  printf("78-width:%d, height:%d\n", width, height);
 
   set_clip_window (0.0, 0.0, width - 0.51, height - 0.51);
 
@@ -86,6 +91,12 @@ void draw_line(float x0, float y0, float x1, float y1)
   dx = x1 - x0;
   dy = y1 - y0;
 
+
+	printf("3D:94-x0:%f,y0:%f\n", x0, y0);
+	printf("3D:95-x1:%f,y1:%f\n", x1, y1);
+	printf("3D:96-dx:%f,dy:%f\n", dx, dy);
+
+
   /* determine whether horizontal or vertical change is larger */
 
   if (fabs(dx) > fabs(dy))
@@ -96,8 +107,10 @@ void draw_line(float x0, float y0, float x1, float y1)
   /* special case to avoid dividing by zero */
 
   if (length == 0) {
+	//printf("3D:109-length==0\n");
     glColor3f( 1.0, 1.0, 1.0 );
     glBegin(GL_POINTS);
+	//printf("3D:111-length==0  -x0:%f, y0:%f\n", x0, y0);
     glVertex2i((int) floor(x0+0.5), (int) floor(y0+0.5));
     glEnd();
    
@@ -115,7 +128,9 @@ void draw_line(float x0, float y0, float x1, float y1)
   for (i = 0; i <= length; i++) {
     glColor3f( 1.0, 1.0, 1.0 );
     glBegin(GL_POINTS);
-    glVertex2i((int) floor(x+0.5), (int) floor(y+0.5));
+	//printf("3D:130-(int) floor(x+0.5):%d, (int) floor(y+0.5):%d\n", (int) floor(x+0.5), (int) floor(y+0.5));
+
+	glVertex2i((int) floor(x+0.5), (int) floor(y+0.5));
     glEnd();
     
 
@@ -415,62 +430,55 @@ int near_far_clip(
 #define COL 4
 
 
-/* Definitions of the types of structures and variables used in the following 
+/* Definitions of the types of structures and variables used in the following
    code.  Use these or implement your own. */
 
-typedef struct                  /* structure definitions */
-{
-   float  mat[ROW][COL];
-}  matrix_unit; 
 
-typedef struct
-{
-   float i;
-   float j;
-   float k;
-} Vector;
-
-typedef struct
-{
-   float x;
-   float y;
-   float z;
-   float r;
-   float g;
-   float b;
-} Vertex_unit;
-
-typedef struct
-{
-  float mat41[ROW];
-} matrix41;
-
-static float Near, Far;
+float Near=-10, Far=10;
 
 float w;
 
 int perspflag=0;
 
-static matrix_unit I = {
+const matrix_unit I = {
    { {1., 0., 0., 0.},
      {0., 1., 0., 0.},
      {0., 0., 1., 0.},
      {0., 0., 0., 1.}  },
-};  
+};
 
-matrix_unit *stack[50];    /* array of pointers to act as a stack */
+matrix_unit ini = {
+		   { {1., 0., 0., 0.},
+		     {0., 1., 0., 0.},
+		     {0., 0., 1., 0.},
+		     {0., 0., 0., 1.}  },
+		};
+
+//matrix_unit current = I;
+
+matrix_unit *stack[50]={&ini};    /* array of pointers to act as a stack */
+
+
 
 int top = 0;                   /* points to top of the stack */
 
 int width, height;         /* height and width of frame buffer */
 
-static matrix_unit orth;       /* global ortho and perspective matrices */
-                               /* to be used in Vertex3f */    
-static matrix_unit perspect;
+matrix_unit orth;
+/* global ortho and perspective matrices */
+/* to be used in Vertex3f */
+
+
+matrix_unit perspect= {
+		   { {1., 0., 0., 0.},
+		     {0., 1., 0., 0.},
+		     {0., 0., 1., 0.},
+		     {0., 0., 0., 1.}  },
+		   };
 
 
 /* These go in your .h file */
-void gtLookAt( float fx, float fy, float fz, float atx, float aty, 
+void gtLookAt( float fx, float fy, float fz, float atx, float aty,
 	       float atz, float upx, float upy, float upz);
 void gtVertex3f(float x, float y, float z);
 
@@ -508,12 +516,24 @@ int Mult_end(matrix_unit *M, matrix41 *V, matrix41 *result) {
         printf("error in matrix multiplication \n");
         return 1;
     }
+
+    //printf("518-input:\n");
+    //for(i=0;i<4;i++)
+    	//printf("520-intput[%d]:%f\n", i, (V->mat41)[i]);
+    //printf("521-end\n");
+
     for (i=0; i<4; i++) {
             (result->mat41)[i] = 0;
-        for (j=0; j<4; j++) 
-                (result->mat41)[i] += (M->mat)[i][j]*(V->mat41)[j];
-    }
+        for (j=0; j<4; j++) {
 
+                (result->mat41)[i] += (M->mat)[i][j]*(V->mat41)[j];
+        		//printf("522-result[%d]:%f\n", i, (result->mat41)[i]);
+        }
+    }
+    //printf("525-result:\n");
+    //for(i=0;i<4;i++)
+    	//printf("527-result[%d]:%f\n", i, (result->mat41)[i]);
+    //printf("528-end\n");
     return 0;
 }
 
@@ -538,7 +558,7 @@ int Mult_mat(matrix_unit *left, matrix_unit *right, matrix_unit *result) {
     return 0;
 }
 
-int Copy_mat(matrix_unit *from, matrix_unit *to) {
+int Copy_mat(const matrix_unit *from, matrix_unit *to) {
     int i, j;
     if (from != NULL && to != NULL) {
         for (i=0; i<ROW; i++) 
@@ -561,6 +581,8 @@ int Copy_mat(matrix_unit *from, matrix_unit *to) {
 void gtLookAt( float fx, float fy, float fz, float atx, float aty, 
 	       float atz, float upx, float upy, float upz)
 {
+
+   //printf("571-gtLookAt\n");
    float dx, dy, dz ;
    Vector slnv, rx, ry, rz, up;
    matrix_unit ltrans, tmpsln, *t, rfin, lookat;
@@ -596,14 +618,31 @@ void gtLookAt( float fx, float fy, float fz, float atx, float aty,
    rfin.mat[2][0] = -rz.i; rfin.mat[2][1] = -rz.j; rfin.mat[2][2] = -rz.k;
 
    Mult_mat(&rfin, &ltrans, &lookat);
-  
+
    /* Multiply the lookat matrix by the matrix currently on the top 
       of the stack.  This then becomes the new top of the stack. */
 
    /*  This will depend on how you implemented your stack */
-  Mult_mat(stack[top], &lookat, &tmpsln);  
-  Copy_mat(&tmpsln, stack[top]);
+   Mult_mat(stack[top], &lookat, &tmpsln);
+
+   Copy_mat(&tmpsln, stack[top]);
    
+	printf("624-stack[%d]:\n", top);
+	for(int i = 0; i <4;i++){
+		for(int j = 0; j<4;j++){
+			printf("%f ", stack[top]->mat[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("632- I:\n");
+	for(int i = 0; i <4;i++){
+		for(int j = 0; j<4;j++){
+			printf("%f ", I.mat[i][j]);
+		}
+		printf("\n");
+	}
+
 }
 /*------------------------------End of gtLookAt -------------------------*/
 
@@ -635,11 +674,14 @@ void gtVertex3f(float x, float y, float z)
 
   printflag++;       /* increase counter */
   
+  //printf("3D.c:640-printflag:%d\n", printflag);
+
   if(printflag==1) { /* if the first vertex, save the points */
     savemat.mat41[0]=tmp.mat41[0];
     savemat.mat41[1]=tmp.mat41[1];
     savemat.mat41[2]=tmp.mat41[2];
     savemat.mat41[3]=1;
+	//printf("3D.c:653-savemat.mat41:%f %f %f\n", savemat.mat41[0], savemat.mat41[1], savemat.mat41[2]);
   }
   if(printflag==2) { /* if the second vertex, test clipping */
 
@@ -650,11 +692,15 @@ void gtVertex3f(float x, float y, float z)
     x0=savemat.mat41[0];
     y0=savemat.mat41[1];
     z0=savemat.mat41[2];
-  
+
+	//printf("3D.c:665-  x0 vector  %f %f %f\n", x0, y0, z0);
+	//printf("3D.c:666-  x1 vector  %f %f %f\n", x1, y1, z1);
+
+
     /* if clipping occurs and points are within view volume, draw line */
     /* from v1 to v2 */
     if(near_far_clip(Near, Far, &x0, &y0, &z0, &x1, &y1, &z1)==1) {
-	
+	printf("3D.c:665-within clipping\n");
 	pvert1.mat41[0]=x0;
 	pvert1.mat41[1]=y0; 
 	pvert1.mat41[2]=z0;
@@ -665,9 +711,45 @@ void gtVertex3f(float x, float y, float z)
 	pvert2.mat41[3]=1;
 
 	if(perspflag==0) {  /* if not a perpective projection, use ortho */
+	  printf("3D.c:676-ortho\n");
 
+	 GLint viewport[4];
+	 glGetIntegerv(GL_VIEWPORT,viewport);
+	 width = abs(viewport[2]-viewport[0]);
+	 height = abs(viewport[3]-viewport[1]);
+	  printf("698-width:%d, height:%d\n", width, height);
+	  /*
+	 orth= {
+					   { {1        , 0.        , 0.     , 0},
+					     {0.       , 1.        , 0.     , 0},
+					     {0.       , 0.        , 0      , 0},
+					     {0.       , 0.        , 0.     , 1}  },
+					   };
+
+*/
+	  /*
+	 orth= {
+				   { {width/2.0, 0.        , 0.     , (width-1) /2.0},
+				     {0.       , height/2.0, 0.     , (height-1)/2.0},
+				     {0.       , 0.        , 1      , 0  		    },
+				     {0.       , 0.        , 0.     , 1             }  },
+				   };
+*/
 	  Mult_end(&orth, &pvert1, &vertex1); /* calculate 2d coordinates */
 	  Mult_end(&orth, &pvert2, &vertex2);
+
+
+	  printf("print ortho:\n");
+	  for(int i = 0; i<4; i++){
+		  for(int j=0; j<4;j++){
+			  	 printf("%f ", orth.mat[i][j]);
+		  }
+		  printf("\n");
+	  }
+
+
+
+	  printf("3D.c-728: Vertex 1: %f %f\n3D.c-728: Vertex 2: %f %f\n",vertex1.mat41[0],vertex1.mat41[1],vertex2.mat41[0],vertex2.mat41[1]);
 
 	  draw_line(vertex1.mat41[0], vertex1.mat41[1], 
 		    vertex2.mat41[0], vertex2.mat41[1]);
@@ -701,12 +783,14 @@ void gtVertex3f(float x, float y, float z)
 	}
     }
 
-    else
+    else{
+      printf("3D.c:717-outside clipping\n");
       printflag=0;  /* if vertices beyond clipping plane, reset counter */
+    }
 
   }
 }
-  
+
 /*--------------------End of gtVertex3f----------------------------------*/
 
 

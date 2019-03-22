@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Lookat.hh"
 #include "3D.h"
+#include "Lookat.hh"
+#include "Util.hh"
 
 
 Lookat::Lookat(){}
@@ -43,6 +44,12 @@ Lookat::lookat(std::vector<std::string> paramList){
 			      // float atz, float upx, float upy, float upz);
 		gtLookAt(fx,fy,fz,ax,ay,az,ux,uy,uz);
 
+		Util::debug_head("Lookat.cpp");
+			std::cout<<"stack["<<top<<"]:"<<std::endl;
+			Util::print_mat(stack[top]);
+			std::cout<<"I:"<<std::endl;
+			Util::print_mat(&I);
+		Util::debug_tail();
 
 		return "Lookat Done";
 	}
