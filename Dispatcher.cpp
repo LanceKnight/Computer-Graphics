@@ -19,6 +19,7 @@
 #include "Ortho.hh"
 #include "Perspective.hh"
 #include "Lookat.hh"
+#include "Pause.hh"
 #include "Vertex.hh"
 #include "Reset.hh"
 #include "Util.hh"
@@ -296,6 +297,21 @@ Dispatcher::dispatch(char line[]){
 
 
 	}
+
+//pause branch
+	if(!strcmp(line, "pause"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to pause branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Pause::pause(paramList).c_str());
+
+
+	}
+
 
 //other processing
    if (line == NULL)
