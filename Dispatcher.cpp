@@ -21,7 +21,6 @@
 #include "Ortho.hh"
 #include "Perspective.hh"
 #include "Lookat.hh"
-#include "Vertex.hh"
 #include "Reset.hh"
 #include "Pause.hh"
 #include "Orient.hh"
