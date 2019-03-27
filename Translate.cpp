@@ -27,21 +27,25 @@ Translate::translate(std::vector<std::string> paramList){
 				return "illegal params";
 
 			}
-			matrix_unit translate_mat = {
+
+
+
+			matrix_unit * translate_mat = new matrix_unit({
 					   { {1., 0., 0., x},
 					     {0., 1., 0., y},
 					     {0., 0., 1., z},
 					     {0., 0., 0., 1.0}  },
-					};
-			matrix_unit temp_mat;
-			Mult_mat(&current, &translate_mat, &temp_mat);
-			Copy_mat(&temp_mat, &current);
+					});
+			matrix_unit tmpsln;
 
+			Mult_mat(stack[top], translate_mat, &tmpsln);
+			Copy_mat(&tmpsln, stack[top]);
+/*
 			Util::debug_head("Translate.cpp");
-				std::cout<<"translate_mat:"<<std::endl;
-				Util::print_mat(translate_mat);
+				std::cout<<"stack["<<top<<"]:"<<std::endl;
+				Util::print_mat(stack[top]);
 			Util::debug_tail();
-
+*/
 		return "Translate Done";
 	}
 	else{

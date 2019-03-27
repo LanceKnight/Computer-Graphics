@@ -2,6 +2,7 @@
 #include "Scale.hh"
 #include "3D.h"
 #include "Matrix.hh"
+#include "Util.hh"
 
 
 std::string
@@ -12,14 +13,14 @@ Scale::scale(std::vector<std::string> paramList){
 		if(paramList.size() <3){
 				return "too few parameters";
 			}
-			float x = 0;
-			float y = 0;
-			float z = 0;
+			float sx = 0;
+			float sy = 0;
+			float sz = 0;
 
 			try{
-				x = std::stod(paramList[0]);
-				y = std::stod(paramList[1]);
-				z = std::stod(paramList[2]);
+				sx = std::stod(paramList[0]);
+				sy = std::stod(paramList[1]);
+				sz = std::stod(paramList[2]);
 
 			}
 			catch(...){
@@ -27,14 +28,22 @@ Scale::scale(std::vector<std::string> paramList){
 
 			}
 			matrix_unit scale_mat = {
-					   { {1., 0., 0., x},
-					     {0., 1., 0., y},
-					     {0., 0., 1., z},
+					   { {sx, 0., 0., 0. },
+					     {0., sy, 0., 0. },
+					     {0., 0., sz, 0. },
 					     {0., 0., 0., 1.0}  },
 					};
-			Mult_mat(&current, &scale_mat, &current);
 
+			matrix_unit tmpsln;
 
+			Mult_mat(stack[top], &scale_mat, &tmpsln);
+			Copy_mat(&tmpsln, stack[top]);
+/*
+			Util::debug_head("Scale.cpp");
+				std::cout<<"stack["<<top<<"]:"<<std::endl;
+				Util::print_mat(stack[top]);
+			Util::debug_tail();
+*/
 		return "Scale Done";
 	}
 	else{

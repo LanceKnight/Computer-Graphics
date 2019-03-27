@@ -19,13 +19,14 @@ Push::push(std::vector<std::string> paramList){
 			matrix_unit * current = new matrix_unit(*stack[top]);
 			top++;
 			stack[top] = current;
-
+/*
 			Util::debug_head("Push.cpp");
 				std::cout<<"stack["<<top<<"]:"<<std::endl;
 				Util::print_mat(stack[top]);
 				std::cout<<"I:"<<std::endl;
 				Util::print_mat(&I);
 			Util::debug_tail();
+			*/
 		}
 		else{
 			return "too many matrics are in the stack";

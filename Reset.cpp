@@ -23,12 +23,15 @@ Reset::reset(std::vector<std::string> paramList){
 		Copy_mat(&I, &i);
 
 		stack[0] = &i;
+
+		/*
 		Util::debug_head("Reset.cpp");
 			std::cout<<"stack["<<top<<"]:"<<std::endl;
 			Util::print_mat(stack[top]);
 			std::cout<<"I:"<<std::endl;
 			Util::print_mat(&I);
 		Util::debug_tail();
+		*/
 
 		return "Reset Done";
 	}

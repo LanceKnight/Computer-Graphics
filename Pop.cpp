@@ -18,12 +18,14 @@ Pop::pop(std::vector<std::string> paramList){
 		if(top>0){
 			delete stack[top];
 			top--;
+			/*
 			Util::debug_head("Pop.cpp");
 				std::cout<<"stack["<<top<<"]:"<<std::endl;
 				Util::print_mat(stack[top]);
 				std::cout<<"I:"<<std::endl;
 				Util::print_mat(&I);
 			Util::debug_tail();
+			*/
 		}
 		else{
 			return "at least one identity matrix should be remained in the stack";
