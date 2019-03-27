@@ -27,8 +27,11 @@ Perspective::perspective(std::vector<std::string> paramList){
 		try{
 			fov = std::stod(paramList[0]);
 			a = std::stod(paramList[1]);
-			n = std::stod(paramList[2])+0.0001;
-			f = std::stod(paramList[3])+0.0001;
+			n = std::stod(paramList[2]);
+			f = std::stod(paramList[3]);
+			if(fov>=180 || fov <=0){
+				return "fov is should be >0 and <180";
+			}
 		}
 		catch(...){
 			return "illegal params";
@@ -49,6 +52,8 @@ Perspective::perspective(std::vector<std::string> paramList){
 		float b = -t;
 		float r = t * a;
 		float l = -t * a;
+		Near = -n;
+		Far = -f;
 		matrix_unit new_perspect= {
 				   { {2.0*n/(r-l)  , 0.          , (l+r)/(l-r) , 0            },
 				     {0.           , 2.0*n/(t-b) , 0.          , 0            },
@@ -75,8 +80,6 @@ Perspective::perspective(std::vector<std::string> paramList){
 		Util::debug_head("Perspective.cpp");
 			std::cout<<"perspect:"<<std::endl;
 			Util::print_mat(&perspect);
-			std::cout<<"I:"<<std::endl;
-			Util::print_mat(&I);
 		Util::debug_tail();
 
 		return "Perspective Done";
