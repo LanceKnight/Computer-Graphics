@@ -17,6 +17,7 @@
 #include "Pop.hh"
 #include "Translate.hh"
 #include "Scale.hh"
+#include "Rotate.hh"
 #include "Ortho.hh"
 #include "Perspective.hh"
 #include "Lookat.hh"
@@ -235,11 +236,24 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "scale"))
 	{
 
-		Util::debug_head("Scale.cpp");
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Scale branch"<<std::endl;
 
 		Util::debug_tail();
 		strcpy(line, Scale::scale(paramList).c_str());
+	}
+
+
+
+//rotate branch
+	if(!strcmp(line, "rotate"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to Rotate branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Rotate::rotate(paramList).c_str());
 	}
 
 //Ortho branch
