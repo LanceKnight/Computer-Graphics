@@ -29,19 +29,22 @@ Ortho::ortho(std::vector<std::string> paramList){
 			r = std::stod(paramList[1]);
 			b = std::stod(paramList[2]);
 			t = std::stod(paramList[3]);
-			n = -std::stod(paramList[4]);
-			f = -std::stod(paramList[5]);
+			n = std::stod(paramList[4]);
+			f = std::stod(paramList[5]);
 		}
 		catch(...){
 			return "illegal params";
 
 		}
+
+		Near = -n;
+		Far = -f;
 		perspflag = 0;
 		matrix_unit new_orth= {
-				   { {2.0/(r-l), 0.     , 0.     , -(r+l)/(r-l) },
-				     {0.       , 2/(t-b), 0.     , -(t+b)/(t-b) },
-				     {0.       , 0.     , -2/(f-n),-(f+n)/(f-n) },
-				     {0.       , 0.     , 0.     , 1            }  },
+				   { {2.0/(r-l), 0.     ,   0.     , -(r+l)/(r-l) },
+				     {0.       , 2.0/(t-b), 0.     , -(t+b)/(t-b) },
+				     {0.       , 0.     ,   -2.0/(f-n),-(f+n)/(f-n) },
+				     {0.       , 0.     ,   0.     , 1            }  },
 				   };
 		 GLint viewport[4];
 		 glGetIntegerv(GL_VIEWPORT,viewport);
