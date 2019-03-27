@@ -10,7 +10,7 @@ Orient::orient(std::vector<std::string> paramList){
 
 
 	if(paramList.size()<=9){
-		if(paramList.size() <3){
+		if(paramList.size() <9){
 				return "too few parameters";
 			}
 			float a = 0;
@@ -26,12 +26,12 @@ Orient::orient(std::vector<std::string> paramList){
 				a = std::stod(paramList[0]);
 				b = std::stod(paramList[1]);
 				c = std::stod(paramList[2]);
-				d = std::stod(paramList[0]);
-				e = std::stod(paramList[1]);
-				f = std::stod(paramList[2]);
-				g = std::stod(paramList[0]);
-				h = std::stod(paramList[1]);
-				i = std::stod(paramList[2]);
+				d = std::stod(paramList[3]);
+				e = std::stod(paramList[4]);
+				f = std::stod(paramList[5]);
+				g = std::stod(paramList[6]);
+				h = std::stod(paramList[7]);
+				i = std::stod(paramList[8]);
 
 			}
 			catch(...){
