@@ -21,10 +21,13 @@
 #include "Ortho.hh"
 #include "Perspective.hh"
 #include "Lookat.hh"
-#include "Pause.hh"
 #include "Vertex.hh"
 #include "Reset.hh"
+#include "Pause.hh"
+#include "Orient.hh"
+//#include "Test3D"
 #include "Util.hh"
+
 
 //static int nested_read_ = 0;//current nested read
 
@@ -337,6 +340,34 @@ Dispatcher::dispatch(char line[]){
 
 	}
 
+//orient branch
+	if(!strcmp(line, "orient"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to orient branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Orient::orient(paramList).c_str());
+
+
+	}
+/*
+//Test-3d branch
+	if(!strcmp(line, "test3d"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to test3d branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Test3D::test3d(paramList).c_str());
+
+
+	}
+*/
 
 //other processing
    if (line == NULL)
