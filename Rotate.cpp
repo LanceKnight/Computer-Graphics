@@ -34,24 +34,20 @@ Rotate::rotate(std::vector<std::string> paramList){
 			Unitvec(x, y, z, &w);
 			Vector arbi = {1,0,0};
 			Vector u;
-			Cross(&w, &arbi, &u);
-			if(u.i == 0 && u.j==0 && u.k == 0){
+			Vector temp;
+			Cross(&w, &arbi, &temp);
+			if(temp.i == 0 && temp.j==0 && temp.k == 0){
 				arbi.i = 0;
 				arbi.j = 1;
 				arbi.k = 0;
-				Cross(&w, &arbi, &u);
+				Cross(&w, &arbi, &temp);
 			}
-			Vector temp;
-			Unitvec(u.i, u.j, u.k, &temp);
-			u.i = temp.i;
-			u.j = temp.j;
-			u.k = temp.k;
+			Unitvec(temp.i, temp.j, temp.k, &u);
+
 			Vector v;
-			Cross(&w, &u, &v);
-			Unitvec(v.i, v.j, v.k, &temp);
-			v.i = temp.i;
-			v.j = temp.j;
-			v.k = temp.k;
+			Cross(&w, &u, &temp);
+			Unitvec(temp.i, temp.j, temp.k, &v);
+
 
 			matrix_unit  mat1 ={
 					   { {u.i, v.i, w.i, 0.},
@@ -62,7 +58,7 @@ Rotate::rotate(std::vector<std::string> paramList){
 			matrix_unit  mat2 ={
 					   { {cos(theta*M_PI/180), -sin(theta*M_PI/180), 0., 0.},
 					     {sin(theta*M_PI/180), cos(theta*M_PI/180) , 0., 0.},
-					     {0.                 , 0.                 , 0., 0.},
+					     {0.                 , 0.                 ,  1., 0.},
 					     {0.                 , 0.                  , 0. , 1.}  },
 					   };
 
@@ -72,6 +68,8 @@ Rotate::rotate(std::vector<std::string> paramList){
 					     {w.i, w.j, w.k, 0.},
 					     {0. , 0. , 0. , 1.}  },
 					   };
+
+
 
 			matrix_unit mat12;
 			matrix_unit * rotate_mat = new matrix_unit;
@@ -88,11 +86,23 @@ Rotate::rotate(std::vector<std::string> paramList){
 
 			Mult_mat(stack[top], rotate_mat, &tmpsln);
 			Copy_mat(&tmpsln, stack[top]);
-
+/*
 			Util::debug_head("Rotate.cpp");
+				std::cout<<"w: "<< w.i<<" " <<w.j<<" "<<w.k<<std::endl;
+				std::cout<<"u: "<< u.i<<" " <<u.j<<" "<<u.k<<std::endl;
+				std::cout<<"v: "<< v.i<<" " <<v.j<<" "<<v.k<<std::endl;
+				std::cout<<"mat1:"<<std::endl;
+				Util::print_mat(&mat1);
+				std::cout<<"mat2:"<<std::endl;
+				Util::print_mat(&mat2);
+				std::cout<<"mat3:"<<std::endl;
+				Util::print_mat(&mat3);
+				std::cout<<"rotate_mat:"<<std::endl;
+				Util::print_mat(rotate_mat);
 				std::cout<<"stack["<<top<<"]:"<<std::endl;
 				Util::print_mat(stack[top]);
 			Util::debug_tail();
+*/
 
 		return "Rotate Done";
 	}
