@@ -15,7 +15,7 @@ std::string
 Pause::pause(std::vector<std::string> paramList){
 	if(paramList.size()<1){
 
-		usleep( 600000);
+		usleep( 1000000);
 
 		return "Pause Done";
 	}
