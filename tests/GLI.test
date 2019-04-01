@@ -10,8 +10,8 @@ draw # test of no params
 nonExistentCommand 3 d 34 # non-exist command with params
 nonExistentCommand #non-exist command without params
 read #test of read command with no params
-read test1.txt test2.txt #test of read command with 2 params
+read GLI.test GLI2.test #test of read command with 2 params
 read test0.txt # test of non-existent file as params
-read test1.txt # test of recursive read, maxium nested read is 6 by default.
-read test2.txt # test of non-recursive read
-read test3.txt # test of recursive read from other file (test3.txt contains "read test1.txt")
+read GLI.test # test of recursive read, maxium nested read is 6 by default.
+read GLI2.test # test of non-recursive read
+read GLI3.test # test of recursive read from other file (test3.txt contains "read GLI.test")
