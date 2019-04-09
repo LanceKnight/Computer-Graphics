@@ -817,6 +817,21 @@ void gtVertex3f(float x, float y, float z)
   }
 }
 
+
+
+float determinant(mat3 matrix);
+float determinant(mat3 matrix){
+	float result = matrix.mat[0][0]*matrix.mat[1][1]*matrix.mat[2][2]+
+				   matrix.mat[0][1]*matrix.mat[1][2]*matrix.mat[2][0]+
+				   matrix.mat[0][2]*matrix.mat[1][0]*matrix.mat[2][1]-
+				   matrix.mat[0][2]*matrix.mat[1][1]*matrix.mat[2][0]-
+				   matrix.mat[0][1]*matrix.mat[1][0]*matrix.mat[2][2]-
+				   matrix.mat[0][0]*matrix.mat[1][2]*matrix.mat[2][1]
+
+				   ;
+	return result;
+}
+
 /*--------------------End of gtVertex3f----------------------------------*/
 
 

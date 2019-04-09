@@ -14,6 +14,8 @@ typedef struct                  /* structure definitions */
    float  mat[ROW][COL];
 }  matrix_unit;
 
+
+
 typedef struct
 {
    float i;
@@ -69,6 +71,13 @@ int Mult_end(matrix_unit *M, matrix41 *V, matrix41 *result);
 int Mult_mat(matrix_unit *left, matrix_unit *right, matrix_unit *result);
 int Copy_mat(const matrix_unit *from, matrix_unit *to);
 
+//extra matrix math support for assignment5
+typedef struct
+{
+	float mat[3][3];
+} mat3;
+
+float determinant(mat3 matrix);
 
 #endif
 
