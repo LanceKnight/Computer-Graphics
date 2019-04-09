@@ -17,6 +17,7 @@ public:
 
 
 	//data
+	static bool ortho_;
 
 	
 
