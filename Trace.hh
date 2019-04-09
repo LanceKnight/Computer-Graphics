@@ -23,7 +23,7 @@ public:
 private:
 	static Ray buildCameraRay(int i,int j);
 
-	static bool intersect(Ray ray, Shape* shape);
+	static float intersect(Ray ray, Shape* shape);
 	//private data
 
 	

@@ -1,6 +1,9 @@
-#include <iostream>
-#include <GL/glut.h>
+#include <algorithm>
 #include <cstring>
+#include <cmath>
+#include <GL/glut.h>
+#include <iostream>
+#include <limits>
 
 #include "Background.hh"
 #include "Camera.hh"
@@ -30,21 +33,31 @@ Trace::trace(std::vector<std::string> paramList){
 
 			for(int i = 0; i < Screen::nx_; i++){
 				for(int j = 0; j < Screen::ny_; j++){
+					float smallest_t = std::numeric_limits<float>::infinity();
+					Shape* render_object;
+					bool hit = false;
 					for(std::vector<Shape*>::iterator it = Trace::object_list_.begin();it != object_list_.end();++it){
 						Ray ray = buildCameraRay(i,j);
-						if(intersect(ray, *it)){
-							checkImage[i][j][0]= (*it)->color_params_[0];
-							checkImage[i][j][1]= (*it)->color_params_[1];
-							checkImage[i][j][2]= (*it)->color_params_[2];
-						}else {
-							checkImage[i][j][0]= Background::r_;
-							checkImage[i][j][1]= Background::g_;
-							checkImage[i][j][2]= Background::b_;
-			            }
-					/*
-					checkImage[i][j][0] = (GLubyte)Screen::nx_ + (GLubyte)Screen::ny_;
-					checkImage[i][j][1] = (GLubyte)Screen::nx_ + (GLubyte)Screen::ny_;
-					checkImage[i][j][2] = (GLubyte)Screen::nx_ + (GLubyte)Screen::ny_;*/
+						float t = intersect(ray, *it);
+						if(t){
+							hit = true;
+							if(t<smallest_t){
+								smallest_t = t;
+								render_object = *it;
+							}
+						}
+
+					}
+					if(hit){
+						checkImage[i][j][0]= render_object->color_params_[0];
+						checkImage[i][j][1]= render_object->color_params_[1];
+						checkImage[i][j][2]= render_object->color_params_[2];
+					}
+					else
+					{
+						checkImage[i][j][0]= Background::r_;
+						checkImage[i][j][1]= Background::g_;
+						checkImage[i][j][2]= Background::b_;
 					}
 				}
 			}
@@ -76,7 +89,7 @@ Trace::buildCameraRay(int i, int j){
 	}
 }
 
-bool
+float
 Trace::intersect(Ray ray, Shape* shape){
 	float t0 = 0;
 	float dx = ray.dir_x_;
@@ -85,6 +98,8 @@ Trace::intersect(Ray ray, Shape* shape){
 	float ex = ray.ori_x_;
 	float ey = ray.ori_y_;
 	float ez = ray.ori_z_;
+	vec3 vec3_e = {{ex, ey, ez}};
+	vec3 vec3_d = {{dx, dy, dz}};
 	if(!strcmp(shape->type_.c_str(), "triangle")){
 		//Util::debug_head("Trace.cpp");
 			//std::cout<<"testing triangle intersection"<<std::endl;
@@ -98,6 +113,7 @@ Trace::intersect(Ray ray, Shape* shape){
 		float cx = shape->geo_params_[6];
 		float cy = shape->geo_params_[7];
 		float cz = shape->geo_params_[8];
+
 		mat3 A = {
 				   { {ax-bx    , ax-cx     , dx     },
 					 {ay-by    , ay-cy     , dy     },
@@ -112,7 +128,7 @@ Trace::intersect(Ray ray, Shape* shape){
 
 		float t = determinant(t_mat)/deter_A;
 		if(t<t0){
-			return false;
+			return 0;
 		}
 
 		mat3 gamma_mat = {
@@ -123,7 +139,7 @@ Trace::intersect(Ray ray, Shape* shape){
 		float gamma = determinant(gamma_mat)/deter_A;
 
 		if(gamma<0 ||gamma >1){
-			return false;
+			return 0;
 		}
 
 		mat3 beta_mat = {
@@ -133,12 +149,40 @@ Trace::intersect(Ray ray, Shape* shape){
 				   };
 		float beta = determinant(beta_mat)/deter_A;
 		if(beta<0 || beta>(1-gamma)){
-			return false;
+			return 0;
 		}
-		return true;
+		return t;
 
 	}
-	return true;
+	else if(!strcmp(shape->type_.c_str(), "sphere")){
+		float R = shape->geo_params_[0];
+		float cx = shape->geo_params_[1];
+		float cy = shape->geo_params_[2];
+		float cz = shape->geo_params_[3];
+		//std::cout<<"R:"<<R<<",cx:"<<cx<<",cy:"<<cy<<",cz:"<<cz<<std::endl;
+		vec3 vec3_c ={{cx, cy, cz}};
+
+		vec3 e_minus_c = vec3Minus(vec3_e, vec3_c);
+		float d_mul_e_minus_c = vec3Mul(vec3_d, e_minus_c);
+		float sq_d = vec3Mul(vec3_d, vec3_d);
+		float sq_e_c = vec3Mul(e_minus_c, e_minus_c);
+		//std::cout<<"d_mul_e_minus_c:"<<d_mul_e_minus_c<<",sq d:"<<sq_d<<",sq_e_c:"<<sq_e_c<<std::endl;
+
+		float disciminant = pow(d_mul_e_minus_c,2) - sq_d *(sq_e_c - pow(R,2));
+
+		if(disciminant<=1){
+			//std::cout<<"false"<<std::endl;
+			return 0;
+
+		}else{
+			float t = std::min( (-d_mul_e_minus_c- sqrt(disciminant))/sq_d,(-d_mul_e_minus_c+ sqrt(disciminant))/sq_d);
+
+			return t;
+		}
+
+	}
+
+	return 0;
 }
 
 
