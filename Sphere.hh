@@ -3,21 +3,31 @@
 
 #include <string>
 #include <vector>
+#include "Shape.hh"
 
 
 
-class Sphere{
+class Sphere:Shape{
 
 public:
 	Sphere();
+
+
+	Sphere(float R, float cx, float cy, float cz,
+					  float ar, float ag, float ab,
+					  float sr, float sg, float sb);
 
 	~Sphere();
 
 	std::string static sphere(std::vector<std::string> paramList);
 
 
-	//data
 
+	//data
+	//float t_;
+private:
+	//private data
+	static int counter_;
 	
 
 };
