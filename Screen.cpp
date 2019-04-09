@@ -1,50 +1,32 @@
 #include <iostream>
+extern "C"{
+#include <GL/glut.h>
+}
 #include "Screen.hh"
-#include "3D.h"
 #include "Util.hh"
 
+float Screen::nx_ = 0;
+float Screen::ny_ = 0;
 
 std::string
 Screen::screen(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=3){
-		if(paramList.size() <3){
+	if(paramList.size()<=2){
+		if(paramList.size() <2){
 				return "too few parameters";
-			}
-			float x = 0;
-			float y = 0;
-			float z = 0;
-
-			try{
-				x = std::stod(paramList[0]);
-				y = std::stod(paramList[1]);
-				z = std::stod(paramList[2]);
-
-			}
-			catch(...){
-				return "illegal params";
-
-			}
+		}
 
 
-
-			matrix_unit * screen_mat = new matrix_unit({
-					   { {1., 0., 0., x},
-					     {0., 1., 0., y},
-					     {0., 0., 1., z},
-					     {0., 0., 0., 1.0}  },
-					});
-			matrix_unit tmpsln;
-
-			Mult_mat(stack[top], screen_mat, &tmpsln);
-			Copy_mat(&tmpsln, stack[top]);
-/*
-			Util::debug_head("Screen.cpp");
-				std::cout<<"stack["<<top<<"]:"<<std::endl;
-				Util::print_mat(stack[top]);
-			Util::debug_tail();
-*/
+		try{
+			Screen::nx_ = std::stod(paramList[0]);
+			Screen::ny_ = std::stod(paramList[1]);
+		}
+		catch(...){
+			return "illegal params";
+		}
+		glutReshapeWindow(Screen::nx_, Screen::ny_);
+		glutPostRedisplay();
 		return "Screen Done";
 	}
 	else{
