@@ -832,6 +832,31 @@ float determinant(mat3 matrix){
 	return result;
 }
 
+float vec3Mul(vec3 a, vec3 b){
+	float result;
+	result= a.mat[0] *b.mat[0]+a.mat[1] *b.mat[1]+a.mat[2] *b.mat[2];
+	return result;
+}
+
+
+vec3 vec3Add(vec3 a, vec3 b){
+	vec3 result;
+	result.mat[0] = a.mat[0] +b.mat[0];
+	result.mat[1] = a.mat[1] +b.mat[1];
+	result.mat[2] = a.mat[2] +b.mat[2];
+	return result;
+}
+
+vec3 vec3Minus(vec3 a, vec3 b){
+	vec3 result;
+	result.mat[0] = a.mat[0] -b.mat[0];
+	result.mat[1] = a.mat[1] -b.mat[1];
+	result.mat[2] = a.mat[2] -b.mat[2];
+	return result;
+}
+
+
+
 /*--------------------End of gtVertex3f----------------------------------*/
 
 

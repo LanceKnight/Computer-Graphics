@@ -77,7 +77,22 @@ typedef struct
 	float mat[3][3];
 } mat3;
 
+typedef struct
+{
+	float mat[3];
+} vec3;
+
 float determinant(mat3 matrix);
+
+float vec3Mul(vec3 a, vec3 b);
+
+vec3 vec3Add(vec3 a, vec3 b);
+
+vec3 vec3Minus(vec3 a, vec3 b);
+
+vec3 vec3Div(vec3 a, vec3 b);
+
+
 
 #endif
 
