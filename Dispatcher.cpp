@@ -371,7 +371,7 @@ Dispatcher::dispatch(char line[]){
 	}
 
 //Illight branch
-	if(!strcmp(line, "Ilight"))
+	if(!strcmp(line, "ilight"))
 	{
 		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"=====DEBUG  INFO====="<<std::endl;
