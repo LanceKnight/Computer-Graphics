@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include "Ray.hh"
+#include "Shape.hh"
 
 
 
@@ -15,11 +17,16 @@ public:
 
 	std::string static trace(std::vector<std::string> paramList);
 
+	//public data
+	static std::vector<Shape *> object_list_;
 
-	//data
+private:
+	static Ray buildCameraRay(int i,int j);
+
+	static bool intersect(Ray ray, Shape* shape);
+	//private data
 
 	
-
 };
 
 
