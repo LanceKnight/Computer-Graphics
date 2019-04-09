@@ -1,6 +1,11 @@
 #include <iostream>
+
+#include "Background.hh"
 #include "Clear.hh"
-#include "3D.h"
+#include "Screen.hh"
+#include "Trace.hh"
+
+#include "main.hh"
 #include "Util.hh"
 
 
@@ -8,43 +13,21 @@ std::string
 Clear::clear(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=3){
-		if(paramList.size() <3){
-				return "too few parameters";
+	if(paramList.size() ==0){
+
+		for(int i = 0; i < Screen::nx_; i++){
+			for(int j = 0; j < Screen::ny_; j++){
+				checkImage[i][j][0]= 0;
+				checkImage[i][j][1]= 0;
+				checkImage[i][j][2]= 0;
 			}
-			float x = 0;
-			float y = 0;
-			float z = 0;
+		}
+		display();
+		Background::r_ =0;
+		Background::g_ =0;
+		Background::b_ =0;
+		Trace::object_list_.clear();
 
-			try{
-				x = std::stod(paramList[0]);
-				y = std::stod(paramList[1]);
-				z = std::stod(paramList[2]);
-
-			}
-			catch(...){
-				return "illegal params";
-
-			}
-
-
-
-			matrix_unit * clear_mat = new matrix_unit({
-					   { {1., 0., 0., x},
-					     {0., 1., 0., y},
-					     {0., 0., 1., z},
-					     {0., 0., 0., 1.0}  },
-					});
-			matrix_unit tmpsln;
-
-			Mult_mat(stack[top], clear_mat, &tmpsln);
-			Copy_mat(&tmpsln, stack[top]);
-/*
-			Util::debug_head("Clear.cpp");
-				std::cout<<"stack["<<top<<"]:"<<std::endl;
-				Util::print_mat(stack[top]);
-			Util::debug_tail();
-*/
 		return "Clear Done";
 	}
 	else{
