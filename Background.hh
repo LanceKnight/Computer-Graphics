@@ -17,8 +17,9 @@ public:
 
 
 	//data
-
-	
+	static float r_;
+	static float g_;
+	static float b_;
 
 };
 
