@@ -5,8 +5,8 @@ extern "C"{
 #include "Screen.hh"
 #include "Util.hh"
 
-float Screen::nx_ = 0;
-float Screen::ny_ = 0;
+int Screen::nx_ = 0;
+int Screen::ny_ = 0;
 
 std::string
 Screen::screen(std::vector<std::string> paramList){

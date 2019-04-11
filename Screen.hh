@@ -17,8 +17,8 @@ public:
 
 
 	//data
-	static float nx_;
-	static float ny_;
+	static int nx_;
+	static int ny_;
 	
 
 };
