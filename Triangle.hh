@@ -3,11 +3,13 @@
 
 #include <string>
 #include <vector>
+
+#include "3D.h"
 #include "Shape.hh"
 
 
 
-class Triangle:Shape{
+class Triangle:public Shape{
 
 public:
 	Triangle();
@@ -16,15 +18,15 @@ public:
 			 float vx, float vy, float vz,
 			 float wx, float wy, float wz,
 			 float ar, float ag, float ab,
-			 float sr, float sg, float sb);
+			 float rr, float rg, float rb);
+
 
 	~Triangle();
 
 	std::string static triangle(std::vector<std::string> paramList);
 
+	static vec3 norm_;
 
-private:
-	//private data
 	static int counter_;
 
 	

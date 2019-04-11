@@ -1,6 +1,9 @@
 #include <iostream>
+#include <vector>
 #include "Shape.hh"
 #include "Util.hh"
+
+
 
 
 Shape::Shape(){
@@ -11,6 +14,8 @@ Shape::~Shape(){
 
 }
 
+
+/*
 std::vector<float>
 Shape::get_geo_params(){
 	return this->geo_params_;
@@ -37,5 +42,5 @@ void
 Shape::set_color_params(std::vector<float> param_list){
 	this->color_params_ = param_list;
 
-}
+}*/
 

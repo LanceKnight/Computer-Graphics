@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include "Triangle.hh"
 #include "Trace.hh"
@@ -22,29 +23,30 @@ Triangle::Triangle(float ux, float uy, float uz,
 				   float rr, float rg, float rb){
 	std::vector<float> geo_params;
 	std::vector<float> color_params;
-	geo_params.push_back(ux);
-	geo_params.push_back(uy);
-	geo_params.push_back(uz);
-	geo_params.push_back(vx);
-	geo_params.push_back(vy);
-	geo_params.push_back(vz);
-	geo_params.push_back(wx);
-	geo_params.push_back(wy);
-	geo_params.push_back(wz);
-	color_params.push_back(ar);
-	color_params.push_back(ag);
-	color_params.push_back(ab);
-	color_params.push_back(rr);
-	color_params.push_back(rg);
-	color_params.push_back(rb);
+	geo_params_.push_back(ux);
+	geo_params_.push_back(uy);
+	geo_params_.push_back(uz);
+	geo_params_.push_back(vx);
+	geo_params_.push_back(vy);
+	geo_params_.push_back(vz);
+	geo_params_.push_back(wx);
+	geo_params_.push_back(wy);
+	geo_params_.push_back(wz);
+	color_params_.push_back(ar);
+	color_params_.push_back(ag);
+	color_params_.push_back(ab);
+	color_params_.push_back(rr);
+	color_params_.push_back(rg);
+	color_params_.push_back(rb);
 
-	this-> name_ = "triangle" + counter_;
+	this-> name_ = "triangle "+ std::to_string(counter_);
 	this-> type_ = "triangle";
-	this-> geo_params_ = geo_params;
-	this-> color_params_ = color_params;
+	//this->geo_params_ = geo_params;
+	//this->color_params_= color_params;
 
 	this-> counter_++;
 }
+
 
 
 std::string
@@ -67,9 +69,9 @@ Triangle::triangle(std::vector<std::string> paramList){
 		float ar = 0;
 		float ag = 0;
 		float ab = 0;
-		float sr = 0;
-		float sg = 0;
-		float sb = 0;
+		float rr = 0;
+		float rg = 0;
+		float rb = 0;
 		try{
 			ux = std::stod(paramList[0]);
 			uy = std::stod(paramList[1]);
@@ -83,9 +85,9 @@ Triangle::triangle(std::vector<std::string> paramList){
 			ar = std::stod(paramList[9]);
 			ag = std::stod(paramList[10]);
 			ab = std::stod(paramList[11]);
-			sr = std::stod(paramList[12]);
-			sg = std::stod(paramList[13]);
-			sb = std::stod(paramList[14]);
+			rr = std::stod(paramList[12]);
+			rg = std::stod(paramList[13]);
+			rb = std::stod(paramList[14]);
 		}
 		catch(...){
 			return "illegal params";
@@ -94,7 +96,7 @@ Triangle::triangle(std::vector<std::string> paramList){
 										       vx, vy, vz,
 										       wx, wy, wz,
 										       ar, ag, ab,
-										       sr, sg, sb);
+										       rr, rg, rb);
 
 
 		Trace::object_list_.push_back(new_triangle);
