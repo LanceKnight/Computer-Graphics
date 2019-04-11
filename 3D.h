@@ -86,11 +86,17 @@ float determinant(mat3 matrix);
 
 float vec3Mul(vec3 a, vec3 b);
 
+vec3 vec3Cross(vec3 a, vec3 b);
+
+vec3 vec3NumMul(float num, vec3 a);
+
 vec3 vec3Add(vec3 a, vec3 b);
 
 vec3 vec3Minus(vec3 a, vec3 b);
 
 vec3 vec3Div(vec3 a, vec3 b);
+
+vec3 normalize(vec3 a);
 
 
 
