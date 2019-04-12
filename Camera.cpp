@@ -1,25 +1,26 @@
 #include <iostream>
 #include "Camera.hh"
-#include "3D.h"
 #include "Util.hh"
 
+
+bool Camera::perspect_ = false;
 
 std::string
 Camera::camera(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=3){
-		if(paramList.size() <3){
+	if(paramList.size()<=14){
+		if(paramList.size() <14){
 				return "too few parameters";
 			}
-			float x = 0;
-			float y = 0;
-			float z = 0;
+			float ex = 0;
+			float ey = 0;
+			float ez = 0;
 
 			try{
-				x = std::stod(paramList[0]);
-				y = std::stod(paramList[1]);
-				z = std::stod(paramList[2]);
+				ex = std::stod(paramList[0]);
+				ey = std::stod(paramList[1]);
+				ez = std::stod(paramList[2]);
 
 			}
 			catch(...){
@@ -29,22 +30,7 @@ Camera::camera(std::vector<std::string> paramList){
 
 
 
-			matrix_unit * camera_mat = new matrix_unit({
-					   { {1., 0., 0., x},
-					     {0., 1., 0., y},
-					     {0., 0., 1., z},
-					     {0., 0., 0., 1.0}  },
-					});
-			matrix_unit tmpsln;
 
-			Mult_mat(stack[top], camera_mat, &tmpsln);
-			Copy_mat(&tmpsln, stack[top]);
-/*
-			Util::debug_head("Camera.cpp");
-				std::cout<<"stack["<<top<<"]:"<<std::endl;
-				Util::print_mat(stack[top]);
-			Util::debug_tail();
-*/
 		return "Camera Done";
 	}
 	else{
