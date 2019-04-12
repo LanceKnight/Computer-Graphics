@@ -41,8 +41,9 @@ Sphere::Sphere(float R, float cx, float cy, float cz,
 
 	this-> counter_++;
 
-	if(sr==0 && sg ==0 && sb ==0){
+	if((sr!=0) || (sg !=0) || (sb !=0)){
 		reflected_=true;
+
 	}
 
 }

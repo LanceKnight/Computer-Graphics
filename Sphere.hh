@@ -16,7 +16,7 @@ public:
 	Sphere(float R, float cx, float cy, float cz,
 					float ar, float ag, float ab,
 					float rr, float rg, float rb,
-					float sr=0, float sg=0, float sb=0);
+					float sr, float sg, float sb);
 
 
 
