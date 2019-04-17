@@ -25,7 +25,6 @@ public:
 
 	std::string static triangle(std::vector<std::string> paramList);
 
-	static vec3 norm_;
 
 	static int counter_;
 

@@ -30,8 +30,8 @@ public:
 	std::string name_;
 	std::vector<float> geo_params_;
 	std::vector<float> color_params_;
-	vec3 norm_;
 	bool reflected_ = false;
+	vec3 norm_;
 
 };
 
