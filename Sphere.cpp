@@ -36,8 +36,8 @@ Sphere::Sphere(float R, float cx, float cy, float cz,
 	color_params_.push_back(sg);
 	color_params_.push_back(sb);
 
-	this-> name_ = "sphere "  + std::to_string(counter_);
-	this-> type_ = "sphere";
+	name_ = "sphere "  + std::to_string(counter_);
+	type_ = "sphere";
 
 	this-> counter_++;
 

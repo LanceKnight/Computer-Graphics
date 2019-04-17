@@ -27,8 +27,6 @@ public:
 
 
 	//data
-	//float t_;
-
 	static int counter_;
 
 	
