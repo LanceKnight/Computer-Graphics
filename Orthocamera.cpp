@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Orthocamera.hh"
+#include "Camera.hh"
 
 #include "3D.h"
 #include "Util.hh"
@@ -13,6 +14,7 @@ Orthocamera::orthocamera(std::vector<std::string> paramList){
 	if(paramList.size()==0){
 
 		Orthocamera::ortho_ = true;
+		Camera::perspect_ = false;
 
 		mat3 a = {
 				   { {3    , 4     , 5     },
@@ -21,6 +23,7 @@ Orthocamera::orthocamera(std::vector<std::string> paramList){
 				   };
 		std::cout<<"========det======="<<std::endl;
 		std::cout<<determinant(a)<<std::endl;
+
 
 		return "Orthocamera Done";
 	}
