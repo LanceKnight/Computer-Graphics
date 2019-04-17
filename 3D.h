@@ -96,7 +96,7 @@ vec3 vec3Minus(vec3 a, vec3 b);
 
 vec3 vec3Div(vec3 a, vec3 b);
 
-vec3 normalize(vec3 a);
+vec3 normal(vec3 a);
 
 
 

@@ -848,9 +848,14 @@ vec3 vec3Cross(vec3 a, vec3 b){
 
 vec3 vec3NumMul(float num, vec3 a){
 	vec3 result;
-	a.mat[0]*=num;
-	a.mat[1]*=num;
-	a.mat[2]*=num;
+
+	result.mat[0] = a.mat[0]*num;
+
+	result.mat[1] = a.mat[1]*num;
+
+	result.mat[2] = a.mat[2]*num;
+
+
 	return result;
 }
 
@@ -871,10 +876,14 @@ vec3 vec3Minus(vec3 a, vec3 b){
 	return result;
 }
 
-vec3 normalize(vec3 a){
-
+vec3 normal(vec3 a){
+	//printf("Im here\n");
+	//printf("a: %f, %f, %f\n", a.mat[0],a.mat[1], a.mat[2]);
 	float norm = sqrt(a.mat[0]*a.mat[0]+a.mat[1]*a.mat[1]+a.mat[2]*a.mat[2]);
-	vec3 result = {{a.mat[0]/norm, a.mat[1]/norm, a.mat[2]/norm}};
+	vec3 result = {{0,0,0}};
+	if(norm!=0){
+		result = {{a.mat[0]/norm, a.mat[1]/norm, a.mat[2]/norm}};
+	}
 	return result;
 }
 
