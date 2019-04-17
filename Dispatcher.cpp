@@ -40,6 +40,7 @@
 #include "Clear.hh"
 #include "Ilight.hh"
 #include "Trace.hh"
+#include "Plane.hh"
 //other
 #include "Util.hh"
 
@@ -398,6 +399,16 @@ Dispatcher::dispatch(char line[]){
 			std::cout<<"dispatching to trace branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Trace::trace(paramList).c_str());
+	}
+
+	//plane branch
+	if(!strcmp(line, "plane"))
+	{
+		Util::debug_head("Dispatcher.cpp");
+		std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		std::cout<<"dispatching to plane branch"<<std::endl;
+		Util::debug_tail();
+		strcpy(line, Plane::plane(paramList).c_str());
 	}
 
 //other processing
