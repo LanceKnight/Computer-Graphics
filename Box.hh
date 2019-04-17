@@ -4,19 +4,30 @@
 #include <string>
 #include <vector>
 
+#include "3D.h"
+#include "Shape.hh"
 
 
-class Box{
+
+class Box:Shape{
 
 public:
 	Box();
+
+	Box(float ux, float uy, float uz,
+		float vx, float vy, float vz,
+		float ar, float ag, float ab,
+		float rr, float rg, float rb);
 
 	~Box();
 
 	std::string static box(std::vector<std::string> paramList);
 
 
-	//data
+
+private:
+	//private data
+	static int counter_;
 
 	
 

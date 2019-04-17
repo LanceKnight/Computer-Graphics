@@ -14,10 +14,12 @@ class Plane:Shape{
 public:
 	Plane();
 
-	Plane(float ux, float uy, float uz,
-		float vx, float vy, float vz,
-		float ar, float ag, float ab,
-		float rr, float rg, float rb);
+	Plane(float nx, float ny, float nz,
+		  float px, float py, float pz,
+		  float ar, float ag, float ab,
+		  float rr, float rg, float rb,
+		  float sr, float sg, float sb
+	);
 
 	~Plane();
 
