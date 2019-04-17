@@ -27,7 +27,7 @@ all: main
 CLI_OBJECTS=main.o Dispatcher.o Util.o Mover.o Drawer.o Colorer.o Reader.o \
 			TiffStat.o TiffRead.o TiffWrite.o Resize.o Zoom.o Border.o Select.o\
 			3D.o Push.o Pop.o Translate.o Scale.o Rotate.o Ortho.o Perspective.o Lookat.o Vertex.o Reset.o Pause.o Orient.o\
-			Screen.o Orthocamera.o Camera.o Background.o Sphere.o Triangle.o Box.o Ilight.o Clear.o Trace.o Shape.o Ray.o
+			Screen.o Orthocamera.o Camera.o Background.o Sphere.o Triangle.o Box.o Ilight.o Clear.o Trace.o Shape.o Ray.o Plane.o
 
 main: $(CLI_OBJECTS)
 	$(LINK) $(CLI_OBJECTS) $(LDADD) $(LIBS)
