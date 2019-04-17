@@ -1,0 +1,28 @@
+
+
+clear
+
+screen 1000 1000
+
+#Orthocamera
+	   #eye          #gaze             #up            #distance          #au   av          #bu  bv
+Camera 499 499 0     499 499 -100        0 1 0          60                 0    0           999  999 
+
+background 0.878 0.878 0.878 #red background
+
+	    #r   g   b      x   y    z
+Ilight  1    1   1     150 110 -10  #red lighting
+
+          #r     x   y   z          ar  ag  ab   rr  rg  rb   sr sg sb
+sphere     15    100 100 -50        0   0   0    1   0   0    0.3  0.3  0.3     # ambient is red, reflected is orange, specular is yellow
+sphere     15    200 200 -100       0   0   1    0   1   0    0  0  0    # ambient is orange, reflected is orange, specular is yellow
+sphere     15    300 300 -150       0   1   0    0   0   1    0  0  0
+sphere     15    400 400 -200       0   1   1    0   0   1    0  0  0
+sphere     15    500 500 -250       1   0   0    1   1   1    0  0  1
+sphere     15    600 400 -200       1   0   1    1   1   1    0  0  1
+sphere     15    700 300 -150       1   1   0    1   1   1    0  0  1
+sphere     15    800 200 -100       1   1   1    1   1   1    0  0  1
+sphere     15    900 100 -50        1   0   1    1   1   1    0  0  1
+
+
+trace

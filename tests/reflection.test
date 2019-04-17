@@ -1,0 +1,20 @@
+
+
+clear
+
+screen 500 500
+
+orthocamera
+
+background 0.878 0.878 0.878 #red background
+
+	    #r   g   b      x   y    z
+Ilight  1    1   1     150 110 -45  #red lighting
+
+          #r     x   y   z          ar  ag  ab   rr  rg  rb   sr sg sb
+sphere     60    100 100 -100       1   0   0    1   0   0    1  0  0     # ambient is red, reflected is orange, specular is yellow
+sphere     60    200 100 -100       0   1   0    1   0   0    0  1  0    # ambient is orange, reflected is orange, specular is yellow
+sphere     60    150 160 -100       0   0   1    1   0   0    0  0  1
+
+
+trace
