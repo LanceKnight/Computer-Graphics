@@ -26,7 +26,7 @@ std::vector<Shape *> Trace::object_list_;
 std::vector<Ilight *> Trace::light_list_;
 
 #define debug_i 250
-#define debug_j 250
+#define debug_j 400
 #define MAX_REFLECT 1
 #define t0 0
 #define t1 std::numeric_limits<float>::infinity()
@@ -85,38 +85,6 @@ Trace::trace(std::vector<std::string> paramList){
 	}
 }
 
-Ray
-Trace::buildCameraRay(int i, int j){
-	if(Orthocamera::ortho_){
-		Ray ray(j, i, -1, 0, 0 , -1 );
-		return ray;
-	}
-	else{
-		vec3 gz = {{Camera::ex_-Camera::gx_,Camera::ey_-Camera::gy_,Camera::ez_-Camera::gz_}};
-
-		vec3 up = {{Camera::ux_, Camera::uy_, Camera::uz_}};
-
-		vec3 v = normal(up);
-
-		vec3 u = normal(vec3Cross(v, gz));
-
-		vec3 w = normal(vec3Cross(u, v));
-
-		vec3 dir = vec3Add(vec3Add(vec3NumMul(j-Camera::gx_, u), vec3NumMul(i-Camera::gy_, v)), vec3NumMul(-Camera::s_, w));
-
-		if(i==499 && j ==499){
-			 std::cout<<"gz:"<<gz.mat[0]<<","<<gz.mat[1]<<","<<gz.mat[2]<<std::endl;
-			 std::cout<<"v:"<<v.mat[0]<<","<<v.mat[1]<<","<<v.mat[2]<<std::endl;
-			 std::cout<<"u:"<<u.mat[0]<<","<<u.mat[1]<<","<<u.mat[2]<<std::endl;
-			 std::cout<<"w:"<<w.mat[0]<<","<<w.mat[1]<<","<<w.mat[2]<<std::endl;
-			 std::cout<<"perspective: eye:"<<Camera::ex_<<","<< Camera::ey_<<","<<Camera::ez_<<std::endl;
-			 std::cout<<"             dir:"<<dir.mat[0]<<","<<dir.mat[1]<<","<<dir.mat[2]<<std::endl;
-		}
-
-		Ray ray( Camera::ex_, Camera::ey_, Camera::ez_ ,dir.mat[0], dir.mat[1] , dir.mat[2]);
-		return ray;
-	}
-}
 
 vec3
 Trace::getColorFromRay(Ray ray, int i, int j){
@@ -140,6 +108,10 @@ Trace::getColorFromRay(Ray ray, int i, int j){
 		}
 	}
 
+	if(i==debug_i && j ==debug_j){
+		std::cout<<"hit:"<<hit<<std::endl;
+	}
+
 	if(hit){
 		float total_light_r = 0;
 		float total_light_g = 0;
@@ -154,19 +126,22 @@ Trace::getColorFromRay(Ray ray, int i, int j){
 			float rr = 0;
 			float rg = 0;
 			float rb = 0;
-			std::string flag;
-			if(!strcmp(render_object->type_.c_str(),"triangle")){
-				flag = "tri";
-				rr = render_object->color_params_[3];
-				rg = render_object->color_params_[4];
-				rb = render_object->color_params_[5];
-			}
-			else if (!strcmp(render_object->type_.c_str(),"sphere")){
-				flag = "sphere";
-				rr = render_object->color_params_[3];
-				rg = render_object->color_params_[4];
-				rb = render_object->color_params_[5];
-			}
+			rr = render_object->color_params_[3];
+			rg = render_object->color_params_[4];
+			rb = render_object->color_params_[5];
+//			std::string flag;
+//			if(!strcmp(render_object->type_.c_str(),"triangle")){
+//				flag = "tri";
+//				rr = render_object->color_params_[3];
+//				rg = render_object->color_params_[4];
+//				rb = render_object->color_params_[5];
+//			}
+//			else if (!strcmp(render_object->type_.c_str(),"sphere")){
+//				flag = "sphere";
+//				rr = render_object->color_params_[3];
+//				rg = render_object->color_params_[4];
+//				rb = render_object->color_params_[5];
+//			}
 /*
 			if(i==debug_i && j ==debug_j ){
 				Util::debug_head("Trace.cpp");
@@ -263,6 +238,45 @@ Trace::getColorFromRay(Ray ray, int i, int j){
 }
 
 
+
+
+Ray
+Trace::buildCameraRay(int i, int j){
+	if(Orthocamera::ortho_){
+		Ray ray(j, i, -1, 0, 0 , -1 );
+		return ray;
+	}
+	else{
+		vec3 gz = {{Camera::ex_-Camera::gx_,Camera::ey_-Camera::gy_,Camera::ez_-Camera::gz_}};
+
+		vec3 up = {{Camera::ux_, Camera::uy_, Camera::uz_}};
+
+		vec3 v = normal(up);
+
+		vec3 u = normal(vec3Cross(v, gz));
+
+		vec3 w = normal(vec3Cross(u, v));
+
+		float x_convert = j*(Camera::bu_-Camera::au_)/Screen::nx_+Camera::au_;
+		float y_convert = i*(Camera::bv_-Camera::av_)/Screen::ny_+Camera::av_;
+
+		         vec3 dir = vec3Add(vec3Add(vec3NumMul(x_convert, u), vec3NumMul( y_convert,v)), vec3NumMul(-Camera::s_, w));
+		//vec3 dir = vec3Add(vec3Add(vec3NumMul(j-Camera::gx_, u), vec3NumMul(i-Camera::gy_, v)), vec3NumMul(-Camera::s_, w));
+
+//		if(i==499 && j ==499){
+//			 std::cout<<"gz:"<<gz.mat[0]<<","<<gz.mat[1]<<","<<gz.mat[2]<<std::endl;
+//			 std::cout<<"v:"<<v.mat[0]<<","<<v.mat[1]<<","<<v.mat[2]<<std::endl;
+//			 std::cout<<"u:"<<u.mat[0]<<","<<u.mat[1]<<","<<u.mat[2]<<std::endl;
+//			 std::cout<<"w:"<<w.mat[0]<<","<<w.mat[1]<<","<<w.mat[2]<<std::endl;
+//			 std::cout<<"perspective: eye:"<<Camera::ex_<<","<< Camera::ey_<<","<<Camera::ez_<<std::endl;
+//			 std::cout<<"             dir:"<<dir.mat[0]<<","<<dir.mat[1]<<","<<dir.mat[2]<<std::endl;
+//		}
+
+		Ray ray( Camera::ex_, Camera::ey_, Camera::ez_ ,dir.mat[0], dir.mat[1] , dir.mat[2]);
+		return ray;
+	}
+}
+
 Ray
 Trace::buildReflectedRay(Ray ray, vec3 norm, vec3 point, int i, int j){// i, j are just for debugging
 
@@ -295,7 +309,101 @@ Trace::buildReflectedRay(Ray ray, vec3 norm, vec3 point, int i, int j){// i, j a
 
 float
 Trace::intersect(Ray ray, Shape* shape, int i, int j){// i, j are just for debugging
-	//float t0 = 0;
+
+	if(!strcmp(shape->type_.c_str(), "triangle")){
+		return intersectTriangle(shape, ray );
+	}
+	else if(!strcmp(shape->type_.c_str(), "sphere")){
+		return intersectSphere(shape, ray);
+	}
+	else if(!strcmp(shape->type_.c_str(), "box")){
+		return intersectBox(shape, ray, i, j );
+
+
+	}
+	else if(!strcmp(shape->type_.c_str(), "plane")){
+		return intersectPlane(shape, ray);
+
+	}
+
+	return 0;
+}
+
+
+float
+Trace::intersectTriangle(Shape* shape, Ray ray){
+	float dx = ray.dir_x_;
+	float dy = ray.dir_y_;
+	float dz = ray.dir_z_;
+	float ex = ray.ori_x_;
+	float ey = ray.ori_y_;
+	float ez = ray.ori_z_;
+
+
+	float ax = shape->geo_params_[0];
+	float ay = shape->geo_params_[1];
+	float az = shape->geo_params_[2];
+	float bx = shape->geo_params_[3];
+	float by = shape->geo_params_[4];
+	float bz = shape->geo_params_[5];
+	float cx = shape->geo_params_[6];
+	float cy = shape->geo_params_[7];
+	float cz = shape->geo_params_[8];
+
+	vec3 vertex_a = {{ax,ay,az}};
+	vec3 vertex_b = {{bx,by,bz}};
+	vec3 vertex_c = {{cx,cy,cz}};
+
+	mat3 A = {
+			{ {ax-bx    , ax-cx     , dx     },
+					{ay-by    , ay-cy     , dy     },
+					{az-bz    , az-cz     , dz     }  },
+	};
+	float deter_A = determinant(A);
+	mat3 t_mat = {{
+			     {ax-bx    , ax-cx     , ax-ex     },
+			     {ay-by    , ay-cy     , ay-ey     },
+			     {az-bz    , az-cz     , az-ez     }
+	             },};
+
+	float t = determinant(t_mat)/deter_A;
+	if(t<t0){
+		return 0;
+	}
+
+	mat3 gamma_mat = {
+			{ {ax-bx    , ax-ex     , dx     },
+					{ay-by    , ay-ey     , dy     },
+					{az-bz    , az-ez     , dz     }  },
+	};
+	float gamma = determinant(gamma_mat)/deter_A;
+
+	if(gamma<0 ||gamma >1){
+		return 0;
+	}
+
+	mat3 beta_mat = {
+			{ {ax-ex    , ax-cx     , dx     },
+					{ay-ey    , ay-cy     , dy     },
+					{az-ez    , az-cz     , dz     }  },
+	};
+	float beta = determinant(beta_mat)/deter_A;
+	if(beta<0 || beta>(1-gamma)){
+		return 0;
+	}
+
+
+	vec3 norm = vec3Cross(vec3Minus(vertex_a, vertex_b),vec3Minus(vertex_a, vertex_c));
+	vec3 normalized_norm = normal(norm);
+	//std::cout<<"norm:"<<normalized_norm.mat[0]<<","<<normalized_norm.mat[1]<<","<<normalized_norm.mat[2]<<std::endl;
+
+	shape->norm_ = normalized_norm ;
+	return t;
+
+}
+
+float
+Trace::intersectSphere(Shape* shape, Ray ray){
 	float dx = ray.dir_x_;
 	float dy = ray.dir_y_;
 	float dz = ray.dir_z_;
@@ -304,242 +412,159 @@ Trace::intersect(Ray ray, Shape* shape, int i, int j){// i, j are just for debug
 	float ez = ray.ori_z_;
 	vec3 vec3_e = {{ex, ey, ez}};
 	vec3 vec3_d = {{dx, dy, dz}};
-	if(!strcmp(shape->type_.c_str(), "triangle")){
-		std::cout<<"Triangle!!!!"<<std::endl;
 
-		float ax = shape->geo_params_[0];
-		float ay = shape->geo_params_[1];
-		float az = shape->geo_params_[2];
-		float bx = shape->geo_params_[3];
-		float by = shape->geo_params_[4];
-		float bz = shape->geo_params_[5];
-		float cx = shape->geo_params_[6];
-		float cy = shape->geo_params_[7];
-		float cz = shape->geo_params_[8];
-		vec3 vertex_a = {{ax,ay,az}};
-		vec3 vertex_b = {{bx,by,bz}};
-		vec3 vertex_c = {{cx,cy,cz}};
+	float R =  shape->geo_params_[0];
+	float cx = shape->geo_params_[1];
+	float cy = shape->geo_params_[2];
+	float cz = shape->geo_params_[3];
 
-		mat3 A = {
-				{ {ax-bx    , ax-cx     , dx     },
-						{ay-by    , ay-cy     , dy     },
-						{az-bz    , az-cz     , dz     }  },
-		};
-		float deter_A = determinant(A);
-		mat3 t_mat = {
-				{ {ax-bx    , ax-cx     , ax-ex     },
-						{ay-by    , ay-cy     , ay-ey     },
-						{az-bz    , az-cz     , az-ez     }  },
-		};
 
-		float t = determinant(t_mat)/deter_A;
-		if(t<t0){
+	//std::cout<<"R:"<<R<<",cx:"<<cx<<",cy:"<<cy<<",cz:"<<cz<<std::endl;
+	vec3 vec3_c ={{cx, cy, cz}};
+
+	vec3 e_minus_c = vec3Minus(vec3_e, vec3_c);
+	float d_mul_e_minus_c = vec3Mul(vec3_d, e_minus_c);
+	float sq_d = vec3Mul(vec3_d, vec3_d);
+	float sq_e_c = vec3Mul(e_minus_c, e_minus_c);
+	//std::cout<<"d_mul_e_minus_c:"<<d_mul_e_minus_c<<",sq d:"<<sq_d<<",sq_e_c:"<<sq_e_c<<std::endl;
+
+	float disciminant = pow(d_mul_e_minus_c,2) - sq_d *(sq_e_c - pow(R,2));
+
+	if(disciminant<=1){
+		//std::cout<<"false"<<std::endl;
+		return 0;
+
+	}else{
+
+		float t;
+		float minus_term = (-d_mul_e_minus_c- sqrt(disciminant))/sq_d;
+		float add_term = (-d_mul_e_minus_c+ sqrt(disciminant))/sq_d;
+
+		if( minus_term>t0){
+
+			t = std::min( minus_term, add_term);
+		}
+		else if(add_term>t0){
+
+			t = add_term;
+		}
+		else{
 			return 0;
 		}
-
-		mat3 gamma_mat = {
-				{ {ax-bx    , ax-ex     , dx     },
-						{ay-by    , ay-ey     , dy     },
-						{az-bz    , az-ez     , dz     }  },
-		};
-		float gamma = determinant(gamma_mat)/deter_A;
-
-		if(gamma<0 ||gamma >1){
-			return 0;
-		}
-
-		mat3 beta_mat = {
-				{ {ax-ex    , ax-cx     , dx     },
-						{ay-ey    , ay-cy     , dy     },
-						{az-ez    , az-cz     , dz     }  },
-		};
-		float beta = determinant(beta_mat)/deter_A;
-		if(beta<0 || beta>(1-gamma)){
-			return 0;
-		}
-
-
-		vec3 norm = vec3Cross(vec3Minus(vertex_a, vertex_b),vec3Minus(vertex_a, vertex_c));
-		vec3 normalized_norm = normal(norm);
-		//std::cout<<"norm:"<<normalized_norm.mat[0]<<","<<normalized_norm.mat[1]<<","<<normalized_norm.mat[2]<<std::endl;
-
-		shape->norm_ = normalized_norm ;
+		vec3 p = {{ex+t*dx, ey+t*dy, ez+t*dz}};
+		vec3 p_minus_c = vec3Minus(p, vec3_c);
+		vec3 normlized_p_minus_c = {{p_minus_c.mat[0]/R, p_minus_c.mat[1]/R, p_minus_c.mat[2]/R}};
+		shape->norm_ = normlized_p_minus_c;
 		return t;
-
 	}
-	else if(!strcmp(shape->type_.c_str(), "sphere")){
-		float R =  shape->geo_params_[0];
-		float cx = shape->geo_params_[1];
-		float cy = shape->geo_params_[2];
-		float cz = shape->geo_params_[3];
-		//std::cout<<"R:"<<R<<",cx:"<<cx<<",cy:"<<cy<<",cz:"<<cz<<std::endl;
-		vec3 vec3_c ={{cx, cy, cz}};
-
-		vec3 e_minus_c = vec3Minus(vec3_e, vec3_c);
-		float d_mul_e_minus_c = vec3Mul(vec3_d, e_minus_c);
-		float sq_d = vec3Mul(vec3_d, vec3_d);
-		float sq_e_c = vec3Mul(e_minus_c, e_minus_c);
-		//std::cout<<"d_mul_e_minus_c:"<<d_mul_e_minus_c<<",sq d:"<<sq_d<<",sq_e_c:"<<sq_e_c<<std::endl;
-
-		float disciminant = pow(d_mul_e_minus_c,2) - sq_d *(sq_e_c - pow(R,2));
-
-		if(disciminant<=1){
-			//std::cout<<"false"<<std::endl;
-			return 0;
-
-		}else{
-
-			float t;
-			float minus_term = (-d_mul_e_minus_c- sqrt(disciminant))/sq_d;
-			float add_term = (-d_mul_e_minus_c+ sqrt(disciminant))/sq_d;
-
-			if( minus_term>t0){
-
-				t = std::min( minus_term, add_term);
-			}
-			else if(add_term>t0){
-
-				t = add_term;
-			}
-			else{
-				return 0;
-			}
-			vec3 p = {{ex+t*dx, ey+t*dy, ez+t*dz}};
-			vec3 p_minus_c = vec3Minus(p, vec3_c);
-			vec3 normlized_p_minus_c = {{p_minus_c.mat[0]/R, p_minus_c.mat[1]/R, p_minus_c.mat[2]/R}};
-			shape->norm_ = normlized_p_minus_c;
-			return t;
-		}
-
-	}
-	else if(!strcmp(shape->type_.c_str(), "box")){
-			float ux = shape->geo_params_[0];
-			float uy = shape->geo_params_[1];
-			float uz = shape->geo_params_[2];
-			float vx = shape->geo_params_[3];
-			float vy = shape->geo_params_[4];
-			float vz = shape->geo_params_[5];
-
-			//test of front
-			float front_t = intersectSquare(vec3_e, vec3_d, ux,uy,uz, vx,vy, uz);
-
-
-			if(i == debug_i && j == debug_j){
-				std::cout<< "front_t:"<<front_t<<std::endl;
-			}
-
-			return front_t;
-			//test of back
-			float back_t = intersectSquare(vec3_e, vec3_d, ux,uy,vz, vx,vy,vz);
-
-			//test of left
-			float left_t = intersectSquare(vec3_e, vec3_d, ux,uy,uz, ux,vy,vz);
-
-			//test of right
-			float right_t = intersectSquare(vec3_e, vec3_d, vx,uy,uz, vx,vy,vz);
-
-			//test of top
-			float top_t = intersectSquare(vec3_e, vec3_d, ux,vy,uz, vx,vy,vz);
-
-			//test of bottom
-			float bottom_t = intersectSquare(vec3_e, vec3_d, ux,uy,uz, vx,uy,vz);
-
-			float t = front_t;
-			shape->norm_ = {{0,0,-1}};
-			if(front_t < back_t){
-				t = back_t;
-				shape->norm_ = {{0,0,1}};
-			}
-			else if(back_t < left_t){
-				t = left_t;
-				shape->norm_ = {{-1,0,0}};
-			}
-			else if(left_t < right_t){
-				t = right_t;
-				shape->norm_ = {{1,0,0}};
-			}else if(right_t < top_t){
-				t = top_t;
-				shape->norm_ = {{0,1,0}};
-			}else if(top_t < bottom_t){
-				t = bottom_t;
-				shape->norm_ = {{0,-1,0}};
-			}
-			return t;
-
-
-	}
-	else if(!strcmp(shape->type_.c_str(), "plane")){
-		float nx = shape->geo_params_[0];
-		float ny = shape->geo_params_[1];
-		float nz = shape->geo_params_[2];
-		float px = shape->geo_params_[3];
-		float py = shape->geo_params_[4];
-		float pz = shape->geo_params_[5];
-
-		float t = intersectPlane(vec3_e, vec3_d, nx, ny, nz, px, py, pz);
-		return t;
-
-	}
-
-
-	return 0;
 }
 
 float
-Trace::intersectSquare(vec3 vec3_e, vec3 vec3_d, float ax, float ay, float az, float bx, float by, float bz){
+Trace::intersectBox(Shape* shape, Ray ray, int i, int j ){// i, j for debug
+	float ux = shape->geo_params_[0];
+	float uy = shape->geo_params_[1];
+	float uz = shape->geo_params_[2];
+	float vx = shape->geo_params_[3];
+	float vy = shape->geo_params_[4];
+	float vz = shape->geo_params_[5];
 
-	if(ax==bx){
-		float t = intersectPlane(vec3_e, vec3_d, 1,0,0, ax, ay, az);
-		if (!t){
-			return 0;
-		}
-		float tx = vec3_e.mat[0] + t* vec3_d.mat[0];
-		float ty = vec3_e.mat[1] + t* vec3_d.mat[1];
-		float tz = vec3_e.mat[2] + t* vec3_d.mat[2];
-		if(ty>ay && ty<by && tz>az && tz<bz){
-			return t;
-		}
-		else{
-			return 0;
-		}
+	Triangle frontA(ux, uy, uz, ux, vy, uz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float frontA_t = intersectTriangle(&frontA, ray);
+
+	Triangle frontB(vx, vy, uz, ux, vy, uz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float frontB_t = intersectTriangle(&frontB, ray);
+
+	Triangle backA(ux, uy, vz, ux, vy, vz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float backA_t = intersectTriangle(&backA, ray);
+
+	Triangle backB(vx, vy, vz, ux, vy, vz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float backB_t = intersectTriangle(&backB, ray);
+
+	Triangle leftA(ux, uy, uz, ux, vy, uz, ux, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float leftA_t = intersectTriangle(&leftA, ray);
+
+	Triangle leftB(ux, vy, vz, ux, vy, uz, ux, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float leftB_t = intersectTriangle(&leftB, ray);
+
+	Triangle rightA(vx, uy, uz, vx, vy, uz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float rightA_t = intersectTriangle(&rightA, ray);
+
+	Triangle rightB(vx, vy, vz, vx, vy, uz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float rightB_t = intersectTriangle(&rightB, ray);
+
+	Triangle topA(ux, vy, uz, ux, vy, vz, vx, vy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float topA_t = intersectTriangle(&topA, ray);
+
+	Triangle topB(vx, vy, vz, ux, vy, vz, vx, vy, uz,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float topB_t = intersectTriangle(&topB, ray);
+
+	Triangle bottomA(ux, uy, uz, ux, uy, vz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float bottomA_t = intersectTriangle(&bottomA, ray);
+
+	Triangle bottomB(vx, uy, vz, ux, uy, vz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+	float bottomB_t = intersectTriangle(&bottomB, ray);
+
+	//A and B has at most one non-negative value, the following codes will get the positive value if it exists.
+	float front_t = frontB_t?frontB_t:frontA_t;
+	float back_t = backB_t?backB_t:backA_t;
+	float left_t = leftB_t?leftB_t:leftA_t;
+	float right_t = rightB_t?rightB_t:rightA_t;
+	float top_t = topB_t?topB_t:topA_t;
+	float bottom_t = bottomB_t?bottomB_t:bottomA_t;
+
+
+//
+//	if(i == debug_i && j == debug_j){
+//		std::cout<< "front_t:"<<front_t<<std::endl;
+//		std::cout<< "back_t:"<<back_t<<std::endl;
+//		std::cout<< "left_t:"<<left_t<<std::endl;
+//		std::cout<< "right_t:"<<right_t<<std::endl;
+//		std::cout<< "top_t:"<<top_t<<std::endl;
+//		std::cout<< "bottom_t:"<<bottom_t<<std::endl;
+//	}
+
+
+	float t = std::numeric_limits<float>::infinity();
+	bool hit = false;
+	if(front_t!=0 && t > front_t){
+		t = front_t;
+		shape->norm_ = {{0,0,1}};
+		hit = true;
 	}
-	else if(ay == by){
-		float t = intersectPlane(vec3_e, vec3_d, 0,1,0, ax, ay, az);
-		if (!t){
-			return 0;
-		}
-		float tx = vec3_e.mat[0] + t* vec3_d.mat[0];
-		float ty = vec3_e.mat[1] + t* vec3_d.mat[1];
-		float tz = vec3_e.mat[2] + t* vec3_d.mat[2];
-		if(tx>ax && tx<bx && tz>az && tz<bz){
-			return t;
-		}
-		else{
-			return 0;
-		}
+
+	if(back_t!=0 && t > back_t){
+		t = back_t;
+		shape->norm_ = {{0,0,-1}};
+		hit = true;
 	}
-	else if(az == bz){
-		float t = intersectPlane( vec3_e, vec3_d, 0,0,1, ax, ay, az);
-		if (!t){
-			return 0;
-		}
-		float tx = vec3_e.mat[0] + t* vec3_d.mat[0];
-		float ty = vec3_e.mat[1] + t* vec3_d.mat[1];
-		float tz = vec3_e.mat[2] + t* vec3_d.mat[2];
-		if(ty>ay && ty<by && tx>ax && tx<bx){
-			return t;
-		}
-		else{
-			return 0;
-		}
+	if(left_t!=0 && t > left_t){
+		t = left_t;
+		shape->norm_ = {{-1,0,0}};
+		hit = true;
+	}
+	if(right_t!=0 && t > right_t){
+		t = right_t;
+		shape->norm_ = {{1,0,0}};
+		hit = true;
+	}
+	if(top_t!=0 && t > top_t){
+		t = top_t;
+		shape->norm_ = {{0,1,0}};
+		hit = true;
+	}
+	if(bottom_t!=0 && t > bottom_t){
+		t = bottom_t;
+		shape->norm_ = {{0,-1,0}};
+		hit = true;
+	}
+	if(i == debug_i && j == debug_j){
+		std::cout<<"final t:"<<t<<std::endl;
+	}
+	if(	hit == true){
+		return t;
 	}
 	else{
-		Util::debug_head("Trace.cpp");
-			std::cout<<"Error in Trace::intersectSquare!"<<std::endl;
-			std::cout<<"ax:"<<ax<<","<<ay<<","<<az<<std::endl;
-			std::cout<<"ax:"<<bx<<","<<by<<","<<bz<<std::endl;
-		Util::debug_tail();
-
+		return 0;
 	}
 
 
@@ -547,7 +572,24 @@ Trace::intersectSquare(vec3 vec3_e, vec3 vec3_d, float ax, float ay, float az, f
 
 
 float
-Trace::intersectPlane( vec3 vec3_e, vec3 vec3_d, float nx, float ny, float nz, float px, float py, float pz){
+Trace::intersectPlane(Shape* shape, Ray ray){
+	float dx = ray.dir_x_;
+	float dy = ray.dir_y_;
+	float dz = ray.dir_z_;
+	float ex = ray.ori_x_;
+	float ey = ray.ori_y_;
+	float ez = ray.ori_z_;
+	vec3 vec3_e = {{ex, ey, ez}};
+	vec3 vec3_d = {{dx, dy, dz}};
+
+
+	float nx = shape->geo_params_[0];
+	float ny = shape->geo_params_[1];
+	float nz = shape->geo_params_[2];
+	float px = shape->geo_params_[3];
+	float py = shape->geo_params_[4];
+	float pz = shape->geo_params_[5];
+
 	vec3 p1 = {{px,py,pz}};
 			vec3 n = {{nx,ny,nz}};
 			vec3 p1_e = vec3Minus(p1, vec3_e);
