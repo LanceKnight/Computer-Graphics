@@ -7,7 +7,7 @@ Ray::Ray(){
 
 }
 
-Ray::Ray(float dir_x, float dir_y, float  dir_z,float  ori_x,float  ori_y,float  ori_z){
+Ray::Ray(float  ori_x,float  ori_y,float  ori_z, float dir_x, float dir_y, float  dir_z){
 	this->dir_x_ = dir_x;
 	this->dir_y_ = dir_y;
 	this->dir_z_ = dir_z;
@@ -16,6 +16,7 @@ Ray::Ray(float dir_x, float dir_y, float  dir_z,float  ori_x,float  ori_y,float 
 	this->ori_z_ = ori_z;
 
 }
+
 
 Ray::~Ray(){
 

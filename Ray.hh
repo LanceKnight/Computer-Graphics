@@ -11,7 +11,9 @@ class Ray{
 public:
 	Ray();
 
-	Ray(float dir_x, float dir_y, float  dir_z,float  ori_x,float  ori_y,float  ori_z);
+	Ray(float ori_x,float ori_y,float ori_z, float dir_x, float dir_y, float dir_z);
+
+	//, float dir_x, float dir_y, float  dir_z
 
 	~Ray();
 
