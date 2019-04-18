@@ -37,46 +37,21 @@ std::string
 Trace::trace(std::vector<std::string> paramList){
 	if(paramList.size()==0){
 
+		for(int i = 0; i < Screen::nx_; i++){
+			for(int j = 0; j < Screen::ny_; j++){
+				Ray ray = buildCameraRay(i,j);
+				reflect_counter_ = 0;
+				vec3 color = getColorFromRay(ray, i, j);
+				checkImage[i][j][0]= std::min((float)255, std::max((float)0, 255*color.mat[0]));
+				checkImage[i][j][1]= std::min((float)255, std::max((float)0, 255*color.mat[1]));
+				checkImage[i][j][2]= std::min((float)255, std::max((float)0, 255*color.mat[2]));
 
-		if(Orthocamera::ortho_){
-
-			for(int i = 0; i < Screen::nx_; i++){
-				for(int j = 0; j < Screen::ny_; j++){
-					Ray ray = buildCameraRay(i,j);
-					reflect_counter_ = 0;
-					vec3 color = getColorFromRay(ray, i, j);
-					checkImage[i][j][0]= std::min((float)255, std::max((float)0, 255*color.mat[0]));
-					checkImage[i][j][1]= std::min((float)255, std::max((float)0, 255*color.mat[1]));
-					checkImage[i][j][2]= std::min((float)255, std::max((float)0, 255*color.mat[2]));
-
-					checkImage[debug_i][debug_j][0]= 0;
-					checkImage[debug_i][debug_j][1]= 0;
-					checkImage[debug_i][debug_j][2]= 0;
-				}
+				checkImage[debug_i][debug_j][0]= 0;
+				checkImage[debug_i][debug_j][1]= 0;
+				checkImage[debug_i][debug_j][2]= 0;
 			}
 		}
-		else if (Camera::perspect_){
 
-			for(int i = 0; i < Screen::nx_; i++){
-				for(int j = 0; j < Screen::ny_; j++){
-					Ray ray = buildCameraRay(i,j);
-					reflect_counter_ = 0;
-					vec3 color = getColorFromRay(ray, i, j);
-					checkImage[i][j][0]= std::min((float)255, std::max((float)0, 255*color.mat[0]));
-					checkImage[i][j][1]= std::min((float)255, std::max((float)0, 255*color.mat[1]));
-					checkImage[i][j][2]= std::min((float)255, std::max((float)0, 255*color.mat[2]));
-
-					checkImage[debug_i][debug_j][0]= 0;
-					checkImage[debug_i][debug_j][1]= 0;
-					checkImage[debug_i][debug_j][2]= 0;
-				}
-			}
-
-
-		}
-		else{
-			return "You need to specify one view method: orthographic or perspective.";
-		}
 		display();
 		return "Trace Done";
 	}
@@ -242,11 +217,8 @@ Trace::getColorFromRay(Ray ray, int i, int j){
 
 Ray
 Trace::buildCameraRay(int i, int j){
-	if(Orthocamera::ortho_){
-		Ray ray(j, i, -1, 0, 0 , -1 );
-		return ray;
-	}
-	else{
+
+	if(Camera::perspect_){
 		vec3 gz = {{Camera::ex_-Camera::gx_,Camera::ey_-Camera::gy_,Camera::ez_-Camera::gz_}};
 
 		vec3 up = {{Camera::ux_, Camera::uy_, Camera::uz_}};
@@ -257,8 +229,8 @@ Trace::buildCameraRay(int i, int j){
 
 		vec3 w = normal(vec3Cross(u, v));
 
-		float x_convert = j*(Camera::bu_-Camera::au_)/Screen::nx_+Camera::au_;
-		float y_convert = i*(Camera::bv_-Camera::av_)/Screen::ny_+Camera::av_;
+		float x_convert = j*(Camera::bu_+Camera::au_)/Screen::nx_-Camera::au_;
+		float y_convert = i*(Camera::bv_+Camera::av_)/Screen::ny_-Camera::av_;
 
 		         vec3 dir = vec3Add(vec3Add(vec3NumMul(x_convert, u), vec3NumMul( y_convert,v)), vec3NumMul(-Camera::s_, w));
 		//vec3 dir = vec3Add(vec3Add(vec3NumMul(j-Camera::gx_, u), vec3NumMul(i-Camera::gy_, v)), vec3NumMul(-Camera::s_, w));
@@ -275,6 +247,11 @@ Trace::buildCameraRay(int i, int j){
 		Ray ray( Camera::ex_, Camera::ey_, Camera::ez_ ,dir.mat[0], dir.mat[1] , dir.mat[2]);
 		return ray;
 	}
+	else{
+			Ray ray(j, i, -1, 0, 0 , -1 );
+			return ray;
+		}
+
 }
 
 Ray
