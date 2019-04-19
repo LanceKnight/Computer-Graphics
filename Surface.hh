@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "HitRecord.hh"
+#include "Ray.hh"
+
 #include "3D.h"
 
 
@@ -13,6 +16,8 @@ public:
 	Surface();
 
 	~Surface();
+
+	//~virtual bool hit(Ray ray, float t0, float t1, HitRecord rec);
 /*
 	virtual std::vector<float> get_geo_params();
 
