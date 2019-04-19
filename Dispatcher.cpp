@@ -259,7 +259,7 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "vertex"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
 			std::cout<<"dispatching to Vertex branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Vertex::vertex(paramList).c_str());
@@ -269,7 +269,7 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "reset"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
 			std::cout<<"dispatching to Reset branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Reset::reset(paramList).c_str());
@@ -279,7 +279,7 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "pause"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
 			std::cout<<"dispatching to pause branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Pause::pause(paramList).c_str());
@@ -289,7 +289,7 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "orient"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
 			std::cout<<"dispatching to orient branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Orient::orient(paramList).c_str());
@@ -301,7 +301,7 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "screen"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
 			std::cout<<"dispatching to screen branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Screen::screen(paramList).c_str());
@@ -312,7 +312,7 @@ Dispatcher::dispatch(char line[]){
 	{
 
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+
 			std::cout<<"dispatching to orthocamera branch"<<std::endl;
 
 		Util::debug_tail();
@@ -325,7 +325,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "camera"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to camera branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Camera::camera(paramList).c_str());
@@ -335,7 +334,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "background"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to background branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Background::background(paramList).c_str());
@@ -345,7 +343,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "sphere"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to sphere branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Sphere::sphere(paramList).c_str());
@@ -355,7 +352,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "triangle"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to triangle branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Triangle::triangle(paramList).c_str());
@@ -365,7 +361,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "box"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to box branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Box::box(paramList).c_str());
@@ -375,7 +370,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "ilight"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to Ilight branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Ilight::ilight(paramList).c_str());
@@ -385,7 +379,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "clear"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to clear branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Clear::clear(paramList).c_str());
@@ -395,7 +388,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "trace"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
 			std::cout<<"dispatching to trace branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Trace::trace(paramList).c_str());
@@ -405,7 +397,6 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "plane"))
 	{
 		Util::debug_head("Dispatcher.cpp");
-		std::cout<<"=====DEBUG  INFO====="<<std::endl;
 		std::cout<<"dispatching to plane branch"<<std::endl;
 		Util::debug_tail();
 		strcpy(line, Plane::plane(paramList).c_str());
