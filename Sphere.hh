@@ -3,11 +3,12 @@
 
 #include <string>
 #include <vector>
-#include "Shape.hh"
+
+#include "Surface.hh"
 
 
 
-class Sphere:public Shape{
+class Sphere:public Surface{
 
 public:
 	Sphere();

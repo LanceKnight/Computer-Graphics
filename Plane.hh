@@ -5,11 +5,11 @@
 #include <vector>
 
 #include "3D.h"
-#include "Shape.hh"
+#include "Surface.hh"
 
 
 
-class Plane:Shape{
+class Plane:Surface{
 
 public:
 	Plane();

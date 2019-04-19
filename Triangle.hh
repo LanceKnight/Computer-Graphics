@@ -5,11 +5,11 @@
 #include <vector>
 
 #include "3D.h"
-#include "Shape.hh"
+#include "Surface.hh"
 
 
 
-class Triangle:public Shape{
+class Triangle:public Surface{
 
 public:
 	Triangle();

@@ -1,5 +1,5 @@
-#ifndef SHAPE_HH
-#define SHAPE_HH
+#ifndef SURFACE_HH
+#define SURFACE_HH
 
 #include <string>
 #include <vector>
@@ -7,12 +7,12 @@
 #include "3D.h"
 
 
-class Shape{
+class Surface{
 
 public:
-	Shape();
+	Surface();
 
-	~Shape();
+	~Surface();
 /*
 	virtual std::vector<float> get_geo_params();
 

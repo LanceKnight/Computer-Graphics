@@ -11,25 +11,26 @@
 #include "Orthocamera.hh"
 #include "Ray.hh"
 #include "Screen.hh"
-#include "Shape.hh"
 #include "Sphere.hh"
 #include "Trace.hh"
 #include "Triangle.hh"
 
 #include "3D.h"
 #include "main.hh"
+#include "Surface.hh"
 #include "Util.hh"
 
 
 
-std::vector<Shape *> Trace::object_list_;
+std::vector<Surface *> Trace::object_list_;
 std::vector<Ilight *> Trace::light_list_;
 
-#define debug_i 250
-#define debug_j 400
+#define debug_i 210
+#define debug_j 250
 #define MAX_REFLECT 1
-#define t0 0
-#define t1 std::numeric_limits<float>::infinity()
+#define T0 0
+#define T1 std::numeric_limits<float>::infinity()
+#define epsilon 0.000001
 
 int Trace::reflect_counter_ =0;
 
@@ -41,7 +42,8 @@ Trace::trace(std::vector<std::string> paramList){
 			for(int j = 0; j < Screen::ny_; j++){
 				Ray ray = buildCameraRay(i,j);
 				reflect_counter_ = 0;
-				vec3 color = getColorFromRay(ray, i, j);
+
+				vec3 color = getColorFromRay(ray, T0, T1, i, j);
 				checkImage[i][j][0]= std::min((float)255, std::max((float)0, 255*color.mat[0]));
 				checkImage[i][j][1]= std::min((float)255, std::max((float)0, 255*color.mat[1]));
 				checkImage[i][j][2]= std::min((float)255, std::max((float)0, 255*color.mat[2]));
@@ -62,16 +64,16 @@ Trace::trace(std::vector<std::string> paramList){
 
 
 vec3
-Trace::getColorFromRay(Ray ray, int i, int j){
+Trace::getColorFromRay(Ray ray, float t0, float t1, int i, int j){
 	float smallest_t = std::numeric_limits<float>::infinity();
 	Triangle tri(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
-	Shape* render_object = &tri;
+	Surface* render_object = &tri;
 	bool hit = false;
 
-	for(std::vector<Shape*>::iterator it = Trace::object_list_.begin();it != object_list_.end();++it){
+	for(std::vector<Surface*>::iterator it = Trace::object_list_.begin();it != object_list_.end();++it){
 
-		float t = intersect(ray, *it, i, j);
+		float t = intersect(ray, *it, t0, t1, i, j);
 
 
 		if(t){
@@ -88,95 +90,63 @@ Trace::getColorFromRay(Ray ray, int i, int j){
 	}
 
 	if(hit){
+		vec3 intersect_point = {{ray.ori_x_+smallest_t*ray.dir_x_,ray.ori_y_+smallest_t*ray.dir_y_,ray.ori_z_+smallest_t*ray.dir_z_,}};
+
+		vec3 color ={{
+
+				std::min((float)1, std::max((float)0, render_object->color_params_[0] )),
+				std::min((float)1, std::max((float)0, render_object->color_params_[1] )),
+				std::min((float)1, std::max((float)0, render_object->color_params_[2] ))
+
+		}};
+
+
+
+
 		float total_light_r = 0;
 		float total_light_g = 0;
 		float total_light_b = 0;
-		vec3 intersect_point = {{ray.ori_x_+smallest_t*ray.dir_x_,ray.ori_y_+smallest_t*ray.dir_y_,ray.ori_z_+smallest_t*ray.dir_z_,}};
-		for(std::vector<Ilight *>::iterator light_it = Trace::light_list_.begin();light_it != Trace::light_list_.end();++light_it){
-			vec3 light ={{(*light_it)->dx_, (*light_it)->dy_, (*light_it)->dz_}};
-
-			vec3 vec3_l = vec3Minus(light, intersect_point);
-			vec3 normalized_light = normal(vec3_l);
-
-			float rr = 0;
-			float rg = 0;
-			float rb = 0;
-			rr = render_object->color_params_[3];
-			rg = render_object->color_params_[4];
-			rb = render_object->color_params_[5];
-//			std::string flag;
-//			if(!strcmp(render_object->type_.c_str(),"triangle")){
-//				flag = "tri";
-//				rr = render_object->color_params_[3];
-//				rg = render_object->color_params_[4];
-//				rb = render_object->color_params_[5];
-//			}
-//			else if (!strcmp(render_object->type_.c_str(),"sphere")){
-//				flag = "sphere";
-//				rr = render_object->color_params_[3];
-//				rg = render_object->color_params_[4];
-//				rb = render_object->color_params_[5];
-//			}
-/*
-			if(i==debug_i && j ==debug_j ){
-				Util::debug_head("Trace.cpp");
-				std::cout<<"-------i "<<i<<"---j "<< j<<"-----"<<std::endl;
-				std::cout<<"------Light Info----"<<std::endl;
-				std::cout<<"light name:"<<(*light_it)->name_<<std::endl;
-				std::cout<<"light position:"<<(*light_it)->dx_<<","<<(*light_it)->dy_<<","<< (*light_it)->dz_<<std::endl;
-				std::cout<<"light color:"<<(*light_it)->lr_<<","<<(*light_it)->lg_<<","<< (*light_it)->lb_<<std::endl;
-				std::cout<<"cos:"<<vec3Mul(render_object->norm_, normalized_light)<<std::endl;
-				std::cout<<"render_object norm:"<<(render_object->norm_).mat[0]<<","<<(render_object->norm_).mat[1]<<","<<(render_object->norm_).mat[2]<<std::endl;
-				std::cout<<"render_object reflected:"<<render_object->reflected_<<std::endl;
-				Util::debug_tail();
-			}*/
-			total_light_r +=  ((*light_it)->lr_  * rr * vec3Mul(render_object->norm_, normalized_light));
-			total_light_g +=  ((*light_it)->lg_  * rg * vec3Mul(render_object->norm_, normalized_light));
-			total_light_b +=  ((*light_it)->lb_  * rb * vec3Mul(render_object->norm_, normalized_light));
-
-		}
-
-		//reflection
 		float total_reflected_r = 0;
 		float total_reflected_g = 0;
 		float total_reflected_b = 0;
+		bool in_shadow = false;
 
-	/*
-		if((render_object->reflected_) && (reflect_counter_<MAX_REFLECT)){
+		for(std::vector<Ilight *>::iterator light_it = Trace::light_list_.begin();light_it != Trace::light_list_.end();++light_it){
 
-			Ray reflected_ray = buildReflectedRay(ray, render_object->norm_, intersect_point, i,j);
-			if(i==debug_i && j==debug_j){
-				Util::debug_head("Trace.cpp");
-				std::cout<<"first reflection counter:" <<reflect_counter_<<std::endl;
-				std::cout<<"norm:"<<render_object->norm_.mat[0]<<","<<render_object->norm_.mat[1]<<","<<render_object->norm_.mat[2]<<std::endl;
-				std::cout<<std::endl;
-				std::cout<<"original Ray:"<<std::endl;
-				std::cout<<"ori:"<<ray.ori_x_<<","<<ray.ori_y_<<","<<ray.ori_z_<<std::endl;
-				std::cout<<"dir:"<<ray.dir_x_<<","<<ray.dir_y_<<","<<ray.dir_z_<<std::endl;
+			vec3 normalized_light = buildLightDir(*light_it, intersect_point);
 
-				std::cout<<std::endl;
-				std::cout<<"reflected Ray:"<<std::endl;
-				std::cout<<"ori:"<<reflected_ray.ori_x_<<","<<reflected_ray.ori_y_<<","<<reflected_ray.ori_z_<<std::endl;
-				std::cout<<"dir:"<<reflected_ray.dir_x_<<","<<reflected_ray.dir_y_<<","<<reflected_ray.dir_z_<<std::endl;
-				Util::debug_tail();
+			Ray shadow_ray(intersect_point.mat[0], intersect_point.mat[1],intersect_point.mat[2], normalized_light.mat[0], normalized_light.mat[1],normalized_light.mat[2]);
+
+			for(std::vector<Surface*>::iterator other_it = Trace::object_list_.begin();other_it != object_list_.end();++other_it){
+				if(strcmp((*other_it)->name_.c_str(),render_object->name_.c_str())){
+
+					if(intersect(shadow_ray, *other_it, epsilon, T1, i, j)){
+						in_shadow = true;
+					}
+				}
 			}
-			reflect_counter_++;
-			vec3 color = getColorFromRay(reflected_ray, i, j);
+			if(i==debug_i && j ==debug_j ){
+				std::cout<<"in_shadow:"<<in_shadow<<std::endl;
+			}
 
-			total_reflected_r = render_object->color_params_[6]*color.mat[0];
-			total_reflected_g = render_object->color_params_[7]*color.mat[1];
-			total_reflected_b = render_object->color_params_[8]*color.mat[2];
+			if(!in_shadow){
+				float rr = render_object->color_params_[3];
+				float rg = render_object->color_params_[4];
+				float rb = render_object->color_params_[5];
+
+				total_light_r +=  ((*light_it)->lr_  * rr * vec3Mul(render_object->norm_, normalized_light));
+				total_light_g +=  ((*light_it)->lg_  * rg * vec3Mul(render_object->norm_, normalized_light));
+				total_light_b +=  ((*light_it)->lb_  * rb * vec3Mul(render_object->norm_, normalized_light));
+			}
+
+			//reflection
 
 
 		}
-*/
-		vec3 color ={{
 
-				std::min((float)1, std::max((float)0, render_object->color_params_[0] + total_light_r + total_reflected_r)),
-				std::min((float)1, std::max((float)0, render_object->color_params_[1] + total_light_g + total_reflected_g)),
-				std::min((float)1, std::max((float)0, render_object->color_params_[2] + total_light_b + total_reflected_b))
-
-		}};
+		color.mat[0] = std::min((float)1, std::max((float)0, color.mat[0]+ total_light_r + total_reflected_r));
+		color.mat[1] = std::min((float)1, std::max((float)0, color.mat[1]+ total_light_g + total_reflected_g));
+		color.mat[2] = std::min((float)1, std::max((float)0, color.mat[2]+ total_light_b + total_reflected_b));
 
 
 		if(i==debug_i && j ==debug_j ){
@@ -193,7 +163,7 @@ Trace::getColorFromRay(Ray ray, int i, int j){
 			}
 			std::cout<<std::endl;
 
-			std::cout<<"shape reflected:"<<render_object->reflected_<<std::endl;
+			std::cout<<"shape reflected:"<<(bool)render_object->reflected_<<std::endl;
 
 			std::cout<<std::endl;
 			std::cout<<"total light:"<<total_light_r<<","<<total_light_g<<","<<total_light_b<<std::endl;
@@ -232,27 +202,38 @@ Trace::buildCameraRay(int i, int j){
 		float x_convert = j*(Camera::bu_+Camera::au_)/Screen::nx_-Camera::au_;
 		float y_convert = i*(Camera::bv_+Camera::av_)/Screen::ny_-Camera::av_;
 
-		         vec3 dir = vec3Add(vec3Add(vec3NumMul(x_convert, u), vec3NumMul( y_convert,v)), vec3NumMul(-Camera::s_, w));
+		vec3 dir = vec3Add(vec3Add(vec3NumMul(x_convert, u), vec3NumMul( y_convert,v)), vec3NumMul(-Camera::s_, w));
 		//vec3 dir = vec3Add(vec3Add(vec3NumMul(j-Camera::gx_, u), vec3NumMul(i-Camera::gy_, v)), vec3NumMul(-Camera::s_, w));
 
-//		if(i==499 && j ==499){
-//			 std::cout<<"gz:"<<gz.mat[0]<<","<<gz.mat[1]<<","<<gz.mat[2]<<std::endl;
-//			 std::cout<<"v:"<<v.mat[0]<<","<<v.mat[1]<<","<<v.mat[2]<<std::endl;
-//			 std::cout<<"u:"<<u.mat[0]<<","<<u.mat[1]<<","<<u.mat[2]<<std::endl;
-//			 std::cout<<"w:"<<w.mat[0]<<","<<w.mat[1]<<","<<w.mat[2]<<std::endl;
-//			 std::cout<<"perspective: eye:"<<Camera::ex_<<","<< Camera::ey_<<","<<Camera::ez_<<std::endl;
-//			 std::cout<<"             dir:"<<dir.mat[0]<<","<<dir.mat[1]<<","<<dir.mat[2]<<std::endl;
-//		}
+		//		if(i==499 && j ==499){
+		//			 std::cout<<"gz:"<<gz.mat[0]<<","<<gz.mat[1]<<","<<gz.mat[2]<<std::endl;
+		//			 std::cout<<"v:"<<v.mat[0]<<","<<v.mat[1]<<","<<v.mat[2]<<std::endl;
+		//			 std::cout<<"u:"<<u.mat[0]<<","<<u.mat[1]<<","<<u.mat[2]<<std::endl;
+		//			 std::cout<<"w:"<<w.mat[0]<<","<<w.mat[1]<<","<<w.mat[2]<<std::endl;
+		//			 std::cout<<"perspective: eye:"<<Camera::ex_<<","<< Camera::ey_<<","<<Camera::ez_<<std::endl;
+		//			 std::cout<<"             dir:"<<dir.mat[0]<<","<<dir.mat[1]<<","<<dir.mat[2]<<std::endl;
+		//		}
 
 		Ray ray( Camera::ex_, Camera::ey_, Camera::ez_ ,dir.mat[0], dir.mat[1] , dir.mat[2]);
 		return ray;
 	}
-	else{
-			Ray ray(j, i, -1, 0, 0 , -1 );
-			return ray;
-		}
+	else{//default is orthographic view
+		Ray ray(j, i, -1, 0, 0 , -1 );
+		return ray;
+	}
 
 }
+
+vec3
+Trace::buildLightDir(const Ilight* ilight, const vec3 intersect_point){
+	vec3 light ={{ilight->dx_, ilight->dy_, ilight->dz_}};
+	vec3 vec3_l = vec3Minus(light, intersect_point);
+	vec3 normalized_light = normal(vec3_l);
+	return normalized_light;
+
+}
+
+
 
 Ray
 Trace::buildReflectedRay(Ray ray, vec3 norm, vec3 point, int i, int j){// i, j are just for debugging
@@ -280,35 +261,29 @@ Trace::buildReflectedRay(Ray ray, vec3 norm, vec3 point, int i, int j){// i, j a
 	}
 
 	return reflected_ray;
-
-
 }
 
 float
-Trace::intersect(Ray ray, Shape* shape, int i, int j){// i, j are just for debugging
+Trace::intersect(Ray ray, Surface* shape, float t0, float t1, int i, int j){// i, j are just for debugging
 
 	if(!strcmp(shape->type_.c_str(), "triangle")){
-		return intersectTriangle(shape, ray );
+		return intersectTriangle(shape, ray, t0, t1 );
 	}
 	else if(!strcmp(shape->type_.c_str(), "sphere")){
-		return intersectSphere(shape, ray);
+		return intersectSphere(shape, ray, t0, t1);
 	}
 	else if(!strcmp(shape->type_.c_str(), "box")){
-		return intersectBox(shape, ray, i, j );
-
-
+		return intersectBox(shape, ray, t0, t1, i, j );
 	}
 	else if(!strcmp(shape->type_.c_str(), "plane")){
 		return intersectPlane(shape, ray);
-
 	}
-
 	return 0;
 }
 
 
 float
-Trace::intersectTriangle(Shape* shape, Ray ray){
+Trace::intersectTriangle(Surface* shape, Ray ray, float t0, float t1){
 	float dx = ray.dir_x_;
 	float dy = ray.dir_y_;
 	float dz = ray.dir_z_;
@@ -380,7 +355,7 @@ Trace::intersectTriangle(Shape* shape, Ray ray){
 }
 
 float
-Trace::intersectSphere(Shape* shape, Ray ray){
+Trace::intersectSphere(Surface* shape, Ray ray, float t0, float t1){
 	float dx = ray.dir_x_;
 	float dy = ray.dir_y_;
 	float dz = ray.dir_z_;
@@ -437,7 +412,7 @@ Trace::intersectSphere(Shape* shape, Ray ray){
 }
 
 float
-Trace::intersectBox(Shape* shape, Ray ray, int i, int j ){// i, j for debug
+Trace::intersectBox(Surface* shape, Ray ray, float t0, float t1, int i, int j ){// i, j for debug
 	float ux = shape->geo_params_[0];
 	float uy = shape->geo_params_[1];
 	float uz = shape->geo_params_[2];
@@ -446,40 +421,40 @@ Trace::intersectBox(Shape* shape, Ray ray, int i, int j ){// i, j for debug
 	float vz = shape->geo_params_[5];
 
 	Triangle frontA(ux, uy, uz, ux, vy, uz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float frontA_t = intersectTriangle(&frontA, ray);
+	float frontA_t = intersectTriangle(&frontA, ray, t0, t1);
 
 	Triangle frontB(vx, vy, uz, ux, vy, uz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float frontB_t = intersectTriangle(&frontB, ray);
+	float frontB_t = intersectTriangle(&frontB, ray, t0, t1);
 
 	Triangle backA(ux, uy, vz, ux, vy, vz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float backA_t = intersectTriangle(&backA, ray);
+	float backA_t = intersectTriangle(&backA, ray, t0, t1);
 
 	Triangle backB(vx, vy, vz, ux, vy, vz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float backB_t = intersectTriangle(&backB, ray);
+	float backB_t = intersectTriangle(&backB, ray, t0, t1);
 
 	Triangle leftA(ux, uy, uz, ux, vy, uz, ux, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float leftA_t = intersectTriangle(&leftA, ray);
+	float leftA_t = intersectTriangle(&leftA, ray, t0, t1);
 
 	Triangle leftB(ux, vy, vz, ux, vy, uz, ux, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float leftB_t = intersectTriangle(&leftB, ray);
+	float leftB_t = intersectTriangle(&leftB, ray, t0, t1);
 
 	Triangle rightA(vx, uy, uz, vx, vy, uz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float rightA_t = intersectTriangle(&rightA, ray);
+	float rightA_t = intersectTriangle(&rightA, ray, t0, t1);
 
 	Triangle rightB(vx, vy, vz, vx, vy, uz, vx, uy, vz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float rightB_t = intersectTriangle(&rightB, ray);
+	float rightB_t = intersectTriangle(&rightB, ray, t0, t1);
 
 	Triangle topA(ux, vy, uz, ux, vy, vz, vx, vy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float topA_t = intersectTriangle(&topA, ray);
+	float topA_t = intersectTriangle(&topA, ray, t0, t1);
 
 	Triangle topB(vx, vy, vz, ux, vy, vz, vx, vy, uz,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float topB_t = intersectTriangle(&topB, ray);
+	float topB_t = intersectTriangle(&topB, ray, t0, t1);
 
 	Triangle bottomA(ux, uy, uz, ux, uy, vz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float bottomA_t = intersectTriangle(&bottomA, ray);
+	float bottomA_t = intersectTriangle(&bottomA, ray, t0, t1);
 
 	Triangle bottomB(vx, uy, vz, ux, uy, vz, vx, uy, uz, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0);
-	float bottomB_t = intersectTriangle(&bottomB, ray);
+	float bottomB_t = intersectTriangle(&bottomB, ray, t0, t1);
 
 	//A and B has at most one non-negative value, the following codes will get the positive value if it exists.
 	float front_t = frontB_t?frontB_t:frontA_t;
@@ -549,7 +524,7 @@ Trace::intersectBox(Shape* shape, Ray ray, int i, int j ){// i, j for debug
 
 
 float
-Trace::intersectPlane(Shape* shape, Ray ray){
+Trace::intersectPlane(Surface* shape, Ray ray){
 	float dx = ray.dir_x_;
 	float dy = ray.dir_y_;
 	float dz = ray.dir_z_;
@@ -559,7 +534,6 @@ Trace::intersectPlane(Shape* shape, Ray ray){
 	vec3 vec3_e = {{ex, ey, ez}};
 	vec3 vec3_d = {{dx, dy, dz}};
 
-
 	float nx = shape->geo_params_[0];
 	float ny = shape->geo_params_[1];
 	float nz = shape->geo_params_[2];
@@ -568,13 +542,13 @@ Trace::intersectPlane(Shape* shape, Ray ray){
 	float pz = shape->geo_params_[5];
 
 	vec3 p1 = {{px,py,pz}};
-			vec3 n = {{nx,ny,nz}};
-			vec3 p1_e = vec3Minus(p1, vec3_e);
-			float up_term = vec3Mul(p1_e, n);
-			float down_term = vec3Mul(vec3_d, n);
-			float t = up_term/down_term;
+	vec3 n = {{nx,ny,nz}};
+	vec3 p1_e = vec3Minus(p1, vec3_e);
+	float up_term = vec3Mul(p1_e, n);
+	float down_term = vec3Mul(vec3_d, n);
+	float t = up_term/down_term;
 
-			return t;
+	return t;
 
 }
 

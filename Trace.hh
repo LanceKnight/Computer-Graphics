@@ -6,7 +6,7 @@
 
 #include "Ilight.hh"
 #include "Ray.hh"
-#include "Shape.hh"
+#include "Surface.hh"
 
 
 
@@ -18,25 +18,27 @@ public:
 	std::string static trace(std::vector<std::string> paramList);
 
 	//public data
-	static std::vector<Shape *> object_list_;
+	static std::vector<Surface *> object_list_;
 	static std::vector<Ilight *> light_list_;
 
 private:
-	static vec3 getColorFromRay(Ray ray, int i, int j);
+	static vec3 getColorFromRay(Ray ray, float t0, float t, int i, int j);
 
 	static Ray buildCameraRay(int i,int j);
 
+	static vec3 buildLightDir(const Ilight* ilight, const vec3 intersect_point);
+
 	static Ray buildReflectedRay(Ray ray, vec3 norm, vec3 point, int i ,int j);
 
-	static float intersect(Ray ray, Shape* shape, int i, int j);
+	static float intersect(Ray ray, Surface* shape, float t0, float t1, int i, int j);
 
-	static float intersectTriangle(Shape* shape, Ray ray);
+	static float intersectTriangle(Surface* shape, Ray ray, float t0, float t1);
 
-	static float intersectSphere(Shape* shape, Ray ray);
+	static float intersectSphere(Surface* shape, Ray ray, float t0, float t1);
 
-	static float intersectBox(Shape* shape, Ray ray, int i, int j);
+	static float intersectBox(Surface* shape, Ray ray, float t0, float t1, int i, int j);
 
-	static float intersectPlane( Shape* shape, Ray ray);
+	static float intersectPlane( Surface* shape, Ray ray);
 
 	//private data
 

@@ -1,16 +1,17 @@
+#include "Surface.hh"
+
 #include <iostream>
 #include <vector>
-#include "Shape.hh"
 #include "Util.hh"
 
 
 
 
-Shape::Shape(){
+Surface::Surface(){
 
 }
 
-Shape::~Shape(){
+Surface::~Surface(){
 
 }
 
