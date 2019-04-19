@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Dispatcher.hh"
 #include "Reader.hh"
+#include "Util.hh"
 
 
 
@@ -43,17 +44,18 @@ Reader::read(std::vector<std::string> paramList){
 						if(command.empty()!= true){
 							if(command.at(0)!='#'){
 							
-							std::cout<<"executing a command from the file..."<<std::endl;
+							//std::cout<<"executing a command from the file..."<<std::endl;
 							std::cout<<"command:"<<command<<std::endl;
 							strcpy(line, command.c_str());
 							strtok(line, "#");
-							#ifdef DEBUG
-								std::cout<<"=====DEBUG  INFO====="<< std::endl;
-									std::cout<<"line:"<<line<<std::endl;
 
-								std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-							#endif
-							
+//							Util::debug_head("Reader.cpp");
+//							std::cout<<"=====DEBUG  INFO====="<< std::endl;
+//							std::cout<<"line:"<<line<<std::endl;
+//
+//							std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+//							Util::debug_tail();
+
 							Dispatcher::dispatch(line);
 
 							result = "File <"+ filename+"> was processed succefully";
