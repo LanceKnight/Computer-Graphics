@@ -1,8 +1,10 @@
 #include <iostream>
 
 #include "Background.hh"
+#include "Box.hh"
 #include "Clear.hh"
 #include "Ilight.hh"
+#include "Plane.hh"
 #include "Screen.hh"
 #include "Sphere.hh"
 #include "Trace.hh"
@@ -43,6 +45,8 @@ Clear::clear(std::vector<std::string> paramList){
 		Triangle::counter_=0;
 		Sphere::counter_=0;
 		Ilight::counter_=0;
+		Box::counter_ = 0;
+		Plane::counter_ = 0;
 		return "Clear Done";
 	}
 	else{
