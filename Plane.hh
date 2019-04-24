@@ -25,10 +25,7 @@ public:
 
 	std::string static plane(std::vector<std::string> paramList);
 
-	static vec3 norm_;
 
-private:
-	//private data
 	static int counter_;
 
 	

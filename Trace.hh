@@ -22,7 +22,7 @@ public:
 	static std::vector<Ilight *> light_list_;
 
 private:
-	static vec3 getColorFromRay(Ray ray, float t0, float t, int i, int j);
+	static vec3 getColorFromRay(Ray ray, float t0, float t, bool is_reflect_ray,int i, int j);
 
 	static Ray buildCameraRay(int i,int j);
 
@@ -34,11 +34,17 @@ private:
 
 	static float intersectTriangle(Surface* shape, Ray ray, float t0, float t1);
 
-	static float intersectSphere(Surface* shape, Ray ray, float t0, float t1);
+	static float intersectSphere(Surface* shape, Ray ray, float t0, float t1, int i, int j);
 
 	static float intersectBox(Surface* shape, Ray ray, float t0, float t1, int i, int j);
 
-	static float intersectPlane( Surface* shape, Ray ray);
+	static float assignT(float a, float b, bool is_min, int * norm_flag, float t0, float t1);
+
+	static vec3 assignNorm(int xyz_1, bool is_min_1, int xyz_2, bool is_min_2, int * norm_flag, float ax, float ay, float az);
+
+	static vec3 assignNorm2(int xyz, bool is_min, float ax, float ay, float az);
+
+	static float intersectPlane( Surface* shape, Ray ray, float t0, float t1);
 
 	//private data
 

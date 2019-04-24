@@ -19,14 +19,18 @@ public:
 		float ar, float ag, float ab,
 		float rr, float rg, float rb);
 
+	Box(float ux, float uy, float uz,
+		float vx, float vy, float vz,
+		float ar, float ag, float ab,
+		float rr, float rg, float rb,
+		float sr, float sg, float sb);
+
 	~Box();
 
 	std::string static box(std::vector<std::string> paramList);
 
 
 
-private:
-	//private data
 	static int counter_;
 
 	

@@ -38,12 +38,22 @@ Plane::Plane(float nx, float ny, float nz,
 	color_params.push_back(sr);
 	color_params.push_back(sg);
 	color_params.push_back(sb);
-	this-> name_ = "plane" + counter_;
+//
+//	Util::debug_head("Plane.cpp");
+//	std::cout<<"sr:"<<sr<<" sg:"<<sg<<" sb:"<<sb<<std::endl;
+//	Util::debug_tail();
+	this-> name_ = "plane" + std::to_string(counter_);
 	this-> type_ = "plane";
 	this-> geo_params_ = geo_params;
 	this-> color_params_ = color_params;
+	this-> norm_ = {{nx, ny, nz}};
 
 	this-> counter_++;
+	this-> counter_++;
+	if((sr!=0) || (sg !=0) || (sb !=0)){
+		reflected_=true;
+
+	}
 }
 
 
@@ -83,9 +93,9 @@ Plane::plane(std::vector<std::string> paramList){
 			rr = std::stod(paramList[9]);
 			rg = std::stod(paramList[10]);
 			rb = std::stod(paramList[11]);
-			sr = std::stod(paramList[9]);
-			sg = std::stod(paramList[10]);
-			sb = std::stod(paramList[11]);
+			sr = std::stod(paramList[12]);
+			sg = std::stod(paramList[13]);
+			sb = std::stod(paramList[14]);
 		}
 		catch(...){
 			return "illegal params";
