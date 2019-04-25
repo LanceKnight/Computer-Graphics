@@ -65,7 +65,7 @@ Util::print_mat(const matrix_unit * matrix){
 
 void
 Util::debug_head(std::string filename){
-	#ifdef DEBUG
+	//#ifdef DEBUG
 		std::cout<<"=====DEBUG  INFO====="<<std::endl;
 		std::cout<<"file:"<<filename<<std::endl;
 
@@ -75,7 +75,7 @@ void
 Util::debug_tail(){
 
 	std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-	#endif
+	//#endif
 
 }
 
