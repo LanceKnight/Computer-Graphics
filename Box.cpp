@@ -82,8 +82,8 @@ Box::box(std::vector<std::string> paramList){
 
 
 	if(paramList.size()<=19){
-		if(paramList.size() <12 || (paramList.size() != 15 && paramList.size()!=19)){
-				return "too few parameters";
+		if(paramList.size() != 12 && paramList.size() != 15 && paramList.size()!=19){
+			return "the number of params can only be either 12(basic), 15(with specular color), or 19(with phong color and coefficent) for box";
 		}
 		float ux = 0;
 		float uy = 0;

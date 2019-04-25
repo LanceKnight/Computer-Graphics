@@ -63,8 +63,8 @@ Sphere::sphere(std::vector<std::string> paramList){
 
 
 	if(paramList.size()<=17){
-		if(paramList.size() !=10 && paramList.size() != 13 && paramList.size() != 17){
-			return "too few parameters";
+		if(paramList.size() != 13 && paramList.size() != 17){
+			return "the number of params can only be either 13(with specular color), or 17(with phong color and coefficent) for sphere";
 		}
 		float R = 0;
 		float cx = 0;

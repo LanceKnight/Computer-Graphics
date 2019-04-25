@@ -98,8 +98,8 @@ Triangle::triangle(std::vector<std::string> paramList){
 
 
 	if(paramList.size()<=22){
-		if(paramList.size() <15 || ( paramList.size() !=18 && paramList.size() !=22) ){
-				return "too few parameters";
+		if( paramList.size() !=15 && paramList.size() !=18 && paramList.size() !=22) {
+			return "the number of params can only be either 15(basic), 18(with specular color), or 22(with phong color and coefficent) for triangle";
 		}
 		float ux = 0;
 		float uy = 0;
