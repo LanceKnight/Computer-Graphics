@@ -1,0 +1,517 @@
+reset 
+
+lookat 2 2 2 0 0 0 0 1 0 #45degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2.31691 2 1.6223 0 0 0 0 1 0#55degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2.5634 2 1.1953 0 0 0 0 1 0#65degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+
+#=================
+pause
+reset
+lookat 2.73205 2 0.73205 0 0 0 0 1 0#75degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+
+#=================
+pause
+reset
+lookat 2.817662 2 0.24651 0 0 0 0 1 0 #85degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2.817662 2 -0.24651 0 0 0 0 1 0 #95degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2.73205 2 -0.73205 0 0 0 0 1 0#105degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2.5634 2 -1.1953 0 0 0 0 1 0#115degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2.31691 2 -1.6223 0 0 0 0 1 0#125degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#=================
+pause
+reset
+lookat 2 2 -2 0 0 0 0 1 0 #135degree
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#============resume
+pause
+reset
+lookat 2 2 2 0 0 0 0 1 0 #35.2643degree, inv-tan(1/sqrt(2))
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#============
+pause
+reset
+lookat 2.21519 1.478 2.21519 0 0 0 0 1 0 #25.2643degree, inv-tan(1/sqrt(2))
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#============
+pause
+reset
+lookat 2.36307 0.9120061 2.36307 0 0 0 0 1 0 #15.2643degree, inv-tan(1/sqrt(2))
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+#============
+pause
+reset
+lookat 2.439157 0.31783 2.439157 0 0 0 0 1 0 #05.2643degree, inv-tan(1/sqrt(2))
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+
+#============
+pause
+reset
+lookat 2.439157 -0.31783 2.439157 0 0 0 0 1 0 #-05.2643degree, inv-tan(1/sqrt(2))
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test
+
+#============
+pause
+reset
+lookat 2.36307 -0.9120061 2.36307 0 0 0 0 1 0 #-15.2643degree, inv-tan(1/sqrt(2))
+perspective 90 1 0.001 1000
+#x-axis
+vertex 0 0 0
+vertex 2 0 0
+#y-axis
+vertex 0 0 0
+vertex 0 2 0
+#z-axis
+vertex 0 0 0
+vertex 0 0 2
+push
+translate 0 2 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 0 0 2
+scale 0.1 0.1 0.1
+read cube.test
+pop
+
+push
+translate 2 0 0
+scale 0.1 0.1 0.1
+read cube.test
+pop
+read put_codes_here.test

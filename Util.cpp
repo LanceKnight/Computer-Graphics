@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include "3D.h"
 #include "Util.hh"
 
 
@@ -47,6 +48,34 @@ Util::reverse(unsigned char * bytes, int n){
 		std::cout<<std::endl;
 		std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
 	#endif*/
+
+}
+
+void
+Util::print_mat(const matrix_unit * matrix){
+	for(int i = 0; i <4; i++){
+		for(int j = 0; j<4; j++){
+			std::cout<<matrix->mat[i][j]<< " ";
+		}
+		std::cout<<std::endl;
+	}
+}
+
+
+
+void
+Util::debug_head(std::string filename){
+	#ifdef DEBUG
+		std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		std::cout<<"file:"<<filename<<std::endl;
+
+}
+
+void
+Util::debug_tail(){
+
+	std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
+	#endif
 
 }
 

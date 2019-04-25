@@ -1,0 +1,9 @@
+translate 1 1 1
+push
+pop
+translate 1 1 1
+push
+translate 1 2 1
+pop
+pop
+reset

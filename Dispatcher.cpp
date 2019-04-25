@@ -13,6 +13,22 @@
 #include "Zoom.hh"
 #include "Border.hh"
 #include "Select.hh"
+#include "Push.hh"
+#include "Pop.hh"
+#include "Translate.hh"
+#include "Scale.hh"
+#include "Rotate.hh"
+#include "Ortho.hh"
+#include "Perspective.hh"
+#include "Lookat.hh"
+#include "Vertex.hh"
+#include "Reset.hh"
+#include "Pause.hh"
+#include "Orient.hh"
+//#include "Test3D"
+#include "Util.hh"
+
+
 //static int nested_read_ = 0;//current nested read
 
 
@@ -40,11 +56,9 @@ Dispatcher::dispatch(char line[]){
 // move branch
 	if(!strcmp(line,"move"))
 	{
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to MOVE branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+		Util::debug_tail();
 		
 		strcpy(line, Mover::move(paramList).c_str());
 	}
@@ -52,11 +66,9 @@ Dispatcher::dispatch(char line[]){
 //draw branch
 	if(!strcmp(line,"draw"))
 	{
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to DRAW branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+		Util::debug_tail();
 		
 		strcpy(line, Drawer::draw(paramList).c_str());
 	}
@@ -64,11 +76,10 @@ Dispatcher::dispatch(char line[]){
 //color branch
 	if(!strcmp(line,"color"))
 	{
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to COLOR branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 	
 		strcpy(line, Colorer::color(paramList).c_str());
 	}
@@ -76,17 +87,14 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line,"read"))
 	{
 		nested_read_++;
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to READ branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+		Util::debug_tail();
 	
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<< "nested_read:"<< nested_read_ <<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		if(nested_read_ < (get_max_read_recursion_depth()+1)){
 			
 			strcpy(line, Reader::read(paramList).c_str());
@@ -102,11 +110,10 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "tiffstat"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to TiffStat branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, TiffStat::tiff_stat(paramList).c_str());
 
 
@@ -117,11 +124,10 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "tiffread"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to TiffRead branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, TiffRead::tiff_read(paramList).c_str());
 
 
@@ -131,11 +137,10 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "tiffwrite"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to TiffWrite branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, TiffWrite::tiff_write(paramList).c_str());
 
 
@@ -145,11 +150,10 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "resize"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Resize branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, Resize::resize(paramList).c_str());
 
 
@@ -159,11 +163,10 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "zoom"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Zoom branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, Zoom::zoom(paramList).c_str());
 
 
@@ -173,34 +176,198 @@ Dispatcher::dispatch(char line[]){
 	if(!strcmp(line, "border"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Border branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, Border::border(paramList).c_str());
 
 
 	}
 
-
-
 //select branch
 	if(!strcmp(line, "select"))
 	{
 
-		#ifdef DEBUG
-			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+		Util::debug_head("Dispatcher.cpp");
 			std::cout<<"dispatching to Select branch"<<std::endl;
-			std::cout<<"==END OF DEBUG INFO==\n"<<std::endl;
-		#endif
+
+		Util::debug_tail();
 		strcpy(line, Select::select(paramList).c_str());
 
 
 	}
 
+//push branch
+	if(!strcmp(line, "push"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to Push branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Push::push(paramList).c_str());
 
 
+	}
+//pop branch
+	if(!strcmp(line, "pop"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to Pop branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Pop::pop(paramList).c_str());
+
+
+	}
+
+//translate branch
+	if(!strcmp(line, "translate"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to Translate branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Translate::translate(paramList).c_str());
+	}
+
+
+//scale branch
+	if(!strcmp(line, "scale"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to Scale branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Scale::scale(paramList).c_str());
+	}
+
+
+
+//rotate branch
+	if(!strcmp(line, "rotate"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to Rotate branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Rotate::rotate(paramList).c_str());
+	}
+
+//Ortho branch
+		if(!strcmp(line, "ortho"))
+		{
+
+			Util::debug_head("Dispatcher.cpp");
+				std::cout<<"dispatching to Ortho branch"<<std::endl;
+
+			Util::debug_tail();
+			strcpy(line, Ortho::ortho(paramList).c_str());
+
+
+		}
+
+//Perspective branch
+		if(!strcmp(line, "perspective"))
+		{
+
+			Util::debug_head("Dispatcher.cpp");
+				std::cout<<"dispatching to Perspective branch"<<std::endl;
+
+			Util::debug_tail();
+			strcpy(line, Perspective::perspective(paramList).c_str());
+
+
+		}
+
+
+//lookat branch
+	if(!strcmp(line, "lookat"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"dispatching to LookAt branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Lookat::lookat(paramList).c_str());
+
+
+	}
+//vertex branch
+	if(!strcmp(line, "vertex"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to Vertex branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Vertex::vertex(paramList).c_str());
+
+
+	}
+
+//reset branch
+	if(!strcmp(line, "reset"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to Reset branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Reset::reset(paramList).c_str());
+
+
+	}
+
+//pause branch
+	if(!strcmp(line, "pause"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to pause branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Pause::pause(paramList).c_str());
+
+
+	}
+
+//orient branch
+	if(!strcmp(line, "orient"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to orient branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Orient::orient(paramList).c_str());
+
+
+	}
+/*
+//Test-3d branch
+	if(!strcmp(line, "test3d"))
+	{
+
+		Util::debug_head("Dispatcher.cpp");
+			std::cout<<"=====DEBUG  INFO====="<<std::endl;
+			std::cout<<"dispatching to test3d branch"<<std::endl;
+
+		Util::debug_tail();
+		strcpy(line, Test3D::test3d(paramList).c_str());
+
+
+	}
+*/
 
 //other processing
    if (line == NULL)

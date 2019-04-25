@@ -1,0 +1,115 @@
+reset 
+#read scripts/project4/cube.cli
+perspective 45 1 1 4
+#perspective 60 1 1 4
+
+
+lookat 0 0 2  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 0.347 0 1.969   0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 0.684 0 1.897  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+pause
+reset
+
+lookat 1 0 1.732  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+pause
+reset
+
+lookat 1.285 0 1.532  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+pause
+reset
+
+lookat 1.532 0 1.285  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 1.732 0 1  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 1.897 0 0.684  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat  1.969 0 0.347   0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 2 0 0  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+#===================carmera goes up
+
+pause
+reset
+
+lookat 1.969 0.347 0 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 1.897 0.684 0  0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+pause
+reset
+
+lookat 1.732 1 0 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+pause
+reset
+
+lookat 1.532 1.285 0 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+#turning carmera
+pause
+reset
+
+lookat 1.532 1.285 0 0 0 0  0 0.984 0.173
+read scripts/project4/cube.cli
+
+
+pause
+reset
+
+lookat 1.532 1.285 0 0 0 0  0 0.939 0.342
+read scripts/project4/cube.cli
+
+pause
+reset
+
+lookat 1.532 1.285 0 0 0 0  0 0.866 0.5
+read scripts/project4/cube.cli
+

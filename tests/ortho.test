@@ -1,0 +1,79 @@
+reset 
+
+#======changing l r
+
+ortho -2 2 -2 2 0.001 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 3 -2 2 0.001 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 4 -2 2 0.001 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+#======changing t p
+pause
+reset
+ortho -2 2 -2 2 0.001 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 2 -2 3 0.001 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
+#======changing n 
+pause
+reset
+ortho -2 2 -2 2 0.001 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 2 -2 2 0.8 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 2 -2 2 1.0 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 2 -2 2 1.2 1000
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+#======changing f
+pause
+reset
+ortho -2 2 -2 2 1.7 3.8
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 2 -2 2 1.7 3.6
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+pause
+reset
+ortho -2 2 -2 2 1.7 3.4
+lookat 1 1 1.732 0 0 0  0 1 0
+read scripts/project4/cube.cli
+
+
