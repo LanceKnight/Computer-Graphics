@@ -51,9 +51,9 @@ Trace::trace(std::vector<std::string> paramList){
 				checkImage[i][j][1]= std::min((float)255, std::max((float)0, 255*color.mat[1]));
 				checkImage[i][j][2]= std::min((float)255, std::max((float)0, 255*color.mat[2]));
 
-				checkImage[debug_i][debug_j][0]= 255;
-				checkImage[debug_i][debug_j][1]= 255;
-				checkImage[debug_i][debug_j][2]= 50;
+//				checkImage[debug_i][debug_j][0]= 255;
+//				checkImage[debug_i][debug_j][1]= 255;
+//				checkImage[debug_i][debug_j][2]= 50;
 			}
 		}
 
