@@ -1,0 +1,16 @@
+clear
+
+screen 1024 1024
+
+orthocamera
+
+background 0.3 0.9 0.3
+
+Ilight  0   0  1    0 0 -1   
+
+
+sphere     150    250 250 -1000     0.5 0   0      1 0 0          0 0 0
+
+triangle          300 600 -800      0 100 -1000    450 20 -1000    0 0 0.5     0 0 1 # ambient is green, reflected is blue
+
+trace

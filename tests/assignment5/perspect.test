@@ -5,7 +5,7 @@ screen 1000 1000
 
 #Orthocamera
 	   #eye                #gaze                  #up            #distance          #au   av          #bu  bv
-Camera  120  0   0         0   0     0       0 1 0             50                 -100    -100       100  100
+Camera  100 100   1000         0   0     0       0 1 0             700                 -100    -100       100  100
 
 background 0.878 0.878 0.878 #grey background
 
