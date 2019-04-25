@@ -22,6 +22,12 @@ General Instructions:
 
 
 ## Result Images
-* result.tif for final image
+both images are in the /results folder.
+
+* result-assignment5.tif for final image
+ 
+![result](results/assignment5/result-assignment5.tif "Result")
 
 * phong.tif for phong feature
+
+![phong](results/assignment5/phong.tif "Result")
