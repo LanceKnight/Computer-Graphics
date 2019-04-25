@@ -1,0 +1,28 @@
+
+
+clear
+
+screen 500 500
+
+orthocamera
+
+	   #eye                #gaze                  #up            #distance          #au   av          #bu  bv
+
+#Camera  150  150   10         150   150     0       0 1 0             50                 -100    -100       100  100
+
+
+background 0.878 0.878 0.878 #red background
+
+	    #r   g   b      x   y    z
+Ilight  1    1   1     150 110  -30  
+Ilight  1    1   1     400 200  -30
+
+          #r     x   y   z          ar  ag  ab    rr  rg  rb   sr sg sb
+sphere     50    80 100 -100       0.5   0   0    1   0   0    0.8 0.8 0.8   
+sphere     50    200 100 -100       0    0.5  0    0   1   0    0.8 0.8 0.8   
+sphere     50    150 180 -100       0    0    0.5  0    0   1   0.8 0.8 0.8
+
+
+       # x   y   z         x      y     z    ar  ag  ab    rr  rg  rb   sr sg sb
+box      230 50  -90      300   160  -200   0.5 0.5  0    1   1    0  0.8 0.8 0.8 
+trace
