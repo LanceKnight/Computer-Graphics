@@ -21,7 +21,10 @@ Sphere::~Sphere(){
 Sphere::Sphere(float R, float cx, float cy, float cz,
 						float ar, float ag, float ab,
 						float rr, float rg, float rb,
-						float sr, float sg, float sb){
+						float sr, float sg, float sb,
+						float pr, float pg, float pb, float p
+
+){
 	geo_params_.push_back(R);
 	geo_params_.push_back(cx);
 	geo_params_.push_back(cy);
@@ -35,6 +38,10 @@ Sphere::Sphere(float R, float cx, float cy, float cz,
 	color_params_.push_back(sr);
 	color_params_.push_back(sg);
 	color_params_.push_back(sb);
+	color_params_.push_back(pr);
+	color_params_.push_back(pg);
+	color_params_.push_back(pb);
+	color_params_.push_back(p);
 
 	name_ = "sphere "  + std::to_string(counter_);
 	type_ = "sphere";
@@ -55,8 +62,8 @@ std::string
 Sphere::sphere(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=13){
-		if(paramList.size() <10){
+	if(paramList.size()<=17){
+		if(paramList.size() !=10 && paramList.size() != 13 && paramList.size() != 17){
 			return "too few parameters";
 		}
 		float R = 0;
@@ -72,6 +79,10 @@ Sphere::sphere(std::vector<std::string> paramList){
 		float sr = 0;
 		float sg = 0;
 		float sb = 0;
+		float pr = 0;
+		float pg = 0;
+		float pb = 0;
+		float p =0;
 		try{
 			R = std::stod(paramList[0]);
 			cx = std::stod(paramList[1]);
@@ -88,8 +99,14 @@ Sphere::sphere(std::vector<std::string> paramList){
 				sg = std::stod(paramList[11]);
 				sb = std::stod(paramList[12]);
 			}
-			else if(paramList.size()!=10){
-				return "parameters numbers should be either 10 or 13";
+			else if(paramList.size() ==17){
+				pr = std::stod(paramList[13]);
+				pg = std::stod(paramList[14]);
+				pb = std::stod(paramList[15]);
+				p = std::stod(paramList[16]);
+			}
+			else {
+				return "parameters numbers should be either 10 or 13 or 17";
 			}
 		}
 		catch(...){
@@ -102,7 +119,9 @@ Sphere::sphere(std::vector<std::string> paramList){
 		Sphere * new_sphere = new Sphere(R,  cx, cy, cz,
 				ar, ag, ab,
 				rr, rg, rb,
-				sr, sg, sb);
+				sr, sg, sb,
+				pr, pg, pb, p
+		);
 
 
 		Trace::object_list_.push_back(new_sphere);

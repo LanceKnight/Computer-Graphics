@@ -5,6 +5,8 @@
 #include <iostream>
 #include <limits>
 
+#include "TiffRead.hh"
+
 #include "Background.hh"
 #include "Camera.hh"
 #include "Ilight.hh"
@@ -25,7 +27,7 @@
 std::vector<Surface *> Trace::object_list_;
 std::vector<Ilight *> Trace::light_list_;
 
-#define debug_i 350
+#define debug_i 650
 #define debug_j 450
 #define MAX_REFLECT 4
 #define T0 0
@@ -56,6 +58,17 @@ Trace::trace(std::vector<std::string> paramList){
 		}
 
 		display();
+		TiffRead::has_image_=true;
+		TiffRead::is_gray_image_ = false;
+		TiffRead::image_width_ = Screen::nx_;
+		TiffRead::image_length_ = Screen::ny_;
+		TiffRead::photo_metric_=2;
+		TiffRead::compression_ =1;
+		TiffRead::x_resolution_numerator_ = 1;
+		TiffRead::y_resolution_numerator_ = 1;
+		TiffRead::x_resolution_denominator_ = 1;
+		TiffRead::y_resolution_denominator_ = 1;
+		TiffRead::resolution_unit_ = 1;
 		return "Trace Done";
 	}
 	else{
@@ -67,7 +80,7 @@ Trace::trace(std::vector<std::string> paramList){
 vec3
 Trace::getColorFromRay(Ray ray, float t0, float t1, bool is_reflect_ray, int i, int j){
 	float smallest_t = std::numeric_limits<float>::infinity();
-	Triangle tri(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0.0, 0.0, 0.0);
+	Triangle tri(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 	Surface* render_object = &tri;
 	bool hit = false;
@@ -88,11 +101,9 @@ Trace::getColorFromRay(Ray ray, float t0, float t1, bool is_reflect_ray, int i, 
 		vec3 intersect_point = {{ray.ori_x_+smallest_t*ray.dir_x_,ray.ori_y_+smallest_t*ray.dir_y_,ray.ori_z_+smallest_t*ray.dir_z_,}};
 
 		vec3 color ={{
-
 				std::min((float)1, std::max((float)0, render_object->color_params_[0] )),
 				std::min((float)1, std::max((float)0, render_object->color_params_[1] )),
 				std::min((float)1, std::max((float)0, render_object->color_params_[2] ))
-
 		}};
 
 		float total_light_r = 0;
@@ -105,9 +116,9 @@ Trace::getColorFromRay(Ray ray, float t0, float t1, bool is_reflect_ray, int i, 
 
 		for(std::vector<Ilight *>::iterator light_it = Trace::light_list_.begin();light_it != Trace::light_list_.end();++light_it){
 			in_shadow = false;
-			vec3 normalized_light =buildLightDir(*light_it, intersect_point);
+			vec3 normalized_l =buildLightDir(*light_it, intersect_point);
 
-			Ray shadow_ray(intersect_point.mat[0], intersect_point.mat[1],intersect_point.mat[2], normalized_light.mat[0], normalized_light.mat[1],normalized_light.mat[2]);
+			Ray shadow_ray(intersect_point.mat[0], intersect_point.mat[1],intersect_point.mat[2], normalized_l.mat[0], normalized_l.mat[1],normalized_l.mat[2]);
 
 			for(std::vector<Surface*>::iterator other_it = Trace::object_list_.begin();other_it != object_list_.end();++other_it){
 				if(strcmp((*other_it)->name_.c_str(),render_object->name_.c_str())){
@@ -122,13 +133,30 @@ Trace::getColorFromRay(Ray ray, float t0, float t1, bool is_reflect_ray, int i, 
 				float rr = render_object->color_params_[3];
 				float rg = render_object->color_params_[4];
 				float rb = render_object->color_params_[5];
+				float pr = render_object->color_params_[9];
+				float pg = render_object->color_params_[10];
+				float pb = render_object->color_params_[11];
+				float p = render_object->color_params_[12];
+				float lr = (*light_it)->lr_;
+				float lg = (*light_it)->lg_;
+				float lb = (*light_it)->lb_;
 
-				float cosine = vec3Mul(render_object->norm_, normalized_light);
+				float cosine = vec3Mul(render_object->norm_, normalized_l);
+				vec3 v = {{-ray.dir_x_, -ray.dir_y_, -ray.dir_z_}};
+				vec3 normal_v = normal(v);
+				vec3 h = normal(vec3Add(normal_v, normalized_l));
+
+//				if(i == debug_i && j == debug_j){
+//					std::cout<<"normal_v:"<<normal_v.mat[0]<<" "<<normal_v.mat[1]<<" "<<normal_v.mat[2]<<std::endl;
+//					std::cout<<"l:"<<normalized_l.mat[0]<<" "<<normalized_l.mat[1]<<" "<<normalized_l.mat[2]<<std::endl;
+//					std::cout<<"h:"<<h.mat[0]<<" "<<h.mat[1]<<" "<<h.mat[2]<<std::endl;
+//				}
+				float cosine_h = std::max((float)0, vec3Mul(render_object->norm_, h));
 				if(strcmp(render_object->type_.c_str(),"triangle") && strcmp(render_object->type_.c_str(),"plane") ){
 
-					total_light_r +=  std::max((float)0,((*light_it)->lr_  * rr * cosine));
-					total_light_g +=  std::max((float)0,((*light_it)->lg_  * rg * cosine));
-					total_light_b +=  std::max((float)0,((*light_it)->lb_  * rb * cosine));
+					total_light_r +=  (rr * lr * std::max((float)0, cosine) + pr * lr * pow(cosine_h, p));
+					total_light_g +=  (rg * lg * std::max((float)0, cosine) + pg * lg * pow(cosine_h,p));
+					total_light_b +=  (rb * lb * std::max((float)0, cosine) + pb * lb * pow(cosine_h,p));
 				}
 				else{
 

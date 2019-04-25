@@ -14,16 +14,15 @@ class Box:Surface{
 public:
 	Box();
 
-	Box(float ux, float uy, float uz,
-		float vx, float vy, float vz,
-		float ar, float ag, float ab,
-		float rr, float rg, float rb);
 
 	Box(float ux, float uy, float uz,
 		float vx, float vy, float vz,
 		float ar, float ag, float ab,
 		float rr, float rg, float rb,
-		float sr, float sg, float sb);
+		float sr, float sg, float sb,
+		float pr, float pg, float pb, float p
+
+	);
 
 	~Box();
 

@@ -25,7 +25,9 @@ public:
 			 float wx, float wy, float wz,
 			 float ar, float ag, float ab,
 			 float rr, float rg, float rb,
-			 float sr, float sg, float sb);
+			 float sr, float sg, float sb,
+			 float pr, float pg, float pb, float p
+	);
 
 	~Triangle();
 

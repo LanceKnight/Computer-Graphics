@@ -14,7 +14,7 @@ Box::Box(){
 Box::~Box(){
 
 }
-
+/*
 Box::Box(float ux, float uy, float uz,
 		 float vx, float vy, float vz,
 		 float ar, float ag, float ab,
@@ -38,12 +38,14 @@ Box::Box(float ux, float uy, float uz,
 
 	counter_++;
 }
-
+*/
 Box::Box(float ux, float uy, float uz,
 		 float vx, float vy, float vz,
 		 float ar, float ag, float ab,
 		 float rr, float rg, float rb,
-		 float sr, float sg, float sb){
+		 float sr, float sg, float sb,
+		 float pr, float pg, float pb, float p
+){
 	geo_params_.push_back(ux);
 	geo_params_.push_back(uy);
 	geo_params_.push_back(uz);
@@ -59,6 +61,10 @@ Box::Box(float ux, float uy, float uz,
 	color_params_.push_back(sr);
 	color_params_.push_back(sg);
 	color_params_.push_back(sb);
+	color_params_.push_back(pr);
+	color_params_.push_back(pg);
+	color_params_.push_back(pb);
+	color_params_.push_back(p);
 	name_ = "box"+ std::to_string(counter_);
 	type_ = "box";
 
@@ -75,8 +81,8 @@ std::string
 Box::box(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=15){
-		if(paramList.size() <12 || paramList.size() == 13 || paramList.size()==14){
+	if(paramList.size()<=19){
+		if(paramList.size() <12 || (paramList.size() != 15 && paramList.size()!=19)){
 				return "too few parameters";
 		}
 		float ux = 0;
@@ -94,7 +100,10 @@ Box::box(std::vector<std::string> paramList){
 		float sr = 0;
 		float sg = 0;
 		float sb = 0;
-
+		float pr = 0;
+		float pg = 0;
+		float pb = 0;
+		float p = 0;
 		try{
 			ux = std::stod(paramList[0]);
 			uy = std::stod(paramList[1]);
@@ -112,6 +121,12 @@ Box::box(std::vector<std::string> paramList){
 				sr = std::stod(paramList[12]);
 				sg = std::stod(paramList[13]);
 				sb = std::stod(paramList[14]);
+			}
+			if(paramList.size()==19){
+				pr = std::stod(paramList[15]);
+				pg = std::stod(paramList[16]);
+				pb = std::stod(paramList[17]);
+				p = std::stod(paramList[18]);
 			}
 		}
 		catch(...){
@@ -138,7 +153,9 @@ Box::box(std::vector<std::string> paramList){
 				vx, vy, vz,
 				ar, ag, ab,
 				rr, rg, rb,
-				sr, sg, sb);
+				sr, sg, sb,
+				pr, pg, pb, p
+		);
 		Trace::object_list_.push_back(new_Box);
 
 		return "Box Done";

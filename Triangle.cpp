@@ -52,7 +52,8 @@ Triangle::Triangle(float ux, float uy, float uz,
 				   float wx, float wy, float wz,
 			   	   float ar, float ag, float ab,
 				   float rr, float rg, float rb,
-				   float sr, float sg, float sb
+				   float sr, float sg, float sb,
+				   float pr, float pg, float pb, float p
 ){
 	std::vector<float> geo_params;
 	std::vector<float> color_params;
@@ -74,6 +75,10 @@ Triangle::Triangle(float ux, float uy, float uz,
 	color_params_.push_back(sr);
 	color_params_.push_back(sg);
 	color_params_.push_back(sb);
+	color_params_.push_back(pr);
+	color_params_.push_back(pg);
+	color_params_.push_back(pb);
+	color_params_.push_back(p);
 	this-> name_ = "triangle "+ std::to_string(counter_);
 	this-> type_ = "triangle";
 	//this->geo_params_ = geo_params;
@@ -92,8 +97,8 @@ std::string
 Triangle::triangle(std::vector<std::string> paramList){
 
 
-	if(paramList.size()<=18){
-		if(paramList.size() <15 || paramList.size() ==16 ||paramList.size() ==17){
+	if(paramList.size()<=22){
+		if(paramList.size() <15 || ( paramList.size() !=18 && paramList.size() !=22) ){
 				return "too few parameters";
 		}
 		float ux = 0;
@@ -114,6 +119,10 @@ Triangle::triangle(std::vector<std::string> paramList){
 		float sr = 0;
 		float sg = 0;
 		float sb = 0;
+		float pr = 0;
+		float pg = 0;
+		float pb = 0;
+		float p = 0;
 		try{
 			ux = std::stod(paramList[0]);
 			uy = std::stod(paramList[1]);
@@ -135,6 +144,12 @@ Triangle::triangle(std::vector<std::string> paramList){
 				sg = std::stod(paramList[16]);
 				sb = std::stod(paramList[17]);
 			}
+			if(paramList.size()==22){
+				pr = std::stod(paramList[18]);
+				pg = std::stod(paramList[19]);
+				pb = std::stod(paramList[20]);
+				p  = std::stod(paramList[21]);
+			}
 
 		}
 		catch(...){
@@ -145,7 +160,8 @@ Triangle::triangle(std::vector<std::string> paramList){
 										       wx, wy, wz,
 										       ar, ag, ab,
 										       rr, rg, rb,
-											   sr, sg, sb
+											   sr, sg, sb,
+											   pr, pg, pb, p
 		);
 
 
