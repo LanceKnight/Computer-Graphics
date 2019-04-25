@@ -742,40 +742,13 @@ void gtVertex3f(float x, float y, float z)
 	 glGetIntegerv(GL_VIEWPORT,viewport);
 	 width = abs(viewport[2]-viewport[0]);
 	 height = abs(viewport[3]-viewport[1]);
-	 // printf("723-width:%d, height:%d\n", width, height);
-	  /*
-	 orth= {
-					   { {1        , 0.        , 0.     , 0},
-					     {0.       , 1.        , 0.     , 0},
-					     {0.       , 0.        , 0      , 0},
-					     {0.       , 0.        , 0.     , 1}  },
-					   };
 
-*/
-	  /*
-	 orth= {
-				   { {width/2.0, 0.        , 0.     , (width-1) /2.0},
-				     {0.       , height/2.0, 0.     , (height-1)/2.0},
-				     {0.       , 0.        , 1      , 0  		    },
-				     {0.       , 0.        , 0.     , 1             }  },
-				   };
-*/
 	  Mult_end(&orth, &pvert1, &vertex1); /* calculate 2d coordinates */
 	  Mult_end(&orth, &pvert2, &vertex2);
 
-/*
-	  printf("print ortho:\n");
-	  for(int i = 0; i<4; i++){
-		  for(int j=0; j<4;j++){
-			  	 printf("%f ", orth.mat[i][j]);
-		  }
-		  printf("\n");
-	  }
-	  printf("end of debug\n");
-*/
 
 
-	//  printf("757: Vertex 1: %f %f\n3D.c-728: Vertex 2: %f %f\n",vertex1.mat41[0],vertex1.mat41[1],vertex2.mat41[0],vertex2.mat41[1]);
+
 
 	  draw_line(vertex1.mat41[0], vertex1.mat41[1], 
 		    vertex2.mat41[0], vertex2.mat41[1]);
@@ -877,8 +850,7 @@ vec3 vec3Minus(vec3 a, vec3 b){
 }
 
 vec3 normal(vec3 a){
-	//printf("Im here\n");
-	//printf("a: %f, %f, %f\n", a.mat[0],a.mat[1], a.mat[2]);
+
 	float norm = sqrt(a.mat[0]*a.mat[0]+a.mat[1]*a.mat[1]+a.mat[2]*a.mat[2]);
 	vec3 result = {{0,0,0}};
 	if(norm!=0){
@@ -886,6 +858,7 @@ vec3 normal(vec3 a){
 	}
 	return result;
 }
+
 
 
 /*--------------------End of gtVertex3f----------------------------------*/
