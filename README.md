@@ -26,7 +26,7 @@ both images are in the /results folder.
 
 * result-assignment5.tif for final image
  
-![result](results/assignment5/result-assignment5.tif "Result")
+![result](https://github.com/LanceKnight/Computer-Graphics/blob/master/results/assignment5/result-assignment5.jpg "Result")
 
 * phong.tif for phong feature
 
