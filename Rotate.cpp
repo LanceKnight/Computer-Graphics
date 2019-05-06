@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "Rotate.hh"
 #include "3D.h"
 #include "Util.hh"

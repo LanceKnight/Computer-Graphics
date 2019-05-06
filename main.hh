@@ -3,12 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <GL/glut.h>
 
 /*	Create checkerboard image	*/
 #define	checkImageWidth 1024
 #define	checkImageHeight 1024
+//static GLubyte checkImage[checkImageHeight][checkImageWidth][3];
 extern GLubyte checkImage[checkImageHeight][checkImageWidth][3];
-
 void makeCheckImage(void);
 void init(void);
 extern void display(void);

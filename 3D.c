@@ -742,40 +742,13 @@ void gtVertex3f(float x, float y, float z)
 	 glGetIntegerv(GL_VIEWPORT,viewport);
 	 width = abs(viewport[2]-viewport[0]);
 	 height = abs(viewport[3]-viewport[1]);
-	 // printf("723-width:%d, height:%d\n", width, height);
-	  /*
-	 orth= {
-					   { {1        , 0.        , 0.     , 0},
-					     {0.       , 1.        , 0.     , 0},
-					     {0.       , 0.        , 0      , 0},
-					     {0.       , 0.        , 0.     , 1}  },
-					   };
 
-*/
-	  /*
-	 orth= {
-				   { {width/2.0, 0.        , 0.     , (width-1) /2.0},
-				     {0.       , height/2.0, 0.     , (height-1)/2.0},
-				     {0.       , 0.        , 1      , 0  		    },
-				     {0.       , 0.        , 0.     , 1             }  },
-				   };
-*/
 	  Mult_end(&orth, &pvert1, &vertex1); /* calculate 2d coordinates */
 	  Mult_end(&orth, &pvert2, &vertex2);
 
-/*
-	  printf("print ortho:\n");
-	  for(int i = 0; i<4; i++){
-		  for(int j=0; j<4;j++){
-			  	 printf("%f ", orth.mat[i][j]);
-		  }
-		  printf("\n");
-	  }
-	  printf("end of debug\n");
-*/
 
 
-	//  printf("757: Vertex 1: %f %f\n3D.c-728: Vertex 2: %f %f\n",vertex1.mat41[0],vertex1.mat41[1],vertex2.mat41[0],vertex2.mat41[1]);
+
 
 	  draw_line(vertex1.mat41[0], vertex1.mat41[1], 
 		    vertex2.mat41[0], vertex2.mat41[1]);
@@ -816,6 +789,77 @@ void gtVertex3f(float x, float y, float z)
 
   }
 }
+
+
+
+float determinant(mat3 matrix);
+float determinant(mat3 matrix){
+	float result = matrix.mat[0][0]*matrix.mat[1][1]*matrix.mat[2][2]+
+				   matrix.mat[0][1]*matrix.mat[1][2]*matrix.mat[2][0]+
+				   matrix.mat[0][2]*matrix.mat[1][0]*matrix.mat[2][1]-
+				   matrix.mat[0][2]*matrix.mat[1][1]*matrix.mat[2][0]-
+				   matrix.mat[0][1]*matrix.mat[1][0]*matrix.mat[2][2]-
+				   matrix.mat[0][0]*matrix.mat[1][2]*matrix.mat[2][1]
+
+				   ;
+	return result;
+}
+
+float vec3Mul(vec3 a, vec3 b){
+	float result;
+	result= a.mat[0] *b.mat[0]+a.mat[1] *b.mat[1]+a.mat[2] *b.mat[2];
+	return result;
+}
+
+vec3 vec3Cross(vec3 a, vec3 b){
+	vec3 result;
+	result.mat[0] = a.mat[1]*b.mat[2] - a.mat[2]*b.mat[1];
+	result.mat[1] = a.mat[2]*b.mat[0] - a.mat[0]*b.mat[2];
+	result.mat[2] = a.mat[0]*b.mat[1] - a.mat[1]*b.mat[0];
+	return result;
+}
+
+vec3 vec3NumMul(float num, vec3 a){
+	vec3 result;
+
+	result.mat[0] = a.mat[0]*num;
+
+	result.mat[1] = a.mat[1]*num;
+
+	result.mat[2] = a.mat[2]*num;
+
+
+	return result;
+}
+
+
+vec3 vec3Add(vec3 a, vec3 b){
+	vec3 result;
+	result.mat[0] = a.mat[0] +b.mat[0];
+	result.mat[1] = a.mat[1] +b.mat[1];
+	result.mat[2] = a.mat[2] +b.mat[2];
+	return result;
+}
+
+vec3 vec3Minus(vec3 a, vec3 b){
+	vec3 result;
+	result.mat[0] = a.mat[0] -b.mat[0];
+	result.mat[1] = a.mat[1] -b.mat[1];
+	result.mat[2] = a.mat[2] -b.mat[2];
+	return result;
+}
+
+vec3 normal(vec3 a){
+
+	float norm = sqrt(a.mat[0]*a.mat[0]+a.mat[1]*a.mat[1]+a.mat[2]*a.mat[2]);
+	vec3 result = {{0,0,0}};
+	if(norm!=0){
+		result = {{a.mat[0]/norm, a.mat[1]/norm, a.mat[2]/norm}};
+	}
+	return result;
+}
+
+
 
 /*--------------------End of gtVertex3f----------------------------------*/
 

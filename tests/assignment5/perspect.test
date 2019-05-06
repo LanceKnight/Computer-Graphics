@@ -1,0 +1,53 @@
+
+clear
+
+screen 1000 1000
+
+#Orthocamera
+	   #eye                #gaze                  #up            #distance          #au   av          #bu  bv
+Camera  100 100   1000         0   0     0       0 1 0             700                 -100    -100       100  100
+
+background 0.878 0.878 0.878 #grey background
+
+	    #r   g   b      x   y    z
+Ilight  1    1   1      60  60  -60  
+
+
+
+
+              #ux   uy  uz    vx  vy  vz          ar  ag  ab    rr  rg  rb   
+#origin
+#box           -10   -10  10   10  10  -10         0.5   0   0.5    1   0   1   
+
+#x axis         
+#box            40   -10  10   60  10  -10         0.5   0   0.5    1   0   1     
+
+            #r       x   y   z          ar  ag  ab    rr  rg  rb   sr sg sb
+#center
+sphere      5       0    0   0         0.5   0.5   0.5    1   1   1    0  0  0
+
+#x axis 
+sphere      5       50    0   0         0.5   0   0    1   0   0    0  0  0
+sphere      5       100   0   0         0.5   0   0    1   0   0    0  0  0
+sphere      5       150   0   0         0.5   0   0    1   0   0    0  0  0
+#y axis                                               
+sphere      5       0     50    0        0  0.5  0     0   1    0    0  0  0
+sphere      5       0     100   0        0  0.5  0     0   1    0    0  0  0
+sphere      5       0     150   0        0  0.5  0     0   1    0    0  0  0
+sphere      5       0     200   0        0  0.5  0     0   1    0    0  0  0
+sphere      5       0     250   0        0  0.5  0     0   1    0    0  0  0
+sphere      5       0     300   0        0  0.5  0     0   1    0    0  0  0
+#z axis                                            
+sphere      5       0     0    -50       0   0  0.5    0   0    1      0  0  0
+sphere      5       0     0   -100       0   0  0.5    0   0    1      0  0  0
+sphere      5       0     0   -150       0   0  0.5    0   0    1      0  0  0
+sphere      5       0     0   -200       0   0  0.5    0   0    1      0  0  0
+sphere      5       0     0   -250       0   0  0.5    0   0    1      0  0  0
+sphere      5       0     0   -300       0   0  0.5    0   0    1      0  0  0
+
+#marker
+sphere      5       0   0   -120       0   0.5  0.5    0   1    1      0  0  0
+
+trace
+
+
