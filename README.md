@@ -1,4 +1,4 @@
-#Ray Tracing ReadMe File
+# Ray Tracing ReadMe File
 General Instructions:
 * The maxium allowed nested read is 6. To change this setting, change the variable <numNested> in main.cpp somewhere below #include
 * test cases are in "tests/" folder
@@ -30,4 +30,4 @@ both images are in the /results folder.
 
 * phong.tif for phong feature
 
-![phong](results/assignment5/phong.tif "Result")
+![phong](https://github.com/LanceKnight/Computer-Graphics/blob/master/results/assignment5/phong.jpg "Result")
